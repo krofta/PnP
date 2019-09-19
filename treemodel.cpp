@@ -17,7 +17,7 @@ TreeModel::TreeModel()
 
 
 void TreeModel::csv_to_treemodel(const QString &filepath){
-    this->rootItem = new TreeItem({tr("Title"), tr("Summary")});
+    this->rootItem = new TreeItem({tr("Bauteil"), tr("x-Koord"), tr("y-Koord")});
     QFile file(filepath);
     file.open(QIODevice::ReadOnly);
     //this->treeModel();
@@ -144,6 +144,7 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
     int number = 0;
 
     while (number < lines.count()) {
+        break;
         int position = 0;
         while (position < lines[number].length()) {
             if (lines[number].at(position) != ' ')
@@ -155,11 +156,23 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 
         if (!lineData.isEmpty()) {
             // Read the column data from the rest of the line.
-            const QStringList columnStrings = lineData.split('\t', QString::SkipEmptyParts);
+            const QStringList columnStrings = lineData.split(';', QString::SkipEmptyParts);
             QVector<QVariant> columnData;
-            columnData.reserve(columnStrings.count());
+            columnData.reserve(columnStrings.count() + 2);
+            columnData << columnStrings[0];
+
+            if(columnStrings.count() == 2){
+                const QStringList bauteile = columnStrings[1].split(',', QString::SkipEmptyParts);
+                QVector<QVariant> bdata;
+                bdata.reserve(1);
+                for(const QString &b : bauteile){
+                    bdata << b;
+                    //parents.last()->appendChild(new TreeItem(bdata, parents.last()));
+                }
+
+            }
             for (const QString &columnString : columnStrings)
-                columnData << columnString;
+                columnData << columnString[0];
 
             if (position > indentations.last()) {
                 // The last child of the current parent is now the new parent
@@ -181,4 +194,20 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
         }
         ++number;
     }
+
+    // Bisschen stuff manuell probieren
+    QVector<QVariant> columnData,columnData2;
+    columnData.reserve(1);
+    columnData << "Pimmelnase";
+    parents.last()->appendChild(new TreeItem(columnData, parents.last()));
+    parents << parents.last()->child(parents.last()->childCount()-1);
+    columnData2.reserve(3);
+    columnData2 << "R100";
+    columnData2 << "R200";
+    parents.last()->appendChild(new TreeItem(columnData2, parents.last()));
+
+
+
+
+
 }

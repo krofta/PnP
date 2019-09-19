@@ -39,15 +39,16 @@ void MainWindow::on_dxfButton_clicked()
 }
 
 void MainWindow::on_csvButton_clicked(){
-    QString s = QFileDialog::getOpenFileName(0, "Open CSV", QString(), "CSV Files (*.csv)");
-    if(s.isEmpty())
-    {
-        return;
-    }
+//    QString s = QFileDialog::getOpenFileName(0, "Open CSV", QString(), "CSV Files (*.csv)");
+//    if(s.isEmpty())
+//    {
+//        return;
+//    }
     //this->msgBox.setText("Filepath csv:" + s);
     //this->msgBox.exec();
 
-    this->treeModel.csv_to_treemodel(s);
+    //this->treeModel.csv_to_treemodel(s);
+    this->treeModel.csv_to_treemodel("/home/aljosha/Schreibtisch/QtTest/Stückliste_Test.csv");
     this->ui->treeView->setModel(&treeModel);
     this->ui->treeView->show();
     //this->ui->treeWidget->set

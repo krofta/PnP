@@ -22,7 +22,7 @@
      <rect>
       <x>0</x>
       <y>30</y>
-      <width>621</width>
+      <width>511</width>
       <height>511</height>
      </rect>
     </property>
@@ -72,9 +72,9 @@
    <widget class="QTreeView" name="treeView">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>505</x>
       <y>30</y>
-      <width>256</width>
+      <width>421</width>
       <height>511</height>
      </rect>
     </property>
