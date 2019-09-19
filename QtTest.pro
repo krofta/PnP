@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+CONFIG += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -23,7 +24,10 @@ SOURCES += main.cpp\
     src/dxfinterface.cpp \
     src/dxfsceneview.cpp \
     src/mtexttohtml.cpp \
-    src/spline.cpp
+    src/spline.cpp \
+    csv_parser.cpp \
+    treeitem.cpp \
+    treemodel.cpp
 
 HEADERS  += mainwindow.h \
     libdxfrw/src/intern/drw_cptable932.h \
@@ -43,6 +47,9 @@ HEADERS  += mainwindow.h \
     src/dxfsceneview.h \
     src/mtexttohtml.h \
     src/scene_items.h \
-    src/spline.h
+    src/spline.h \
+    csv_parser.h \
+    treeitem.h \
+    treemodel.h
 
 FORMS    += mainwindow.ui

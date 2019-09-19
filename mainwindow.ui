@@ -17,54 +17,65 @@
    <string>Käfer Futter für die Hühners</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTableWidget" name="tableWidget">
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>0</y>
-      <width>301</width>
-      <height>541</height>
-     </rect>
-    </property>
-    <column>
-     <property name="text">
-      <string>Komponente</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Wert</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>Koordinaten</string>
-     </property>
-    </column>
-   </widget>
-   <widget class="QToolButton" name="dxfButton">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>131</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>Open dxf-File</string>
-    </property>
-   </widget>
    <widget class="DXFSceneView" name="graphicsView">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>90</y>
+      <y>30</y>
       <width>621</width>
-      <height>451</height>
+      <height>511</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>323</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QToolButton" name="dxfButton">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string>Open dxf-File</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="csvButton">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string>Open csv-File</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="rptButton">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string>Open rpt-File</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QTreeView" name="treeView">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>30</y>
+      <width>256</width>
+      <height>511</height>
      </rect>
     </property>
    </widget>
