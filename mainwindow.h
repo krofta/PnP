@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QTreeWidgetItem>
 #include "src/dxfinterface.h"
 #include "libdxfrw/src/libdxfrw.h"
 #include <src/dxfsceneview.h>
@@ -20,6 +21,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     static void openFilePicker();
+    void addTreeRoot(QString name, QString description);
+    void addTreeChild(QTreeWidgetItem *parent, QString name, QString description);
     QString filename;
     DXFInterface dxf;
     TreeModel treeModel;

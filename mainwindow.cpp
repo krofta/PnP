@@ -39,20 +39,79 @@ void MainWindow::on_dxfButton_clicked()
 }
 
 void MainWindow::on_csvButton_clicked(){
-//    QString s = QFileDialog::getOpenFileName(0, "Open CSV", QString(), "CSV Files (*.csv)");
-//    if(s.isEmpty())
-//    {
-//        return;
-//    }
+    QString s = QFileDialog::getOpenFileName(0, "Open CSV", QString(), "CSV Files (*.csv)");
+    if(s.isEmpty())
+    {
+        return;
+    }
     //this->msgBox.setText("Filepath csv:" + s);
     //this->msgBox.exec();
 
     //this->treeModel.csv_to_treemodel(s);
-    this->treeModel.csv_to_treemodel("/home/aljosha/Schreibtisch/QtTest/Stückliste_Test.csv");
-    this->ui->treeView->setModel(&treeModel);
-    this->ui->treeView->show();
-    //this->ui->treeWidget->set
-            //>setModel(this->treeModel);
+    //QString path = "/home/aljosha/Schreibtisch/QtTest/Stückliste_Test.csv";
+    QFile file(s);
+    file.open(QIODevice::ReadOnly);
+    //this->treeModel();
+    const QString data = file.readAll();
+    file.close();
+
+    ui->treeWidget->setColumnCount(3);
+    ui->treeWidget->setHeaderLabels(QStringList() << "Bauteilart" << "x-Koord" << "y-Koord");
+
+    const QStringList lines =  data.split('\n');
+
+    for( const QString line : lines){
+        addTreeRoot(line, "");
+    }
+
+
+
+}
+
+void MainWindow::addTreeRoot(QString name, QString description)
+{
+    // QTreeWidgetItem(QTreeWidget * parent, int type = Type)
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem(ui->treeWidget);
+
+    const QStringList lineStrings = name.split(';', QString::SkipEmptyParts);
+     if(lineStrings.count() == 2){
+        treeItem->setText(0, lineStrings[0]);
+
+        const QStringList bauteile = lineStrings[1].split(',', QString::SkipEmptyParts);
+        //if(bauteile.count() > 1)
+            for(const QString &teil : bauteile){
+                treeItem->setText(0, lineStrings[0]);
+                addTreeChild(treeItem, teil , "Child_first");
+
+            }
+
+    }
+
+
+
+
+    // QTreeWidgetItem::setText(int column, const QString & text)
+    //int counter = 0;
+
+    //treeItem->setText(0, name);
+    //treeItem->setText(1, description);
+    //addTreeChild(treeItem, name + "A", "Child_first");
+    //addTreeChild(treeItem, name + "B", "Child_second");
+}
+
+
+void MainWindow::addTreeChild(QTreeWidgetItem *parent,
+                  QString name, QString description)
+{
+    // QTreeWidgetItem(QTreeWidget * parent, int type = Type)
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
+
+    // QTreeWidgetItem::setText(int column, const QString & text)
+    treeItem->setText(0, name);
+    treeItem->setText(1, description);
+
+    // QTreeWidgetItem::addChild(QTreeWidgetItem * child)
+    parent->addChild(treeItem);
 }
 
 void MainWindow::on_rptButton_clicked(){
