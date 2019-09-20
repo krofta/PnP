@@ -57,7 +57,7 @@ void CSV_Parser::addTreeChild(QTreeWidgetItem *parent, PCB_Part part)
     QTreeWidgetItem *treeItem = new QTreeWidgetItem();
     treeItem->setText(0, part.get_name());
     treeItem->setText(1, part.get_sx());
-    treeItem->setText(1, part.get_sy());
+    treeItem->setText(2, part.get_sy());
     parent->addChild(treeItem);
 
 }

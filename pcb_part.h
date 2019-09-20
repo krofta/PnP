@@ -8,7 +8,7 @@ class PCB_Part
 public:
     PCB_Part();
     ~PCB_Part();
-    PCB_Part(QString name, QString x = 0, QString y = 0);
+    PCB_Part(QString name, QString x = "0", QString y = "0");
     void set_name(QString name);
     bool set_sx(QString x);
     bool set_sy(QString y);
