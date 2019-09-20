@@ -71,5 +71,17 @@ void MainWindow::on_csvButton_clicked(){
 
 void MainWindow::on_rptButton_clicked(){
 
+    QString s = QFileDialog::getOpenFileName(0, "Open RPT", QString(), "RPT Files (*.rpt)");
+    if(s.isEmpty())
+    {
+        return;
+    }
+
+    this->file_parser = CSV_Parser();
+    this->ui->treeWidget->clear();
+    this->file_parser.parse_rpt_datei(s, this->pcb_partkinds);
+    this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+
+
 }
 

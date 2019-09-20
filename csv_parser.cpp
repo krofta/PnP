@@ -20,7 +20,7 @@ int CSV_Parser::parse_csv_partlist(QString path, QList<PCB_PartKind> *part_kinds
         QStringList lineStrings = line.split(';', QString::SkipEmptyParts);
         if(lineStrings.count() == 2){
             PCB_PartKind kind = PCB_PartKind(lineStrings[0]);
-            QStringList parts = lineStrings[1].replace(" ", "").split(',');
+            QStringList parts = lineStrings[1].replace(" ", "").replace("\r","").split(',');
             for(QString part : parts){
                 kind.parts.append(PCB_Part(part));
                 //PCB_Part pcb_part = ;
@@ -59,6 +59,35 @@ void CSV_Parser::addTreeChild(QTreeWidgetItem *parent, PCB_Part part)
     treeItem->setText(1, part.get_sx());
     treeItem->setText(2, part.get_sy());
     parent->addChild(treeItem);
+
+}
+
+int CSV_Parser::parse_rpt_datei(QString path, QList<PCB_PartKind> &part_kinds){
+    QFile file(path);
+    if(!file.open(QIODevice::ReadOnly))
+        return 1;
+    QString data = file.readAll();
+    file.close();
+
+    QStringList lines =  data.split('\n');
+    int count = 0;
+    for(QString line : lines){
+        count++;
+        if( count < 5 )continue;    // Die ersten 5 Zeilen ignorieren
+        QStringList lineStrings = line.split(',', QString::SkipEmptyParts);
+        if(lineStrings.count() == 8){   // 9 Spalten
+            for(int i = 0; i < part_kinds.count(); i++){
+
+                for(int j = 0; j < part_kinds[i].parts.count(); j++){
+                    if(lineStrings[0] == part_kinds[i].parts[j].get_name() ){
+                        part_kinds[i].parts[j].set_sx(lineStrings[4]);
+                        part_kinds[i].parts[j].set_sy(lineStrings[5]);
+                    }
+                }
+            }
+        }
+    }
+    return 0;
 
 }
 
