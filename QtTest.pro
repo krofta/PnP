@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     src/spline.cpp \
     csv_parser.cpp \
     treeitem.cpp \
-    treemodel.cpp
+    treemodel.cpp \
+    pcb_part.cpp
 
 HEADERS  += mainwindow.h \
     libdxfrw/src/intern/drw_cptable932.h \
@@ -50,6 +51,7 @@ HEADERS  += mainwindow.h \
     src/spline.h \
     csv_parser.h \
     treeitem.h \
-    treemodel.h
+    treemodel.h \
+    pcb_part.h
 
 FORMS    += mainwindow.ui
