@@ -21,8 +21,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     static void openFilePicker();
-    void addTreeRoot(QString name, QString description);
-    void addTreeChild(QTreeWidgetItem *parent, QString name, QString description);
+    void addTreeRoot(QString name, QString bauteile);
+    void addTreeChild(QTreeWidgetItem *parent, QString name);
     QString filename;
     DXFInterface dxf;
     TreeModel treeModel;
