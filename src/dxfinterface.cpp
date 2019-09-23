@@ -70,9 +70,9 @@ void DXFInterface::setBlock(const int /*handle*/)
 
 }
 
-void DXFInterface::addCircle(const DRW_Circle &data)
+QGraphicsEllipseItem* DXFInterface::addCircle(const DRW_Circle &data)
 {
-    mScene.addEllipse(data.basePoint.x-data.radious, data.basePoint.y-data.radious, 2*data.radious, 2*data.radious, attributesToPen(&data));
+    return mScene.addEllipse(data.basePoint.x-data.radious, data.basePoint.y-data.radious, 2*data.radious, 2*data.radious, attributesToPen(&data));
 
 }
 
@@ -340,8 +340,8 @@ QPen DXFInterface::attributesToPen(const DRW_Entity *e)
     else
         setQPenLinetype(p, e->lineType);
 
-    if(e->lineWith != 1)
-        p.setWidth( e->lineWith);
+//    if(e->lineWith != 1)
+//        p.setWidth( e->lineWith);
 
     return p;
 }

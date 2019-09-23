@@ -18,6 +18,7 @@
 #include "drw_entities.h"
 #include "drw_objects.h"
 //#include "dl_extrusion.h"
+#include <QGraphicsEllipseItem>
 
 /**
  * Abstract class (interface) for comunicate dxfReader with the application.
@@ -85,7 +86,7 @@ public:
     virtual void addArc(const DRW_Arc& data) = 0;
 
     /** Called for every circle */
-    virtual void addCircle(const DRW_Circle& data) = 0;
+    virtual QGraphicsEllipseItem* addCircle(const DRW_Circle& data) = 0;
 
     /** Called for every ellipse */
     virtual void addEllipse(const DRW_Ellipse& data) = 0;

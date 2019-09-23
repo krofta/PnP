@@ -33,6 +33,7 @@ public:
     QList<PCB_PartKind> pcb_partkinds;
     // Objekt zum parsen der scv und rpt dateien
     CSV_Parser file_parser;
+    int dxf_initialised;
 
 protected:
     void showEvent(QShowEvent *ev);

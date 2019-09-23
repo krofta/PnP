@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     ui->setupUi(this);
+    this->dxf_initialised = 0;
 }
 
 MainWindow::~MainWindow()
@@ -51,11 +52,15 @@ void MainWindow::on_dxfButton_clicked()
     this->ui->graphicsView->setScene(dxf.scene());
     this->ui->graphicsView->fitInView(dxf.scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
     this->ui->graphicsView->show();
+    this->dxf_initialised = 1;
 
 }
 
 
 void MainWindow::on_csvButton_clicked(){
+    // Noch keine Szene initialisiert? Dann zurück
+    if(this->dxf_initialised == 0)
+        return;
     QString s = QFileDialog::getOpenFileName(0, "Open CSV", QString(), "CSV Files (*.csv)");
     if(s.isEmpty())
     {
@@ -67,11 +72,13 @@ void MainWindow::on_csvButton_clicked(){
     this->file_parser = CSV_Parser();
     this->file_parser.parse_csv_partlist(s, &this->pcb_partkinds);
     this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+
 }
 
 
 void MainWindow::on_rptButton_clicked(){
-
+    if(this->dxf_initialised == 0)
+        return;
     QString s = QFileDialog::getOpenFileName(0, "Open RPT", QString(), "RPT Files (*.rpt)");
     if(s.isEmpty())
     {
@@ -92,24 +99,30 @@ void MainWindow::on_rptButton_clicked(){
 void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
     PCB_Part *part;
-    double x = 0;
-    double y = 0;
-//    QVariant var;
-//    for(int i = 0; i < item->childCount(); i++){
-//        items = item->child(i);
-//        for(int j = 0; j < items->columnCount(); j++)
-//             var = items->data(j,0);
-//    }
-    CustomItem *c_item;// = CustomItem();
+    CustomItem *c_item;
 
     if(item->parent() != nullptr/*this->ui->treeWidget*/){
         c_item = (CustomItem*)item;
         if(c_item->part != nullptr){
             part = c_item->part;
-            x = part->get_dx();
-            y = part->get_dx();
-            this->dxf.addCircle(*part->getCircle());
-            //this->dxf.
+            if(part->get_visible() == 0){
+                part->set_visible(1);
+                //part->circle.color24 = (0xFFFFFF);
+                part->circle.colorName = "green";
+                //part->circle.
+                part->ellipse = this->dxf.addCircle(*part->getCircle());
+                QBrush brush_green(Qt::green);
+                ui->treeWidget->currentItem()->setBackground(1, brush_green);
+            }
+            else
+            {
+                part->set_visible(0);
+
+                this->dxf.mScene.removeItem(part->ellipse);
+                QBrush brush_white(Qt::white);
+                ui->treeWidget->currentItem()->setBackground(1, brush_white);
+            }
+
         }
     }
     else{
@@ -118,11 +131,11 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 
 
 
-    QBrush brush_red(Qt::red);
-    //twitem = ui->treeWidget->currentItem();
-    QModelIndex index = ui->treeWidget->currentIndex();
-    //index = twitem->indexOfChild(twitem);
-    //twitem->setBackground(0, brush_red);
-    QBrush brush_green(Qt::green);
-    ui->treeWidget->currentItem()->setBackground(1, brush_green);
+//    QBrush brush_red(Qt::red);
+//    //twitem = ui->treeWidget->currentItem();
+//    QModelIndex index = ui->treeWidget->currentIndex();
+//    //index = twitem->indexOfChild(twitem);
+//    //twitem->setBackground(0, brush_red);
+//    QBrush brush_green(Qt::green);
+//    ui->treeWidget->currentItem()->setBackground(1, brush_green);
 }

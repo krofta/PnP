@@ -3,6 +3,7 @@
 #include <QFile>
 
 
+
 CSV_Parser::CSV_Parser()
 {
 
@@ -50,6 +51,7 @@ int CSV_Parser::partKindsToTreeView(QList<PCB_PartKind> &part_kinds, QTreeWidget
             treeItemChild->setText(2, part_kinds[i].parts[j].get_sy());
             treeItemRoot->addChild(treeItemChild);
 
+
         }
         //addTreeRoot(tree, *kind);
 
@@ -85,7 +87,7 @@ void CSV_Parser::addTreeChild(QTreeWidgetItem *parent, PCB_Part part)
 
 }
 
-int CSV_Parser::parse_rpt_datei(QString path, QList<PCB_PartKind> &part_kinds){
+int CSV_Parser::parse_rpt_datei(QString path, QList<PCB_PartKind> &part_kinds/*, DXFInterface &dxf*/){
     QFile file(path);
     if(!file.open(QIODevice::ReadOnly))
         return 1;
@@ -106,6 +108,7 @@ int CSV_Parser::parse_rpt_datei(QString path, QList<PCB_PartKind> &part_kinds){
                         part_kinds[i].parts[j].set_sx(lineStrings[4]);
                         part_kinds[i].parts[j].set_sy(lineStrings[5]);
                         part_kinds[i].parts[j].refreshCircle();
+                        //dxf.addCircle(*part_kinds[i].parts[j].getCircle());
 
                     }
                 }

@@ -10,7 +10,7 @@ PCB_Part::PCB_Part()
 
 PCB_Part::~PCB_Part(){
     this->circle = DRW_Circle();
-    this->circle.color = 0xFF0000;
+    this->circle.color = 0x00FF00;
     this->circle.basePoint = DRW_Coord(0.0, 0.0, 0.0);
     this->circle.radious = 0.5;
     this->circle.visible = false;
@@ -21,10 +21,10 @@ PCB_Part::PCB_Part(QString name, QString x, QString y){
     this->set_name(name);
     this->set_sx(x);
     this->set_sy(y);
-    this->color = 0xFF0000;
-    this->visible = 1;
+    this->color = 0x00FFFF;
+    this->visible = 0;
     this->circle = DRW_Circle();
-    this->circle.color = 0xFF0000;
+    this->circle.color = 0x00FF00;
     this->circle.basePoint = DRW_Coord(0.0, 0.0, 0.0);
     this->circle.radious = 0.5;
     this->circle.visible = false;
@@ -69,6 +69,7 @@ void PCB_Part::set_dy(double y){
 
 void PCB_Part::set_visible(int val){
     this->visible = val > 0 ? 1 : 0;
+    this->circle.visible = val > 0 ? true : false;
 }
 
 void PCB_Part::set_color(int color){
@@ -102,7 +103,8 @@ int PCB_Part::get_color(){
 }
 
 int PCB_Part::get_visible(){
-    return this->visible;
+    //this->circle.visible
+    return this->circle.visible;
 }
 
 DRW_Circle* PCB_Part::getCircle(){

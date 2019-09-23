@@ -27,6 +27,8 @@ public:
     int get_visible();
     int get_color();
     DRW_Circle* getCircle();
+    QGraphicsEllipseItem *ellipse;
+    DRW_Circle circle;
 
 private:
     QString name;
@@ -36,7 +38,7 @@ private:
     double dy;
     int visible;
     int color;
-    DRW_Circle circle;
+
 
 
 };
