@@ -8,7 +8,7 @@
 #include "src/dxfinterface.h"
 #include "libdxfrw/src/libdxfrw.h"
 #include <src/dxfsceneview.h>
-#include "treemodel.h"
+
 #include "pcb_part.h"
 #include "csv_parser.h"
 
@@ -44,6 +44,8 @@ private slots:
     
     void on_rptButton_clicked();
     
+    void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
+
 private:
     Ui::MainWindow *ui;
     void showEventHelper();

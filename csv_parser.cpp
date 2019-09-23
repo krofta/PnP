@@ -1,4 +1,5 @@
 #include "csv_parser.h"
+#include "customitem.h"
 #include <QFile>
 
 
@@ -54,7 +55,13 @@ void CSV_Parser::addTreeRoot(QTreeWidget *tree, PCB_PartKind kind)
 
 void CSV_Parser::addTreeChild(QTreeWidgetItem *parent, PCB_Part part)
 {
-    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
+//    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
+//    treeItem->setText(0, part.get_name());
+//    treeItem->setText(1, part.get_sx());
+//    treeItem->setText(2, part.get_sy());
+//    parent->addChild(treeItem);
+
+    CustomItem *treeItem = new CustomItem(&part);
     treeItem->setText(0, part.get_name());
     treeItem->setText(1, part.get_sx());
     treeItem->setText(2, part.get_sy());

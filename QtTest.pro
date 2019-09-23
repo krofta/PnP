@@ -26,9 +26,8 @@ SOURCES += main.cpp\
     src/mtexttohtml.cpp \
     src/spline.cpp \
     csv_parser.cpp \
-    treeitem.cpp \
-    treemodel.cpp \
-    pcb_part.cpp
+    pcb_part.cpp \
+    customitem.cpp
 
 HEADERS  += mainwindow.h \
     libdxfrw/src/intern/drw_cptable932.h \
@@ -50,8 +49,7 @@ HEADERS  += mainwindow.h \
     src/scene_items.h \
     src/spline.h \
     csv_parser.h \
-    treeitem.h \
-    treemodel.h \
-    pcb_part.h
+    pcb_part.h \
+    customitem.h
 
 FORMS    += mainwindow.ui

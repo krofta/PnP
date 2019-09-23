@@ -33,6 +33,7 @@ void MainWindow::showEventHelper()
     //ui->setupUi(this);
     ui->treeWidget->setColumnCount(3);
     ui->treeWidget->setHeaderLabels(QStringList() << "Bauteilart" << "x-Koord" << "y-Koord");
+    ui->treeWidget->setColumnWidth (0, 180 );
     ui->treeWidget->setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -85,3 +86,24 @@ void MainWindow::on_rptButton_clicked(){
 
 }
 
+
+
+
+void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
+{
+    QTreeWidgetItem* twitem;
+//    QVariant var;
+//    for(int i = 0; i < item->childCount(); i++){
+//        items = item->child(i);
+//        for(int j = 0; j < items->columnCount(); j++)
+//             var = items->data(j,0);
+//    }
+
+    QBrush brush_red(Qt::red);
+    twitem = ui->treeWidget->currentItem();
+    QModelIndex index = ui->treeWidget->currentIndex();
+    //index = twitem->indexOfChild(twitem);
+    twitem->setBackground(0, brush_red);
+    QBrush brush_green(Qt::green);
+    ui->treeWidget->currentItem()->setBackground(1, brush_green);
+}
