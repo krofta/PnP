@@ -11,7 +11,7 @@ public:
     CSV_Parser();
     // scv Datei (Stückliste) von Franzi einlesen
     int parse_csv_partlist(QString path, QList<PCB_PartKind> * part_kinds);
-    int partKindsToTreeView(QList<PCB_PartKind> part_kinds, QTreeWidget *tree);
+    int partKindsToTreeView(QList<PCB_PartKind> &part_kinds, QTreeWidget *tree);
 
     // rpt Datei (Place Daten aus Allegro) einlesen und zu der Stückliste matchen
     int parse_rpt_datei(QString path, QList<PCB_PartKind> &part_kinds);
@@ -19,6 +19,7 @@ public:
     // Daten in Treeview einfügen
     void addTreeRoot(QTreeWidget *tree, PCB_PartKind kind);
     void addTreeChild(QTreeWidgetItem *parent, PCB_Part part);
+
 
 
 

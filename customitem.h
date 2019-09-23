@@ -7,6 +7,7 @@
 class CustomItem : public QTreeWidgetItem
 {
 public:
+    CustomItem();
     CustomItem(PCB_Part *part);
     PCB_Part *part;
 

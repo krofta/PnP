@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QList>
+#include "libdxfrw/src/libdxfrw.h"
 class PCB_Part
 {
 public:
@@ -16,6 +17,7 @@ public:
     void set_dy(double y);
     void set_visible(int val);
     void set_color(int color);
+    void refreshCircle();
 
     QString get_name();
     QString get_sx();
@@ -24,6 +26,7 @@ public:
     double get_dy();
     int get_visible();
     int get_color();
+    DRW_Circle* getCircle();
 
 private:
     QString name;
@@ -33,6 +36,9 @@ private:
     double dy;
     int visible;
     int color;
+    DRW_Circle circle;
+
+
 };
 
 

@@ -9,6 +9,11 @@ PCB_Part::PCB_Part()
 }
 
 PCB_Part::~PCB_Part(){
+    this->circle = DRW_Circle();
+    this->circle.color = 0xFF0000;
+    this->circle.basePoint = DRW_Coord(0.0, 0.0, 0.0);
+    this->circle.radious = 0.5;
+    this->circle.visible = false;
 
 }
 
@@ -18,6 +23,11 @@ PCB_Part::PCB_Part(QString name, QString x, QString y){
     this->set_sy(y);
     this->color = 0xFF0000;
     this->visible = 1;
+    this->circle = DRW_Circle();
+    this->circle.color = 0xFF0000;
+    this->circle.basePoint = DRW_Coord(0.0, 0.0, 0.0);
+    this->circle.radious = 0.5;
+    this->circle.visible = false;
 
 }
 
@@ -93,6 +103,17 @@ int PCB_Part::get_color(){
 
 int PCB_Part::get_visible(){
     return this->visible;
+}
+
+DRW_Circle* PCB_Part::getCircle(){
+    return &this->circle;
+}
+
+void PCB_Part::refreshCircle(){
+    //DRW_Coord coord =
+    this->circle.basePoint.x = this->dx;
+    this->circle.basePoint.y = this->dy;
+           // = DRW_Coord(this->dx, this->dy, 1.0);
 }
 
 // Klasse die die Bauteilart speichert und eine Liste aller entsprechenden teile enthält

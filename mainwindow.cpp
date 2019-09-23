@@ -3,7 +3,7 @@
 #include <QFileDialog>
 #include <QPushButton>
 
-
+#include "customitem.h"
 #include "src/dxfinterface.h"
 #include "libdxfrw/src/libdxfrw.h"
 #include <src/dxfsceneview.h>
@@ -91,19 +91,38 @@ void MainWindow::on_rptButton_clicked(){
 
 void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
-    QTreeWidgetItem* twitem;
+    PCB_Part *part;
+    double x = 0;
+    double y = 0;
 //    QVariant var;
 //    for(int i = 0; i < item->childCount(); i++){
 //        items = item->child(i);
 //        for(int j = 0; j < items->columnCount(); j++)
 //             var = items->data(j,0);
 //    }
+    CustomItem *c_item;// = CustomItem();
+
+    if(item->parent() != nullptr/*this->ui->treeWidget*/){
+        c_item = (CustomItem*)item;
+        if(c_item->part != nullptr){
+            part = c_item->part;
+            x = part->get_dx();
+            y = part->get_dx();
+            this->dxf.addCircle(*part->getCircle());
+            //this->dxf.
+        }
+    }
+    else{
+
+    }
+
+
 
     QBrush brush_red(Qt::red);
-    twitem = ui->treeWidget->currentItem();
+    //twitem = ui->treeWidget->currentItem();
     QModelIndex index = ui->treeWidget->currentIndex();
     //index = twitem->indexOfChild(twitem);
-    twitem->setBackground(0, brush_red);
+    //twitem->setBackground(0, brush_red);
     QBrush brush_green(Qt::green);
     ui->treeWidget->currentItem()->setBackground(1, brush_green);
 }
