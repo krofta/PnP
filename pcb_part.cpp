@@ -112,10 +112,8 @@ DRW_Circle* PCB_Part::getCircle(){
 }
 
 void PCB_Part::refreshCircle(){
-    //DRW_Coord coord =
     this->circle.basePoint.x = this->dx;
     this->circle.basePoint.y = this->dy;
-           // = DRW_Coord(this->dx, this->dy, 1.0);
 }
 
 // Klasse die die Bauteilart speichert und eine Liste aller entsprechenden teile enthält

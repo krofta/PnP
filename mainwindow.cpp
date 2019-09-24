@@ -30,8 +30,6 @@ void MainWindow::showEvent(QShowEvent *ev)
 
 void MainWindow::showEventHelper()
 {
-    // your code placed here
-    //ui->setupUi(this);
     ui->treeWidget->setColumnCount(3);
     ui->treeWidget->setHeaderLabels(QStringList() << "Bauteilart" << "x-Koord" << "y-Koord");
     ui->treeWidget->setColumnWidth (0, 180 );
@@ -59,15 +57,16 @@ void MainWindow::on_dxfButton_clicked()
 
 void MainWindow::on_csvButton_clicked(){
     // Noch keine Szene initialisiert? Dann zurück
-    if(this->dxf_initialised == 0)
+    if(this->dxf_initialised == 0){
+        this->msgBox.setText("Erst mal 'ne DXF-Datei importieren, min Jung!");
+        this->msgBox.exec();
         return;
+    }
     QString s = QFileDialog::getOpenFileName(0, "Open CSV", QString(), "CSV Files (*.csv)");
     if(s.isEmpty())
     {
         return;
     }
-    //this->msgBox.setText("Filepath csv:" + s);
-    //this->msgBox.exec();
 
     this->file_parser = CSV_Parser();
     this->file_parser.parse_csv_partlist(s, &this->pcb_partkinds);
@@ -77,20 +76,20 @@ void MainWindow::on_csvButton_clicked(){
 
 
 void MainWindow::on_rptButton_clicked(){
-    if(this->dxf_initialised == 0)
+    if(this->dxf_initialised == 0){
+        this->msgBox.setText("Erst mal 'ne DXF- und CSV-Datei importieren, min Jung!");
+        this->msgBox.exec();
         return;
+    }
     QString s = QFileDialog::getOpenFileName(0, "Open RPT", QString(), "RPT Files (*.rpt)");
     if(s.isEmpty())
     {
         return;
     }
-
     this->file_parser = CSV_Parser();
     this->ui->treeWidget->clear();
     this->file_parser.parse_rpt_datei(s, this->pcb_partkinds);
     this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
-
-
 }
 
 
@@ -110,7 +109,11 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
                 //part->circle.color24 = (0xFFFFFF);
                 part->circle.colorName = "green";
                 //part->circle.
-                part->ellipse = this->dxf.addCircle(*part->getCircle());
+                //data.basePoint.x-data.radious, data.basePoint.y-data.radious, 2*data.radious, 2*data.radious, attributesToPen(&data)
+
+                part->ellipse = this->dxf.mScene.addEllipse(part->circle.basePoint.x-part->circle.radious, part->circle.basePoint.y-part->circle.radious,
+                                            2*part->circle.radious,2*part->circle.radious,QPen(Qt::green),QBrush(Qt::green));
+                //part->ellipse = this->dxf.addCircle(*part->getCircle());
                 QBrush brush_green(Qt::green);
                 ui->treeWidget->currentItem()->setBackground(1, brush_green);
             }
@@ -126,16 +129,39 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
         }
     }
     else{
+        int visible = 0;
+        // Checken ob irgendwelche Bauteile aktiviert
+        for(int i = 0; i < item->childCount(); i++){
+            CustomItem* citem = (CustomItem*)item->child(i);
+            if(citem->part->get_visible())
+                visible = 1;
+        }
+        // Wenn Bauteile aktiviert -> Alle deaktivieren
+        if(visible)
+            for(int i = 0; i < item->childCount(); i++){
+                CustomItem* citem = (CustomItem*)item->child(i);
+                citem->part->set_visible(0);
 
+                this->dxf.mScene.removeItem(citem->part->ellipse);
+                QBrush brush_white(Qt::white);
+                citem->setBackground(1, brush_white);
+
+            }
+        // Wenn keine Bauteile aktiviert -> Alle aktivieren
+        else
+            for(int i = 0; i < item->childCount(); i++){
+                CustomItem* citem = (CustomItem*)item->child(i);
+                citem->part->set_visible(1);
+                //part->circle.color24 = (0xFFFFFF);
+                citem->part->circle.colorName = "green";
+
+                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-citem->part->circle.radious, citem->part->circle.basePoint.y-citem->part->circle.radious,
+                                            2*citem->part->circle.radious,2*citem->part->circle.radious,QPen(Qt::green),QBrush(Qt::green));
+                //part->ellipse = this->dxf.addCircle(*part->getCircle());
+                QBrush brush_green(Qt::green);
+                citem->setBackground(1, brush_green);
+
+            }
     }
 
-
-
-//    QBrush brush_red(Qt::red);
-//    //twitem = ui->treeWidget->currentItem();
-//    QModelIndex index = ui->treeWidget->currentIndex();
-//    //index = twitem->indexOfChild(twitem);
-//    //twitem->setBackground(0, brush_red);
-//    QBrush brush_green(Qt::green);
-//    ui->treeWidget->currentItem()->setBackground(1, brush_green);
 }

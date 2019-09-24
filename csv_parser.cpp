@@ -4,9 +4,7 @@
 
 
 
-CSV_Parser::CSV_Parser()
-{
-
+CSV_Parser::CSV_Parser(){
 }
 
 int CSV_Parser::parse_csv_partlist(QString path, QList<PCB_PartKind> *part_kinds){
@@ -25,7 +23,6 @@ int CSV_Parser::parse_csv_partlist(QString path, QList<PCB_PartKind> *part_kinds
             QStringList parts = lineStrings[1].replace(" ", "").replace("\r","").split(',');
             for(QString part : parts){
                 kind.parts.append(PCB_Part(part));
-                //PCB_Part pcb_part = ;
             }
             part_kinds->append(kind);
         }
@@ -34,27 +31,16 @@ int CSV_Parser::parse_csv_partlist(QString path, QList<PCB_PartKind> *part_kinds
 }
 
 int CSV_Parser::partKindsToTreeView(QList<PCB_PartKind> &part_kinds, QTreeWidget *tree){
- //   if( part_kinds == nullptr || tree == nullptr)
-//        return 1;
-
     for(int i = 0; i < part_kinds.count(); i++){
-
         QTreeWidgetItem *treeItemRoot = new QTreeWidgetItem(tree);
         treeItemRoot->setText(0, part_kinds[i].get_name());
-
         for(int j = 0; j < part_kinds[i].parts.count(); j++){
-            //PCB_Part * part;
-            //*part = part_kinds[i].parts[j];
             CustomItem *treeItemChild = new CustomItem(&part_kinds[i].parts[j]);
             treeItemChild->setText(0, part_kinds[i].parts[j].get_name());
             treeItemChild->setText(1, part_kinds[i].parts[j].get_sx());
             treeItemChild->setText(2, part_kinds[i].parts[j].get_sy());
             treeItemRoot->addChild(treeItemChild);
-
-
         }
-        //addTreeRoot(tree, *kind);
-
     }
     return 0;
 }
@@ -73,12 +59,6 @@ void CSV_Parser::addTreeRoot(QTreeWidget *tree, PCB_PartKind kind)
 
 void CSV_Parser::addTreeChild(QTreeWidgetItem *parent, PCB_Part part)
 {
-//    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
-//    treeItem->setText(0, part.get_name());
-//    treeItem->setText(1, part.get_sx());
-//    treeItem->setText(2, part.get_sy());
-//    parent->addChild(treeItem);
-
     CustomItem *treeItem = new CustomItem(&part);
     treeItem->setText(0, part.get_name());
     treeItem->setText(1, part.get_sx());
@@ -108,14 +88,11 @@ int CSV_Parser::parse_rpt_datei(QString path, QList<PCB_PartKind> &part_kinds/*,
                         part_kinds[i].parts[j].set_sx(lineStrings[4]);
                         part_kinds[i].parts[j].set_sy(lineStrings[5]);
                         part_kinds[i].parts[j].refreshCircle();
-                        //dxf.addCircle(*part_kinds[i].parts[j].getCircle());
-
                     }
                 }
             }
         }
     }
     return 0;
-
 }
 
