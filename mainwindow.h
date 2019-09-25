@@ -47,6 +47,8 @@ private slots:
     
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
 
+    void on_toggleButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     void showEventHelper();

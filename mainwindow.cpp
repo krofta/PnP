@@ -100,20 +100,15 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
     PCB_Part *part;
     CustomItem *c_item;
 
-    if(item->parent() != nullptr/*this->ui->treeWidget*/){
+    if(item->parent() != nullptr){
         c_item = (CustomItem*)item;
         if(c_item->part != nullptr){
             part = c_item->part;
             if(part->get_visible() == 0){
                 part->set_visible(1);
-                //part->circle.color24 = (0xFFFFFF);
                 part->circle.colorName = "green";
-                //part->circle.
-                //data.basePoint.x-data.radious, data.basePoint.y-data.radious, 2*data.radious, 2*data.radious, attributesToPen(&data)
-
                 part->ellipse = this->dxf.mScene.addEllipse(part->circle.basePoint.x-part->circle.radious, part->circle.basePoint.y-part->circle.radious,
                                             2*part->circle.radious,2*part->circle.radious,QPen(Qt::green),QBrush(Qt::green));
-                //part->ellipse = this->dxf.addCircle(*part->getCircle());
                 QBrush brush_green(Qt::green);
                 ui->treeWidget->currentItem()->setBackground(1, brush_green);
             }
@@ -162,6 +157,51 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
                 citem->setBackground(1, brush_green);
 
             }
+    }
+
+}
+
+// Alle Bauteile ein- oder ausschalten
+void MainWindow::on_toggleButton_clicked()
+{
+    int itemsCount = this->ui->treeWidget->topLevelItemCount();
+    int visible = 0;
+    // checken ob items aktiviert sind
+    for(int i = 0; i < itemsCount; i++){
+        QTreeWidgetItem *item = (QTreeWidgetItem *)this->ui->treeWidget->topLevelItem(i);
+        for(int j = 0; j < item->childCount(); j++){
+            CustomItem *citem = (CustomItem*)item->child(j);
+            if(citem->part->get_visible()){
+                visible = 1;
+            }
+        }
+    }
+    if(visible){
+        for(int i = 0; i < itemsCount; i++){
+            QTreeWidgetItem *item = (QTreeWidgetItem *)this->ui->treeWidget->topLevelItem(i);
+            for(int j = 0; j < item->childCount(); j++){
+                CustomItem *citem = (CustomItem*)item->child(j);
+                citem->part->set_visible(0);
+                this->dxf.mScene.removeItem(citem->part->ellipse);
+                QBrush brush_white(Qt::white);
+                citem->setBackground(1, brush_white);
+            }
+        }
+    }
+    else{
+        for(int i = 0; i < itemsCount; i++){
+            QTreeWidgetItem *item = (QTreeWidgetItem *)this->ui->treeWidget->topLevelItem(i);
+            for(int j = 0; j < item->childCount(); j++){
+                CustomItem *citem = (CustomItem*)item->child(j);
+                citem->part->set_visible(1);
+                citem->part->circle.colorName = "green";
+
+                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-citem->part->circle.radious, citem->part->circle.basePoint.y-citem->part->circle.radious,
+                                            2*citem->part->circle.radious,2*citem->part->circle.radious,QPen(Qt::green),QBrush(Qt::green));
+                QBrush brush_green(Qt::green);
+                citem->setBackground(1, brush_green);
+            }
+        }
     }
 
 }
