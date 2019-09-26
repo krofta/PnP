@@ -63,6 +63,30 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="reloadButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Reload Files</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ColorPickerToolButton" name="toolButton">
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/color_wheel.png</normaloff>:/color_wheel.png</iconset>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
@@ -121,9 +145,16 @@
   <customwidget>
    <class>DXFSceneView</class>
    <extends>QGraphicsView</extends>
-   <header>dxfsceneview.h</header>
+   <header>src/dxfsceneview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ColorPickerToolButton</class>
+   <extends>QToolButton</extends>
+   <header>ColorPickerToolButton.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

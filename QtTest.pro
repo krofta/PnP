@@ -27,7 +27,9 @@ SOURCES += main.cpp\
     src/spline.cpp \
     csv_parser.cpp \
     pcb_part.cpp \
-    customitem.cpp
+    customitem.cpp \
+    ColorPickerActionWidget.cpp \
+    ColorPickerToolButton.cpp
 
 HEADERS  += mainwindow.h \
     libdxfrw/src/intern/drw_cptable932.h \
@@ -50,6 +52,11 @@ HEADERS  += mainwindow.h \
     src/spline.h \
     csv_parser.h \
     pcb_part.h \
-    customitem.h
+    customitem.h \
+    ColorPickerActionWidget.h \
+    ColorPickerToolButton.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    icons.qrc

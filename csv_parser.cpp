@@ -14,7 +14,7 @@ int CSV_Parser::parse_csv_partlist(QString path, QList<PCB_PartKind> *part_kinds
         return 1;
     QString data = file.readAll();
     file.close();
-
+    part_kinds->clear();
     QStringList lines =  data.split('\n');
     for(QString line : lines){
         QStringList lineStrings = line.split(';', QString::SkipEmptyParts);
@@ -31,6 +31,7 @@ int CSV_Parser::parse_csv_partlist(QString path, QList<PCB_PartKind> *part_kinds
 }
 
 int CSV_Parser::partKindsToTreeView(QList<PCB_PartKind> &part_kinds, QTreeWidget *tree){
+    tree->clear();
     for(int i = 0; i < part_kinds.count(); i++){
         QTreeWidgetItem *treeItemRoot = new QTreeWidgetItem(tree);
         treeItemRoot->setText(0, part_kinds[i].get_name());

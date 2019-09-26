@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QTreeWidgetItem>
 #include <QList>
+#include <QSettings>
 #include "src/dxfinterface.h"
 #include "libdxfrw/src/libdxfrw.h"
 #include <src/dxfsceneview.h>
@@ -26,7 +27,9 @@ public:
     static void openFilePicker();
     void addTreeRoot(QString name, QString bauteile);
     void addTreeChild(QTreeWidgetItem *parent, QString name);
-    QString filename;
+    QString dxf_filename;
+    QString csv_filename;
+    QString rpt_filename;
     DXFInterface dxf;
     QMessageBox msgBox;
     // Liste von Objekte um Informationen über Position und Name zu Speichern
@@ -34,6 +37,9 @@ public:
     // Objekt zum parsen der scv und rpt dateien
     CSV_Parser file_parser;
     int dxf_initialised;
+    int csv_initialised;
+    int rpt_initialised;
+    QColor dot_brush;
 
 protected:
     void showEvent(QShowEvent *ev);
@@ -49,9 +55,16 @@ private slots:
 
     void on_toggleButton_clicked();
 
+private Q_SLOTS:
+    void onTextColorSelected(QColor color);
+
+    void on_reloadButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     void showEventHelper();
+    void loadSettings();
+    void saveSettings();
 
 
 };
