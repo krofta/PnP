@@ -46,7 +46,7 @@ void MainWindow::showEventHelper()
 void MainWindow::onTextColorSelected(QColor color)
 {
     //ui->textEdit->setTextColor(color);
-    this->dot_brush = color;
+    this->dot_color = color;
 }
 
 
@@ -134,9 +134,9 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
             if(part->get_visible() == 0){
                 part->set_visible(1);
                 part->circle.colorName = "green";
-                part->ellipse = this->dxf.mScene.addEllipse(part->circle.basePoint.x-part->circle.radious, part->circle.basePoint.y-part->circle.radious,
-                                            2*part->circle.radious,2*part->circle.radious,QPen(this->dot_brush),QBrush(this->dot_brush));
-                QBrush brush_green(this->dot_brush);
+                part->ellipse = this->dxf.mScene.addEllipse(part->circle.basePoint.x-this->dot_size, part->circle.basePoint.y-this->dot_size,
+                                            2*this->dot_size,2*this->dot_size,QPen(this->dot_color),QBrush(this->dot_color));
+                QBrush brush_green(this->dot_color);
                 ui->treeWidget->currentItem()->setBackground(1, brush_green);
             }
             else
@@ -177,10 +177,10 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
                 //part->circle.color24 = (0xFFFFFF);
                 citem->part->circle.colorName = "green";
 
-                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-citem->part->circle.radious, citem->part->circle.basePoint.y-citem->part->circle.radious,
-                                            2*citem->part->circle.radious,2*citem->part->circle.radious,QPen(this->dot_brush),QBrush(this->dot_brush));
+                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-this->dot_size, citem->part->circle.basePoint.y-this->dot_size,
+                                            2*this->dot_size,2*this->dot_size,QPen(this->dot_color),QBrush(this->dot_color));
                 //part->ellipse = this->dxf.addCircle(*part->getCircle());
-                QBrush brush_green(this->dot_brush);
+                QBrush brush_green(this->dot_color);
                 citem->setBackground(1, brush_green);
 
             }
@@ -222,10 +222,9 @@ void MainWindow::on_toggleButton_clicked()
                 CustomItem *citem = (CustomItem*)item->child(j);
                 citem->part->set_visible(1);
                 citem->part->circle.colorName = "green";
-
-                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-citem->part->circle.radious, citem->part->circle.basePoint.y-citem->part->circle.radious,
-                                            2*citem->part->circle.radious,2*citem->part->circle.radious,QPen(this->dot_brush),QBrush(this->dot_brush));
-                QBrush brush_green(this->dot_brush);
+                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-this->dot_size, citem->part->circle.basePoint.y-this->dot_size,
+                                            2*this->dot_size,2*this->dot_size,QPen(this->dot_color),QBrush(this->dot_color));
+                QBrush brush_green(this->dot_color);
                 citem->setBackground(1, brush_green);
             }
         }
@@ -238,8 +237,7 @@ void MainWindow::loadSettings(){
     setting.beginGroup("MainWindow");
     QRect myRect = setting.value("position", QRect(100,100,800,600)).toRect();
     setGeometry(myRect);
-
-    this->dot_brush  = QColor(
+    this->dot_color  = QColor(
                 setting.value("dot_brush_red","0").toInt(),
                 setting.value("dot_brush_green",255).toInt(),
                 setting.value("dot_brush_blue",0).toInt()
@@ -247,6 +245,8 @@ void MainWindow::loadSettings(){
     this->dxf_filename = setting.value("dxf_path", "").toString();
     this->csv_filename = setting.value("csv_path", "").toString();
     this->rpt_filename = setting.value("rpt_path", "").toString();
+    this->dot_size = setting.value("dot_size", 0.5).toDouble();
+    this->ui->horizontalSlider->setValue((int)(this->dot_size * 100));
 
     setting.endGroup();
 
@@ -256,17 +256,14 @@ void MainWindow::saveSettings(){
     QSettings setting("datakamo","PartPlaceHelper");
     setting.beginGroup("MainWindow");
     setting.setValue("position", this->geometry());
-
-    setting.setValue("dot_brush_red",this->dot_brush.red());
-    setting.setValue("dot_brush_green",this->dot_brush.green());
-    setting.setValue("dot_brush_blue",this->dot_brush.blue());
+    setting.setValue("dot_brush_red",this->dot_color.red());
+    setting.setValue("dot_brush_green",this->dot_color.green());
+    setting.setValue("dot_brush_blue",this->dot_color.blue());
     setting.setValue("dxf_path", this->dxf_filename);
     setting.setValue("csv_path", this->csv_filename);
     setting.setValue("rpt_path", this->rpt_filename);
-
+    setting.setValue("dot_size", this->dot_size);
     setting.endGroup();
-
-
 }
 
 void MainWindow::on_reloadButton_clicked()
@@ -316,4 +313,9 @@ void MainWindow::on_reloadButton_clicked()
         this->rpt_initialised = 1;
     }
 
+}
+
+void MainWindow::on_horizontalSlider_sliderMoved(int position)
+{
+   this->dot_size = ((double)position) / 100.0;
 }

@@ -39,7 +39,8 @@ public:
     int dxf_initialised;
     int csv_initialised;
     int rpt_initialised;
-    QColor dot_brush;
+    QColor dot_color;
+    double dot_size;
 
 protected:
     void showEvent(QShowEvent *ev);
@@ -59,6 +60,8 @@ private Q_SLOTS:
     void onTextColorSelected(QColor color);
 
     void on_reloadButton_clicked();
+
+    void on_horizontalSlider_sliderMoved(int position);
 
 private:
     Ui::MainWindow *ui;
