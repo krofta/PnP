@@ -63,6 +63,10 @@ private Q_SLOTS:
 
     void on_horizontalSlider_sliderMoved(int position);
 
+    void on_rbOrCAD_toggled(bool checked);
+
+    void on_rbKiCAD_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
     void showEventHelper();

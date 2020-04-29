@@ -83,9 +83,13 @@ void MainWindow::on_csvButton_clicked(){
     }
 
     this->file_parser = CSV_Parser();
-    if(!this->file_parser.parse_csv_partlist(this->csv_filename, &this->pcb_partkinds)){
-    this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
-    this->csv_initialised = 1;
+    int res = 0;
+    res= this->ui->rbKiCAD->isChecked() ?
+                this->file_parser.parse_csv_partlist(this->csv_filename, &this->pcb_partkinds, true) :
+                this->file_parser.parse_csv_partlist(this->csv_filename, &this->pcb_partkinds);
+    if(!res){
+        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+        this->csv_initialised = 1;
     }
     else{
         this->msgBox.setText("csv - Datei existiert nicht.");
@@ -101,14 +105,18 @@ void MainWindow::on_rptButton_clicked(){
         this->msgBox.exec();
         return;
     }
-    this->rpt_filename = QFileDialog::getOpenFileName(0, "Open RPT", QString(), "RPT Files (*.rpt)");
+    this->rpt_filename = QFileDialog::getOpenFileName(0, "Open RPT", QString(), this->ui->rbKiCAD->isChecked()?"POS Files (*.pos)" :"RPT Files (*.rpt)");
     if(this->rpt_filename.isEmpty())
     {
         return;
     }
     this->file_parser = CSV_Parser();
+    int res = 0;
+    res= this->ui->rbKiCAD->isChecked() ?
+                this->file_parser.parse_pos_datei(this->rpt_filename, this->pcb_partkinds) :
+                this->file_parser.parse_rpt_datei(this->rpt_filename, this->pcb_partkinds) ;
     this->ui->treeWidget->clear();
-    if(!this->file_parser.parse_rpt_datei(this->rpt_filename, this->pcb_partkinds)){
+    if(!res){
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
         this->rpt_initialised = 1;
     }
@@ -247,6 +255,11 @@ void MainWindow::loadSettings(){
     this->rpt_filename = setting.value("rpt_path", "").toString();
     this->dot_size = setting.value("dot_size", 0.5).toDouble();
     this->ui->horizontalSlider->setValue((int)(this->dot_size * 100));
+    int CAD_Kind = setting.value("CAD_kind",1).toInt();
+    if(CAD_Kind == 1)
+        this->ui->rbOrCAD->setChecked(true);
+    else if( CAD_Kind == 2)
+        this->ui->rbKiCAD->setChecked(true);
 
     setting.endGroup();
 
@@ -263,6 +276,11 @@ void MainWindow::saveSettings(){
     setting.setValue("csv_path", this->csv_filename);
     setting.setValue("rpt_path", this->rpt_filename);
     setting.setValue("dot_size", this->dot_size);
+    if(this->ui->rbOrCAD->isChecked())
+        setting.setValue("CAD_kind", 1);
+    else if(this->ui->rbKiCAD->isChecked())
+        setting.setValue("CAD_kind", 2);
+
     setting.endGroup();
 }
 
@@ -301,14 +319,22 @@ void MainWindow::on_reloadButton_clicked()
     this->dxf_initialised = 1;
     // csv Datei einlesen und anzeigen
     this->file_parser = CSV_Parser();
-    if(!this->file_parser.parse_csv_partlist(this->csv_filename, &this->pcb_partkinds)){
-    this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
-    this->csv_initialised = 1;
+    int res= 0;
+    res= this->ui->rbKiCAD->isChecked() ?
+                this->file_parser.parse_csv_partlist(this->csv_filename, &this->pcb_partkinds, true) :
+                this->file_parser.parse_csv_partlist(this->csv_filename, &this->pcb_partkinds);
+    if(!res){
+        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+        this->csv_initialised = 1;
     }
     // rpt Datei einlesen und zu den csv Daten matchen
     this->file_parser = CSV_Parser();
+
+    res= this->ui->rbKiCAD->isChecked() ?
+                this->file_parser.parse_pos_datei(this->rpt_filename, this->pcb_partkinds) :
+                this->file_parser.parse_rpt_datei(this->rpt_filename, this->pcb_partkinds) ;
     this->ui->treeWidget->clear();
-    if(!this->file_parser.parse_rpt_datei(this->rpt_filename, this->pcb_partkinds)){
+    if(!res){
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
         this->rpt_initialised = 1;
     }
@@ -318,4 +344,14 @@ void MainWindow::on_reloadButton_clicked()
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
    this->dot_size = ((double)position) / 100.0;
+}
+
+void MainWindow::on_rbOrCAD_toggled(bool checked)
+{
+    this->ui->rptButton->setText(checked ? "Open rpt-File" : "Open pos-File");
+}
+
+void MainWindow::on_rbKiCAD_toggled(bool checked)
+{
+
 }
