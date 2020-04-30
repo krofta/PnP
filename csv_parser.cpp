@@ -40,33 +40,20 @@ int CSV_Parser::parse_csv_partlist(QString path, QList<PCB_PartKind> * part_kind
     QStringList lines =  data.split('\n');
     bool first = true;
     for(QString line : lines){
-        QStringList lineStrings = line.split('"', QString::KeepEmptyParts);
+        QStringList lineStrings = line.split(';', QString::KeepEmptyParts);
         if(first){
             first = false;
             continue;
         }
         // Zusammengefasste Bauteile mit "R101,R202" usw
-        if(lineStrings.count() > 2){
-            PCB_PartKind kind;
-            QStringList subLineStrings = lineStrings[2].split(',',QString::SkipEmptyParts);
-            if(subLineStrings.count() >= 3){
-                kind = PCB_PartKind(subLineStrings[2]);
-            }
-            subLineStrings = lineStrings[1].split(',');
+        if(lineStrings.count() > 6){
+
+            PCB_PartKind kind = PCB_PartKind(lineStrings[4].replace("\"", ""));
+            QStringList subLineStrings = lineStrings[1].replace("\"", "").split(',',QString::SkipEmptyParts);
             for (QString x : subLineStrings){
                 kind.parts.append(PCB_Part(x));
             }
             part_kinds->append(kind);
-        }
-        // Keine Zusammenfassung von Bauteilen
-        else{
-            QStringList subLineStrings = lineStrings[0].split(',');
-            if(subLineStrings.count() > 4){
-                PCB_PartKind kind = PCB_PartKind(subLineStrings[4]);
-                kind.parts.append(PCB_Part(subLineStrings[1]));
-                part_kinds->append(kind);
-            }
-
         }
     }
     return 0;
@@ -156,7 +143,10 @@ int CSV_Parser::parse_pos_datei(QString path, QList<PCB_PartKind> &part_kinds/*,
 
                 for(int j = 0; j < part_kinds[i].parts.count(); j++){
                     if(lineStrings[0] == part_kinds[i].parts[j].get_name() ){
-                        part_kinds[i].parts[j].set_sx(lineStrings[3]);
+                        if(lineStrings[6] == "bottom")
+                            part_kinds[i].parts[j].set_sx(lineStrings[3],true);
+                        else
+                            part_kinds[i].parts[j].set_sx(lineStrings[3]);
                         part_kinds[i].parts[j].set_sy(lineStrings[4]);
                         part_kinds[i].parts[j].refreshCircle();
                     }

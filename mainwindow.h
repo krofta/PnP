@@ -67,6 +67,7 @@ private Q_SLOTS:
 
     void on_rbKiCAD_toggled(bool checked);
 
+
 private:
     Ui::MainWindow *ui;
     void showEventHelper();

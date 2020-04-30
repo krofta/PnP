@@ -46,6 +46,15 @@ bool PCB_Part::set_sx(QString x) {
     }
     return ok;
 }
+bool PCB_Part::set_sx(QString x, int invert) {
+    bool ok = false;
+    double dingdong = x.toDouble(&ok);
+    if(ok){
+        this->sx = x;
+        this->dx = dingdong * (invert ? -1 : 1);
+    }
+    return ok;
+}
 bool PCB_Part::set_sy(QString y){
     bool ok = false;
     double dingdong = y.toDouble(&ok);

@@ -58,7 +58,7 @@ void MainWindow::on_dxfButton_clicked()
     {
         return;
     }
-    dxf.mScene.clear();
+    //dxf.mScene.clear();
     this->ui->statusBar->showMessage(this->dxf_filename);
     dxf.iniDXF(this->dxf_filename);
     this->ui->graphicsView->setScene(dxf.scene());
@@ -355,3 +355,4 @@ void MainWindow::on_rbKiCAD_toggled(bool checked)
 {
 
 }
+

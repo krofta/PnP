@@ -44,7 +44,7 @@ DXFInterface::~DXFInterface()
 void DXFInterface::iniDXF(QString filename){
     dxfRW *rw = new dxfRW(filename.toUtf8());
     rw->read(this, false);
-    mScene.setBackgroundBrush(QBrush(Qt::black));
+    mScene.setBackgroundBrush(QBrush(Qt::gray));
 }
 
 void DXFInterface::add3dFace(const DRW_3Dface & /*data*/)
