@@ -38,22 +38,52 @@ int CSV_Parser::parse_csv_partlist(QString path, QList<PCB_PartKind> * part_kind
     file.close();
     part_kinds->clear();
     QStringList lines =  data.split('\n');
-    bool first = true;
     for(QString line : lines){
-        QStringList lineStrings = line.split(';', QString::KeepEmptyParts);
-        if(first){
-            first = false;
+        QStringList lineStrings = line.split(';', QString::SkipEmptyParts);
+        if(lineStrings.count() == 2){
+            PCB_PartKind kind = PCB_PartKind(lineStrings[0]);
+            QStringList parts = lineStrings[1].replace(" ", "").replace("\r","").split(',');
+            for(QString part : parts){
+                kind.parts.append(PCB_Part(part));
+            }
+            part_kinds->append(kind);
+        }
+    }
+    return 0;
+}
+
+int CSV_Parser::parse_BOM_partlist(QString path, QList<PCB_PartKind> * part_kinds){
+    QFile file(path);
+    if(!file.open(QIODevice::ReadOnly))
+        return 1;
+    QString data = file.readAll();
+    file.close();
+    part_kinds->clear();
+    QStringList lines =  data.split('\n');
+    int cnt = 0;
+    for(QString line : lines){
+
+        if(cnt < 14){
+            cnt++;
             continue;
         }
-        // Zusammengefasste Bauteile mit "R101,R202" usw
-        if(lineStrings.count() > 6){
+        QStringList lineStrings = line.split('\t', QString::SkipEmptyParts);
+        if(lineStrings.count() == 5){
 
-            PCB_PartKind kind = PCB_PartKind(lineStrings[4].replace("\"", ""));
-            QStringList subLineStrings = lineStrings[1].replace("\"", "").split(',',QString::SkipEmptyParts);
+            PCB_PartKind kind = PCB_PartKind(lineStrings[3]);
+            QStringList subLineStrings = lineStrings[2].split(',',QString::SkipEmptyParts);
             for (QString x : subLineStrings){
                 kind.parts.append(PCB_Part(x));
             }
             part_kinds->append(kind);
+        }
+        else if(lineStrings.count() == 1){
+            QStringList subLineStrings = lineStrings[0].replace('\r',"").split(',',QString::SkipEmptyParts);
+            for (QString x : subLineStrings){
+                if(x == "")
+                    continue;
+                part_kinds->last().parts.append(x);
+            }
         }
     }
     return 0;

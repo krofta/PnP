@@ -15,6 +15,7 @@ public:
     // scv Datei (Stückliste) von Franzi einlesen
     int parse_csv_partlist(QString path, QList<PCB_PartKind> * part_kinds);
     int parse_csv_partlist(QString path, QList<PCB_PartKind> * part_kinds, bool KiCad);
+    int parse_BOM_partlist(QString path, QList<PCB_PartKind> * part_kinds);
     int partKindsToTreeView(QList<PCB_PartKind> &part_kinds, QTreeWidget *tree);
 
     // rpt Datei (Place Daten aus Allegro) einlesen und zu der Stückliste matchen

@@ -76,8 +76,8 @@ void MainWindow::on_csvButton_clicked(){
         this->msgBox.exec();
         return;
     }
-    this->csv_filename = QFileDialog::getOpenFileName(0, "Open CSV", QString(), "CSV Files (*.csv)");
-    if(this->csv_filename.isEmpty())
+    this->BillOfMaterialFile = QFileDialog::getOpenFileName(0, "Open CSV", QString(), this->ui->rbKiCAD->isChecked()?"csv Files (*.csv)" :"BOM Files (*.BOM)");
+    if(this->BillOfMaterialFile.isEmpty())
     {
         return;
     }
@@ -85,8 +85,8 @@ void MainWindow::on_csvButton_clicked(){
     this->file_parser = CSV_Parser();
     int res = 0;
     res= this->ui->rbKiCAD->isChecked() ?
-                this->file_parser.parse_csv_partlist(this->csv_filename, &this->pcb_partkinds, true) :
-                this->file_parser.parse_csv_partlist(this->csv_filename, &this->pcb_partkinds);
+                this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds, true) :
+                this->file_parser.parse_BOM_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
     if(!res){
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
         this->csv_initialised = 1;
@@ -98,6 +98,36 @@ void MainWindow::on_csvButton_clicked(){
 
 }
 
+void MainWindow::on_btnFranzisStuekcliste_clicked()
+{
+
+    // Noch keine Szene initialisiert? Dann zurück
+    if(this->dxf_initialised == 0){
+        this->msgBox.setText("Erst mal 'ne DXF-Datei importieren, min Jung!");
+        this->msgBox.exec();
+        return;
+    }
+    this->BillOfMaterialFile = QFileDialog::getOpenFileName(0, "Open CSV", QString(), "CSV Files (*.csv)");
+    if(this->BillOfMaterialFile.isEmpty())
+    {
+        return;
+    }
+
+    this->file_parser = CSV_Parser();
+    int res = 0;
+    res= this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
+
+    if(!res){
+        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+        this->csv_initialised = 1;
+    }
+    else{
+        this->msgBox.setText("csv - Datei existiert nicht.");
+        this->msgBox.exec();
+    }
+}
+
+
 
 void MainWindow::on_rptButton_clicked(){
     if(this->dxf_initialised == 0 || this->csv_initialised == 0){
@@ -105,16 +135,16 @@ void MainWindow::on_rptButton_clicked(){
         this->msgBox.exec();
         return;
     }
-    this->rpt_filename = QFileDialog::getOpenFileName(0, "Open RPT", QString(), this->ui->rbKiCAD->isChecked()?"POS Files (*.pos)" :"RPT Files (*.rpt)");
-    if(this->rpt_filename.isEmpty())
+    this->PickAndPlaceFile = QFileDialog::getOpenFileName(0, "Open RPT", QString(), this->ui->rbKiCAD->isChecked()?"POS Files (*.pos)" :"RPT Files (*.rpt)");
+    if(this->PickAndPlaceFile.isEmpty())
     {
         return;
     }
     this->file_parser = CSV_Parser();
     int res = 0;
     res= this->ui->rbKiCAD->isChecked() ?
-                this->file_parser.parse_pos_datei(this->rpt_filename, this->pcb_partkinds) :
-                this->file_parser.parse_rpt_datei(this->rpt_filename, this->pcb_partkinds) ;
+                this->file_parser.parse_pos_datei(this->PickAndPlaceFile, this->pcb_partkinds) :
+                this->file_parser.parse_rpt_datei(this->PickAndPlaceFile, this->pcb_partkinds) ;
     this->ui->treeWidget->clear();
     if(!res){
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
@@ -251,8 +281,8 @@ void MainWindow::loadSettings(){
                 setting.value("dot_brush_blue",0).toInt()
                 );
     this->dxf_filename = setting.value("dxf_path", "").toString();
-    this->csv_filename = setting.value("csv_path", "").toString();
-    this->rpt_filename = setting.value("rpt_path", "").toString();
+    this->BillOfMaterialFile = setting.value("csv_path", "").toString();
+    this->PickAndPlaceFile = setting.value("rpt_path", "").toString();
     this->dot_size = setting.value("dot_size", 0.5).toDouble();
     this->ui->horizontalSlider->setValue((int)(this->dot_size * 100));
     int CAD_Kind = setting.value("CAD_kind",1).toInt();
@@ -273,8 +303,8 @@ void MainWindow::saveSettings(){
     setting.setValue("dot_brush_green",this->dot_color.green());
     setting.setValue("dot_brush_blue",this->dot_color.blue());
     setting.setValue("dxf_path", this->dxf_filename);
-    setting.setValue("csv_path", this->csv_filename);
-    setting.setValue("rpt_path", this->rpt_filename);
+    setting.setValue("csv_path", this->BillOfMaterialFile);
+    setting.setValue("rpt_path", this->PickAndPlaceFile);
     setting.setValue("dot_size", this->dot_size);
     if(this->ui->rbOrCAD->isChecked())
         setting.setValue("CAD_kind", 1);
@@ -286,7 +316,7 @@ void MainWindow::saveSettings(){
 
 void MainWindow::on_reloadButton_clicked()
 {
-    if(this->dxf_filename == "" || this->csv_filename == "" || this->rpt_filename == ""){
+    if(this->dxf_filename == "" || this->BillOfMaterialFile == "" || this->PickAndPlaceFile == ""){
         this->msgBox.setText("Einer der letzten Dateipfade ist leer");
         this->msgBox.exec();
         return;
@@ -297,13 +327,13 @@ void MainWindow::on_reloadButton_clicked()
         this->msgBox.exec();
         return;
     }
-    QFileInfo check_csv(this->csv_filename);
+    QFileInfo check_csv(this->BillOfMaterialFile);
     if(!check_csv.exists() || !check_csv.isFile()){
         this->msgBox.setText("csv - Datei existiert nicht.");
         this->msgBox.exec();
         return;
     }
-    QFileInfo check_rpt(this->rpt_filename);
+    QFileInfo check_rpt(this->PickAndPlaceFile);
     if(!check_rpt.exists() || !check_rpt.isFile()){
         this->msgBox.setText("rpt - Datei existiert nicht.");
         this->msgBox.exec();
@@ -321,8 +351,8 @@ void MainWindow::on_reloadButton_clicked()
     this->file_parser = CSV_Parser();
     int res= 0;
     res= this->ui->rbKiCAD->isChecked() ?
-                this->file_parser.parse_csv_partlist(this->csv_filename, &this->pcb_partkinds, true) :
-                this->file_parser.parse_csv_partlist(this->csv_filename, &this->pcb_partkinds);
+                this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds, true) :
+                this->file_parser.parse_BOM_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
     if(!res){
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
         this->csv_initialised = 1;
@@ -331,8 +361,8 @@ void MainWindow::on_reloadButton_clicked()
     this->file_parser = CSV_Parser();
 
     res= this->ui->rbKiCAD->isChecked() ?
-                this->file_parser.parse_pos_datei(this->rpt_filename, this->pcb_partkinds) :
-                this->file_parser.parse_rpt_datei(this->rpt_filename, this->pcb_partkinds) ;
+                this->file_parser.parse_pos_datei(this->PickAndPlaceFile, this->pcb_partkinds) :
+                this->file_parser.parse_rpt_datei(this->PickAndPlaceFile, this->pcb_partkinds) ;
     this->ui->treeWidget->clear();
     if(!res){
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
@@ -349,10 +379,17 @@ void MainWindow::on_horizontalSlider_sliderMoved(int position)
 void MainWindow::on_rbOrCAD_toggled(bool checked)
 {
     this->ui->rptButton->setText(checked ? "Open rpt-File" : "Open pos-File");
+    this->ui->btnFranzisStueckliste->setVisible(checked);
+    this->ui->csvButton->setText(checked ? "Open BOM-File" : "Open csv-File");
 }
 
 void MainWindow::on_rbKiCAD_toggled(bool checked)
 {
 
 }
+
+
+
+
+
 

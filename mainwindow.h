@@ -28,8 +28,8 @@ public:
     void addTreeRoot(QString name, QString bauteile);
     void addTreeChild(QTreeWidgetItem *parent, QString name);
     QString dxf_filename;
-    QString csv_filename;
-    QString rpt_filename;
+    QString BillOfMaterialFile;
+    QString PickAndPlaceFile;
     DXFInterface dxf;
     QMessageBox msgBox;
     // Liste von Objekte um Informationen über Position und Name zu Speichern
@@ -67,6 +67,8 @@ private Q_SLOTS:
 
     void on_rbKiCAD_toggled(bool checked);
 
+    
+    void on_btnFranzisStuekcliste_clicked();
 
 private:
     Ui::MainWindow *ui;
