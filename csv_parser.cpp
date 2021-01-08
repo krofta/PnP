@@ -38,19 +38,27 @@ int CSV_Parser::parse_csv_partlist(QString path, QList<PCB_PartKind> * part_kind
     file.close();
     part_kinds->clear();
     QStringList lines =  data.split('\n');
+    bool first = true;
     for(QString line : lines){
-        QStringList lineStrings = line.split(';', QString::SkipEmptyParts);
-        if(lineStrings.count() == 2){
-            PCB_PartKind kind = PCB_PartKind(lineStrings[0]);
-            QStringList parts = lineStrings[1].replace(" ", "").replace("\r","").split(',');
-            for(QString part : parts){
-                kind.parts.append(PCB_Part(part));
+        QStringList lineStrings = line.split(';', QString::KeepEmptyParts);
+        if(first){
+            first = false;
+            continue;
+        }
+        // Zusammengefasste Bauteile mit "R101,R202" usw
+        if(lineStrings.count() > 6){
+
+            PCB_PartKind kind = PCB_PartKind(lineStrings[4].replace("\"", ""));
+            QStringList subLineStrings = lineStrings[1].replace("\"", "").split(',',QString::SkipEmptyParts);
+            for (QString x : subLineStrings){
+                kind.parts.append(PCB_Part(x));
             }
             part_kinds->append(kind);
         }
     }
     return 0;
 }
+
 
 int CSV_Parser::parse_BOM_partlist(QString path, QList<PCB_PartKind> * part_kinds){
     QFile file(path);
