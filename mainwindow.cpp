@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
     this->csv_initialised = this->rpt_initialised = this->dxf_initialised = 0;
+    this->ui->splitter->setStretchFactor(1,3);
 
 }
 
@@ -36,9 +37,12 @@ void MainWindow::showEvent(QShowEvent *ev)
 
 void MainWindow::showEventHelper()
 {
-    ui->treeWidget->setColumnCount(3);
-    ui->treeWidget->setHeaderLabels(QStringList() << "Bauteilart" << "x-Koord" << "y-Koord");
-    ui->treeWidget->setColumnWidth (0, 180 );
+    ui->treeWidget->setColumnCount(4);
+    ui->treeWidget->setHeaderLabels(QStringList() << "Bauteilart" << "X" << "Y"<< "Rotation");
+    ui->treeWidget->setColumnWidth (0, 120 );
+    ui->treeWidget->setColumnWidth (1, 80 );
+    ui->treeWidget->setColumnWidth (2, 80 );
+    ui->treeWidget->setColumnWidth (3, 80 );
     ui->treeWidget->setAttribute(Qt::WA_DeleteOnClose);
 
     this->loadSettings();
@@ -53,12 +57,13 @@ void MainWindow::onTextColorSelected(QColor color)
 
 void MainWindow::on_dxfButton_clicked()
 {
-    this->dxf_filename = QFileDialog::getOpenFileName(0, "Open DXF", QString(), "DXF Files (*.dxf)");
+    this->dxf_filename = QFileDialog::getOpenFileName(this, "Open DXF", this->lastFilePath, "DXF Files (*.dxf)");
     if(dxf_filename.isEmpty())
     {
         return;
     }
-    //dxf.mScene.clear();
+    QFileInfo fi(this->dxf_filename);
+    this->lastFilePath = fi.path();
     this->ui->statusBar->showMessage(this->dxf_filename);
     dxf.iniDXF(this->dxf_filename);
     this->ui->graphicsView->setScene(dxf.scene());
@@ -76,7 +81,7 @@ void MainWindow::on_csvButton_clicked(){
         this->msgBox.exec();
         return;
     }
-    this->BillOfMaterialFile = QFileDialog::getOpenFileName(0, "Open CSV", QString(), this->ui->rbKiCAD->isChecked()?"csv Files (*.csv)" :"BOM Files (*.BOM)");
+    this->BillOfMaterialFile = QFileDialog::getOpenFileName(this, "Open CSV", this->lastFilePath, this->ui->rbKiCAD->isChecked()?"csv Files (*.csv)" :"BOM Files (*.BOM)");
     if(this->BillOfMaterialFile.isEmpty())
     {
         return;
@@ -107,7 +112,7 @@ void MainWindow::on_btnFranzisStuekcliste_clicked()
         this->msgBox.exec();
         return;
     }
-    this->BillOfMaterialFile = QFileDialog::getOpenFileName(0, "Open CSV", QString(), "CSV Files (*.csv)");
+    this->BillOfMaterialFile = QFileDialog::getOpenFileName(this, "Open CSV",  this->lastFilePath, "CSV Files (*.csv)");
     if(this->BillOfMaterialFile.isEmpty())
     {
         return;
@@ -135,7 +140,7 @@ void MainWindow::on_rptButton_clicked(){
         this->msgBox.exec();
         return;
     }
-    this->PickAndPlaceFile = QFileDialog::getOpenFileName(0, "Open RPT", QString(), this->ui->rbKiCAD->isChecked()?"POS Files (*.pos)" :"RPT Files (*.rpt)");
+    this->PickAndPlaceFile = QFileDialog::getOpenFileName(this, "Open RPT",  this->lastFilePath, this->ui->rbKiCAD->isChecked()?"POS Files (*.pos)" :"RPT Files (*.rpt)");
     if(this->PickAndPlaceFile.isEmpty())
     {
         return;
@@ -283,6 +288,7 @@ void MainWindow::loadSettings(){
     this->dxf_filename = setting.value("dxf_path", "").toString();
     this->BillOfMaterialFile = setting.value("csv_path", "").toString();
     this->PickAndPlaceFile = setting.value("rpt_path", "").toString();
+    this->lastFilePath = setting.value("last_file_path", QDir::currentPath()).toString();
     this->dot_size = setting.value("dot_size", 0.5).toDouble();
     this->ui->horizontalSlider->setValue((int)(this->dot_size * 100));
     int CAD_Kind = setting.value("CAD_kind",1).toInt();
@@ -305,6 +311,7 @@ void MainWindow::saveSettings(){
     setting.setValue("dxf_path", this->dxf_filename);
     setting.setValue("csv_path", this->BillOfMaterialFile);
     setting.setValue("rpt_path", this->PickAndPlaceFile);
+    setting.setValue("last_file_path", this->lastFilePath);
     setting.setValue("dot_size", this->dot_size);
     if(this->ui->rbOrCAD->isChecked())
         setting.setValue("CAD_kind", 1);
@@ -316,6 +323,9 @@ void MainWindow::saveSettings(){
 
 void MainWindow::on_reloadButton_clicked()
 {
+    this->ui->treeWidget->clear();
+    this->pcb_partkinds.clear();
+   this->dxf.mScene.clear();
     if(this->dxf_filename == "" || this->BillOfMaterialFile == "" || this->PickAndPlaceFile == ""){
         this->msgBox.setText("Einer der letzten Dateipfade ist leer");
         this->msgBox.exec();
@@ -340,7 +350,7 @@ void MainWindow::on_reloadButton_clicked()
         return;
     }
     // dxf einlesen und anzeigen
-    this->dxf.mScene.clear();
+
     this->ui->statusBar->showMessage(this->dxf_filename);
     dxf.iniDXF(this->dxf_filename);
     this->ui->graphicsView->setScene(dxf.scene());
@@ -393,3 +403,10 @@ void MainWindow::on_rbKiCAD_toggled(bool checked)
 
 
 
+
+void MainWindow::on_clearButton_clicked()
+{
+    this->ui->treeWidget->clear();
+    this->pcb_partkinds.clear();
+    this->dxf.mScene.clear();
+}
