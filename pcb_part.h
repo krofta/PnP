@@ -14,8 +14,10 @@ public:
     bool set_sx(QString x);
     bool set_sx(QString x, int invert);
     bool set_sy(QString y);
+    bool set_srotation(QString rot);
     void set_dx(double x);
     void set_dy(double y);
+    void set_drotation(double rot);
     void set_visible(int val);
     void set_color(int color);
     void refreshCircle();
@@ -23,8 +25,10 @@ public:
     QString get_name();
     QString get_sx();
     QString get_sy();
+    QString get_srotation();
     double get_dx();
     double get_dy();
+    double get_drotation();
     int get_visible();
     int get_color();
     DRW_Circle* getCircle();
@@ -35,8 +39,10 @@ private:
     QString name;
     QString sx;
     QString sy;
+    QString srotation;
     double dx;
     double dy;
+    double drotation;
     int visible;
     int color;
 

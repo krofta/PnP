@@ -65,6 +65,17 @@ bool PCB_Part::set_sy(QString y){
     return ok;
 }
 
+bool PCB_Part::set_srotation(QString rot)
+{
+    bool ok = false;
+    double dingdong = rot.toDouble(&ok);
+    if(ok){
+        this->srotation = rot;
+        this->dy = dingdong;
+    }
+    return ok;
+}
+
 void PCB_Part::set_dx(double x){
     this->dx = x;
     this->sx = QString::number(x);
@@ -73,6 +84,12 @@ void PCB_Part::set_dx(double x){
 void PCB_Part::set_dy(double y){
     this->dy = y;
     this->sy = QString::number(y);
+}
+
+void PCB_Part::set_drotation(double rot)
+{
+    this->drotation = rot;
+    this->srotation = QString::number(rot);
 }
 
 
@@ -99,12 +116,22 @@ QString PCB_Part::get_sy(){
     return this->sy;
 }
 
+QString PCB_Part::get_srotation()
+{
+    return this->srotation;
+}
+
 double PCB_Part::get_dx(){
     return this->dx;
 }
 
 double PCB_Part::get_dy(){
     return this->dy;
+}
+
+double PCB_Part::get_drotation()
+{
+    return this->drotation;
 }
 
 int PCB_Part::get_color(){
