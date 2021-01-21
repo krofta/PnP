@@ -108,6 +108,7 @@ int CSV_Parser::partKindsToTreeView(QList<PCB_PartKind> &part_kinds, QTreeWidget
             treeItemChild->setText(1, part_kinds[i].parts[j].get_sx());
             treeItemChild->setText(2, part_kinds[i].parts[j].get_sy());
             treeItemChild->setText(3, part_kinds[i].parts[j].get_srotation());
+            treeItemChild->setText(4, part_kinds[i].parts[j].get_layer());
             treeItemRoot->addChild(treeItemChild);
         }
     }
@@ -190,6 +191,7 @@ int CSV_Parser::parse_pos_datei(QString path, QList<PCB_PartKind> &part_kinds/*,
                         }
                         part_kinds[i].parts[j].set_sy(lineStrings[4]);
                         part_kinds[i].parts[j].set_srotation(lineStrings[5]);
+                        part_kinds[i].parts[j].set_layer(lineStrings[6]);
                         part_kinds[i].parts[j].refreshCircle();
                     }
                 }

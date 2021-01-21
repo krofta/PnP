@@ -15,6 +15,7 @@ public:
     bool set_sx(QString x, int invert);
     bool set_sy(QString y);
     bool set_srotation(QString rot);
+    void set_layer(QString layer);
     void set_dx(double x);
     void set_dy(double y);
     void set_drotation(double rot);
@@ -26,6 +27,7 @@ public:
     QString get_sx();
     QString get_sy();
     QString get_srotation();
+    QString get_layer();
     double get_dx();
     double get_dy();
     double get_drotation();
@@ -40,6 +42,7 @@ private:
     QString sx;
     QString sy;
     QString srotation;
+    QString layer;  // top or bottom
     double dx;
     double dy;
     double drotation;

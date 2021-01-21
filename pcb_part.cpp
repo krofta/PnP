@@ -4,7 +4,7 @@
 
 PCB_Part::PCB_Part()
 {
-
+    this->ellipse = nullptr;
 
 }
 
@@ -14,10 +14,12 @@ PCB_Part::~PCB_Part(){
     this->circle.basePoint = DRW_Coord(0.0, 0.0, 0.0);
     this->circle.radious = 0.5;
     this->circle.visible = false;
+    this->ellipse = nullptr;
 
 }
 
 PCB_Part::PCB_Part(QString name, QString x, QString y){
+    this->ellipse = nullptr;
     this->set_name(name);
     this->set_sx(x);
     this->set_sy(y);
@@ -71,9 +73,14 @@ bool PCB_Part::set_srotation(QString rot)
     double dingdong = rot.toDouble(&ok);
     if(ok){
         this->srotation = rot;
-        this->dy = dingdong;
+        this->drotation = dingdong;
     }
     return ok;
+}
+
+void PCB_Part::set_layer(QString layer)
+{
+    this->layer = layer;
 }
 
 void PCB_Part::set_dx(double x){
@@ -119,6 +126,11 @@ QString PCB_Part::get_sy(){
 QString PCB_Part::get_srotation()
 {
     return this->srotation;
+}
+
+QString PCB_Part::get_layer()
+{
+    return this->layer;
 }
 
 double PCB_Part::get_dx(){

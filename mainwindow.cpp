@@ -37,12 +37,13 @@ void MainWindow::showEvent(QShowEvent *ev)
 
 void MainWindow::showEventHelper()
 {
-    ui->treeWidget->setColumnCount(4);
-    ui->treeWidget->setHeaderLabels(QStringList() << "Bauteilart" << "X" << "Y"<< "Rotation");
+    ui->treeWidget->setColumnCount(5);
+    ui->treeWidget->setHeaderLabels(QStringList() << "Bauteilart" << "X" << "Y"<< "Rotation" << "Layer");
     ui->treeWidget->setColumnWidth (0, 120 );
     ui->treeWidget->setColumnWidth (1, 80 );
     ui->treeWidget->setColumnWidth (2, 80 );
     ui->treeWidget->setColumnWidth (3, 80 );
+    ui->treeWidget->setColumnWidth (3, 60 );
     ui->treeWidget->setAttribute(Qt::WA_DeleteOnClose);
 
     this->loadSettings();
@@ -185,8 +186,8 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
             else
             {
                 part->set_visible(0);
-
-                this->dxf.mScene.removeItem(part->ellipse);
+                if(part->ellipse != nullptr)
+                    this->dxf.mScene.removeItem(part->ellipse);
                 QBrush brush_white(Qt::white);
                 ui->treeWidget->currentItem()->setBackground(1, brush_white);
             }
@@ -206,8 +207,8 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
             for(int i = 0; i < item->childCount(); i++){
                 CustomItem* citem = (CustomItem*)item->child(i);
                 citem->part->set_visible(0);
-
-                this->dxf.mScene.removeItem(citem->part->ellipse);
+                if(citem->part->ellipse != nullptr)
+                    this->dxf.mScene.removeItem(citem->part->ellipse);
                 QBrush brush_white(Qt::white);
                 citem->setBackground(1, brush_white);
 
@@ -252,7 +253,8 @@ void MainWindow::on_toggleButton_clicked()
             for(int j = 0; j < item->childCount(); j++){
                 CustomItem *citem = (CustomItem*)item->child(j);
                 citem->part->set_visible(0);
-                this->dxf.mScene.removeItem(citem->part->ellipse);
+                if(citem->part->ellipse != nullptr)
+                    this->dxf.mScene.removeItem(citem->part->ellipse);
                 QBrush brush_white(Qt::white);
                 citem->setBackground(1, brush_white);
             }
