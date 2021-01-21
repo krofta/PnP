@@ -3,3 +3,5 @@ pro.user.*
 *.pro.user
 .user.*
 moc_*
+*.user
+*.autosave
