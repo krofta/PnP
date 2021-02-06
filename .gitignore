@@ -1,3 +1,8 @@
+*.o
+pro.user.*
+*.pro.user
+.user.*
 *.user.*
+moc_*
 *.user
-user.*
+*.autosave

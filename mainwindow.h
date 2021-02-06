@@ -30,6 +30,7 @@ public:
     QString dxf_filename;
     QString BillOfMaterialFile;
     QString PickAndPlaceFile;
+    QString lastFilePath;
     DXFInterface dxf;
     QMessageBox msgBox;
     // Liste von Objekte um Informationen über Position und Name zu Speichern
@@ -69,6 +70,8 @@ private Q_SLOTS:
 
     
     void on_btnFranzisStuekcliste_clicked();
+
+    void on_clearButton_clicked();
 
 private:
     Ui::MainWindow *ui;
