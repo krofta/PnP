@@ -46,6 +46,8 @@ void MainWindow::showEventHelper()
     ui->treeWidget->setColumnWidth (3, 60 );
     ui->treeWidget->setAttribute(Qt::WA_DeleteOnClose);
 
+    ui->tableWidget->setColumnCount(5);
+
     this->loadSettings();
 }
 void MainWindow::onTextColorSelected(QColor color)
