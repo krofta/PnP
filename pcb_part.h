@@ -4,6 +4,30 @@
 #include <QString>
 #include <QList>
 #include "libdxfrw/src/libdxfrw.h"
+
+typedef struct{
+    QString sBarcode;
+    int iIgnore;        // Flag: this parts will be ignored
+    int iFiducial;      // Flag: this component is a fiducial
+    int iCV;            // Flag: use CV for this component
+    int iMatched;       // Flag: this part is matched with a feeder
+    int iNozzle;        // Nozzle to pick this part
+
+    double dVelX;       // process velocity in x
+    double dAccX;       // process acceleration in x
+    double dVelY;       // process velocity in y
+    double dAccY;       // process acceleration in y
+    double dVelZ;       // process velocity in z
+    double dAccZ;       // process acceleration in z
+    double dVelRot;     // process velocity during rotation
+    double dAccRot;     // process acceleration during rotation
+
+    double dHeight;     // heigth of the component if needed
+    double dOffsetX;    // x offset if footprint is not centered
+    double dOffsetY;    // y offset if footprint is not centered
+    double dOffsetRot;  // rotation offset if footprint is not centered
+}ProcessParameters;
+
 class PCB_Part
 {
 public:
@@ -58,14 +82,15 @@ class PCB_PartKind
 {
 public:
     PCB_PartKind();
-    PCB_PartKind(QString name);
+    PCB_PartKind(QString name, ProcessParameters *p);
     ~PCB_PartKind();
     QList<PCB_Part> parts;
     void set_name(QString name);
     QString get_name();
 
 private:
-    QString name;
+    QString sName = "";
+    ProcessParameters parameters;
 
 };
 

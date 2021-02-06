@@ -1,10 +1,32 @@
 #include "csv_parser.h"
 #include "customitem.h"
 #include <QFile>
+#include <QSettings>
 
 
 
 CSV_Parser::CSV_Parser(){
+    QSettings setting("kPlacer","CSV_ParserSettings");
+    setting.beginGroup("Default Process Parameters");
+
+    this->defaultPrameters.sBarcode = "";
+    this->defaultPrameters.iIgnore = setting.value("Ignore", 0).toInt();
+    this->defaultPrameters.iFiducial = setting.value("Fiducial", 0).toInt();
+    this->defaultPrameters.iCV = setting.value("Computer Vision", 0).toInt();
+    this->defaultPrameters.iMatched = 0;
+    this->defaultPrameters.iNozzle = setting.value("Nozzle", 0).toInt();
+    this->defaultPrameters.dVelX = setting.value("Velocity X",1000.0).toDouble();
+    this->defaultPrameters.dAccX = setting.value("Acceleration X",1000.0).toDouble();
+    this->defaultPrameters.dVelY = setting.value("Velocity Y",1000.0).toDouble();
+    this->defaultPrameters.dAccY = setting.value("Acceleration Y",1000.0).toDouble();
+    this->defaultPrameters.dVelRot = setting.value("Velocity Rot.",1000.0).toDouble();
+    this->defaultPrameters.dAccRot = setting.value("Acceleration Rot.",1000.0).toDouble();
+    this->defaultPrameters.dHeight = setting.value("Height",1.0).toDouble();
+    this->defaultPrameters.dOffsetX = setting.value("Offset X",0.0).toDouble();
+    this->defaultPrameters.dOffsetY = setting.value("Offset Y",0.0).toDouble();
+    this->defaultPrameters.dOffsetRot = setting.value("Offset Rot.",0.0).toDouble();
+    setting.endGroup();
+
 }
 
 int CSV_Parser::parse_csv_partlist(QString path, QList<PCB_PartKind> *part_kinds){
@@ -19,7 +41,7 @@ int CSV_Parser::parse_csv_partlist(QString path, QList<PCB_PartKind> *part_kinds
     for(QString line : lines){
         QStringList lineStrings = line.split(';', QString::SkipEmptyParts);
         if(lineStrings.count() == 2){
-            PCB_PartKind kind = PCB_PartKind(lineStrings[0]);
+            PCB_PartKind kind = PCB_PartKind(lineStrings[0], &this->defaultPrameters);
             QStringList parts = lineStrings[1].replace(" ", "").replace("\r","").split(',');
             for(QString part : parts){
                 kind.parts.append(PCB_Part(part));
@@ -48,7 +70,7 @@ int CSV_Parser::parse_csv_partlist(QString path, QList<PCB_PartKind> * part_kind
         // Zusammengefasste Bauteile mit "R101,R202" usw
         if(lineStrings.count() > 6){
 
-            PCB_PartKind kind = PCB_PartKind(lineStrings[4].replace("\"", ""));
+            PCB_PartKind kind = PCB_PartKind(lineStrings[4].replace("\"", ""), &this->defaultPrameters);
             QStringList subLineStrings = lineStrings[1].replace("\"", "").split(',',QString::SkipEmptyParts);
             for (QString x : subLineStrings){
                 kind.parts.append(PCB_Part(x));
@@ -78,7 +100,7 @@ int CSV_Parser::parse_BOM_partlist(QString path, QList<PCB_PartKind> * part_kind
         QStringList lineStrings = line.split('\t', QString::SkipEmptyParts);
         if(lineStrings.count() == 5){
 
-            PCB_PartKind kind = PCB_PartKind(lineStrings[3]);
+            PCB_PartKind kind = PCB_PartKind(lineStrings[3], &this->defaultPrameters);
             QStringList subLineStrings = lineStrings[2].split(',',QString::SkipEmptyParts);
             for (QString x : subLineStrings){
                 kind.parts.append(PCB_Part(x));

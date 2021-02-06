@@ -1,4 +1,5 @@
 #include "pcb_part.h"
+#include <stdlib.h>
 
 // -----------------------------KONSTRUKTOREN
 
@@ -172,16 +173,18 @@ PCB_PartKind::PCB_PartKind(){
 PCB_PartKind::~PCB_PartKind(){
     //delete parts;
 }
-PCB_PartKind::PCB_PartKind(QString name){
+#include <string.h> // memcpy
+PCB_PartKind::PCB_PartKind(QString name, ProcessParameters *p){
     this->set_name(name);
+    memcpy(&this->parameters, p, sizeof(ProcessParameters));
 
 }
 void PCB_PartKind::set_name(QString name){
-    this->name = name;
+    this->sName = name;
 }
 
 QString PCB_PartKind::get_name(){
-    return this->name;
+    return this->sName;
 }
 
 

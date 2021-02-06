@@ -27,7 +27,7 @@ public:
     void addTreeChild(QTreeWidgetItem *parent, PCB_Part part);
 
 
-
+    ProcessParameters defaultPrameters;
 
 
 };

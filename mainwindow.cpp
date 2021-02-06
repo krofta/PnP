@@ -46,7 +46,26 @@ void MainWindow::showEventHelper()
     ui->treeWidget->setColumnWidth (3, 60 );
     ui->treeWidget->setAttribute(Qt::WA_DeleteOnClose);
 
-    ui->tableWidget->setColumnCount(5);
+    ui->tableWidget->setColumnCount(18);
+    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << "Name"
+        << "Barcode"
+        << "Ignore"
+        << "Fiducial"
+        << "Caera Vision"
+        << "Nozzle"
+        << "Speed X"
+        << "Acc. X"
+        << "Speed Y"
+        << "Acc. Y"
+        << "Speed Z"
+        << "Acc. Z"
+        << "Speed rot."
+        << "Acc. rot."
+        << "Height"
+        << "Offset X"
+        << "Offset Y"
+        << "Offset rot."
+        );
 
     this->loadSettings();
 }
@@ -280,7 +299,7 @@ void MainWindow::on_toggleButton_clicked()
 }
 
 void MainWindow::loadSettings(){
-    QSettings setting("datakamo","PartPlaceHelper");
+    QSettings setting("kPlacer","MainWindowSettings");
     setting.beginGroup("MainWindow");
     QRect myRect = setting.value("position", QRect(100,100,800,600)).toRect();
     setGeometry(myRect);
