@@ -14,6 +14,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
+    customtablewidgetitem.cpp \
         mainwindow.cpp \
     libdxfrw/src/intern/drw_textcodec.cpp \
     libdxfrw/src/intern/dxfreader.cpp \
@@ -33,6 +34,7 @@ SOURCES += main.cpp\
     ColorPickerToolButton.cpp
 
 HEADERS  += mainwindow.h \
+    customtablewidgetitem.h \
     libdxfrw/src/intern/drw_cptable932.h \
     libdxfrw/src/intern/drw_cptable936.h \
     libdxfrw/src/intern/drw_cptable949.h \

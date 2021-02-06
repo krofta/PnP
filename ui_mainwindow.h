@@ -262,7 +262,7 @@ public:
         sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(tabWidget->sizePolicy().hasHeightForWidth());
         tabWidget->setSizePolicy(sizePolicy1);
-        tabWidget->setMaximumSize(QSize(1000, 1000));
+        tabWidget->setMaximumSize(QSize(10000, 10000));
         tabComponents = new QWidget();
         tabComponents->setObjectName(QString::fromUtf8("tabComponents"));
         QSizePolicy sizePolicy2(QSizePolicy::Expanding, QSizePolicy::Expanding);

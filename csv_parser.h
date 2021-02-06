@@ -3,6 +3,7 @@
 #include <QString>
 #include <QList>
 #include <QTreeWidget>
+#include <QTableWidget>
 #include "pcb_part.h"
 #include "src/dxfinterface.h"
 #include "libdxfrw/src/libdxfrw.h"
@@ -12,11 +13,13 @@ class CSV_Parser
 {
 public:
     CSV_Parser();
+    ~CSV_Parser();
     // scv Datei (Stückliste) von Franzi einlesen
     int parse_csv_partlist(QString path, QList<PCB_PartKind> * part_kinds);
     int parse_csv_partlist(QString path, QList<PCB_PartKind> * part_kinds, bool KiCad);
     int parse_BOM_partlist(QString path, QList<PCB_PartKind> * part_kinds);
     int partKindsToTreeView(QList<PCB_PartKind> &part_kinds, QTreeWidget *tree);
+    int partKindstoTableView(QList<PCB_PartKind> &part_kinds, QTableWidget *table);
 
     // rpt Datei (Place Daten aus Allegro) einlesen und zu der Stückliste matchen
     int parse_rpt_datei(QString path, QList<PCB_PartKind> &part_kinds/*, DXFInterface &dxf*/);
@@ -26,7 +29,8 @@ public:
     void addTreeRoot(QTreeWidget *tree, PCB_PartKind kind);
     void addTreeChild(QTreeWidgetItem *parent, PCB_Part part);
 
-
+    void loadSettings();
+    void saveSettings();
     ProcessParameters defaultPrameters;
 
 

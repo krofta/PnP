@@ -173,11 +173,10 @@ PCB_PartKind::PCB_PartKind(){
 PCB_PartKind::~PCB_PartKind(){
     //delete parts;
 }
-#include <string.h> // memcpy
+#include <string.h>
 PCB_PartKind::PCB_PartKind(QString name, ProcessParameters *p){
     this->set_name(name);
-    memcpy(&this->parameters, p, sizeof(ProcessParameters));
-
+    memcpy(&this->parameters, p, sizeof(this->parameters));
 }
 void PCB_PartKind::set_name(QString name){
     this->sName = name;

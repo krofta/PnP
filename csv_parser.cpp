@@ -1,32 +1,16 @@
 #include "csv_parser.h"
 #include "customitem.h"
+#include "customtablewidgetitem.h"
 #include <QFile>
 #include <QSettings>
 
 
 
 CSV_Parser::CSV_Parser(){
-    QSettings setting("kPlacer","CSV_ParserSettings");
-    setting.beginGroup("Default Process Parameters");
-
-    this->defaultPrameters.sBarcode = "";
-    this->defaultPrameters.iIgnore = setting.value("Ignore", 0).toInt();
-    this->defaultPrameters.iFiducial = setting.value("Fiducial", 0).toInt();
-    this->defaultPrameters.iCV = setting.value("Computer Vision", 0).toInt();
-    this->defaultPrameters.iMatched = 0;
-    this->defaultPrameters.iNozzle = setting.value("Nozzle", 0).toInt();
-    this->defaultPrameters.dVelX = setting.value("Velocity X",1000.0).toDouble();
-    this->defaultPrameters.dAccX = setting.value("Acceleration X",1000.0).toDouble();
-    this->defaultPrameters.dVelY = setting.value("Velocity Y",1000.0).toDouble();
-    this->defaultPrameters.dAccY = setting.value("Acceleration Y",1000.0).toDouble();
-    this->defaultPrameters.dVelRot = setting.value("Velocity Rot.",1000.0).toDouble();
-    this->defaultPrameters.dAccRot = setting.value("Acceleration Rot.",1000.0).toDouble();
-    this->defaultPrameters.dHeight = setting.value("Height",1.0).toDouble();
-    this->defaultPrameters.dOffsetX = setting.value("Offset X",0.0).toDouble();
-    this->defaultPrameters.dOffsetY = setting.value("Offset Y",0.0).toDouble();
-    this->defaultPrameters.dOffsetRot = setting.value("Offset Rot.",0.0).toDouble();
-    setting.endGroup();
-
+    this->loadSettings();
+}
+CSV_Parser::~CSV_Parser(){
+    this->saveSettings();
 }
 
 int CSV_Parser::parse_csv_partlist(QString path, QList<PCB_PartKind> *part_kinds){
@@ -137,6 +121,37 @@ int CSV_Parser::partKindsToTreeView(QList<PCB_PartKind> &part_kinds, QTreeWidget
     return 0;
 }
 
+int CSV_Parser::partKindstoTableView(QList<PCB_PartKind> &part_kinds, QTableWidget *table)
+{
+    table->clear();
+    table->setHorizontalHeaderLabels(QStringList() << "Name"
+        << "Barcode"
+        << "Ignore"
+        << "Fiducial"
+        << "Caera Vision"
+        << "Nozzle"
+        << "Speed X"
+        << "Acc. X"
+        << "Speed Y"
+        << "Acc. Y"
+        << "Speed Z"
+        << "Acc. Z"
+        << "Speed rot."
+        << "Acc. rot."
+        << "Height"
+        << "Offset X"
+        << "Offset Y"
+        << "Offset rot."
+        );
+    table->setRowCount(part_kinds.count());
+    for(int i = 0; i < part_kinds.count(); i++){
+        CustomTableWidgetItem *item = new CustomTableWidgetItem(&part_kinds[i]);
+        table->setItem(i, 0, item);
+
+    }
+    return 0;
+}
+
 void CSV_Parser::addTreeRoot(QTreeWidget *tree, PCB_PartKind kind)
 {
     QTreeWidgetItem *treeItem = new QTreeWidgetItem(tree);
@@ -157,6 +172,56 @@ void CSV_Parser::addTreeChild(QTreeWidgetItem *parent, PCB_Part part)
     treeItem->setText(2, part.get_sy());
     parent->addChild(treeItem);
 
+}
+
+void CSV_Parser::loadSettings()
+{
+    QSettings setting("kPlacer","CSV_ParserSettings");
+    setting.beginGroup("Default_Process_Parameters");
+
+    strcpy(this->defaultPrameters.sBarcode, "");// = "";
+    this->defaultPrameters.iIgnore      = setting.value("Ignore", 0).toInt();
+    this->defaultPrameters.iFiducial    = setting.value("Fiducial", 0).toInt();
+    this->defaultPrameters.iCV          = setting.value("Computer_Vision", 0).toInt();
+    this->defaultPrameters.iMatched = 0;
+    this->defaultPrameters.iNozzle      = setting.value("Nozzle", 0).toInt();
+    this->defaultPrameters.dVelX        = setting.value("Velocity_X",100.0).toDouble();
+    this->defaultPrameters.dAccX        = setting.value("Acceleration_X",1000.0).toDouble();
+    this->defaultPrameters.dVelY        = setting.value("Velocity_Y",100.0).toDouble();
+    this->defaultPrameters.dAccY        = setting.value("Acceleration_Y",1000.0).toDouble();
+    this->defaultPrameters.dVelZ        = setting.value("Velocity_Z",100.0).toDouble();
+    this->defaultPrameters.dAccZ        = setting.value("Acceleration_Z",1000.0).toDouble();
+    this->defaultPrameters.dVelRot      = setting.value("Velocity_Rot",100.0).toDouble();
+    this->defaultPrameters.dAccRot      = setting.value("Acceleration_Rot",1000.0).toDouble();
+    this->defaultPrameters.dHeight      = setting.value("Height",1.0).toDouble();
+    this->defaultPrameters.dOffsetX     = setting.value("Offset_X",0.0).toDouble();
+    this->defaultPrameters.dOffsetY     = setting.value("Offset_Y",0.0).toDouble();
+    this->defaultPrameters.dOffsetRot   = setting.value("Offset_Rot",0.0).toDouble();
+    setting.endGroup();
+
+}
+
+void CSV_Parser::saveSettings()
+{
+    QSettings setting("kPlacer","CSV_ParserSettings");
+    setting.beginGroup("Default_Process_Parameters");
+    setting.setValue("Ignore", this->defaultPrameters.iIgnore );
+    setting.setValue("Fiducial", this->defaultPrameters.iFiducial);
+    setting.setValue("Computer_Vision", this->defaultPrameters.iCV);
+    setting.setValue("Nozzle", this->defaultPrameters.iNozzle);
+    setting.setValue("Velocity_X", this->defaultPrameters.dVelX);
+    setting.setValue("Acceleration_X", this->defaultPrameters.dAccX);
+    setting.setValue("Velocity_Y", this->defaultPrameters.dVelY);
+    setting.setValue("Acceleration_Y", this->defaultPrameters.dAccY);
+    setting.setValue("Velocity_Z",      this->defaultPrameters.dVelZ);
+    setting.setValue("Acceleration_Z",  this->defaultPrameters.dAccZ);
+    setting.setValue("Velocity_Rot", this->defaultPrameters.dVelRot);
+    setting.setValue("Acceleration_Rot", this->defaultPrameters.dAccRot);
+    setting.setValue("Height", this->defaultPrameters.dHeight);
+    setting.setValue("Offset_X", this->defaultPrameters.dOffsetX);
+    setting.setValue("Offset_Y", this->defaultPrameters.dOffsetY);
+    setting.setValue("Offset_Rot",this->defaultPrameters.dOffsetRot);
+    setting.endGroup();
 }
 
 int CSV_Parser::parse_rpt_datei(QString path, QList<PCB_PartKind> &part_kinds/*, DXFInterface &dxf*/){

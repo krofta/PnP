@@ -6,7 +6,7 @@
 #include "libdxfrw/src/libdxfrw.h"
 
 typedef struct{
-    QString sBarcode;
+    char sBarcode[100];
     int iIgnore;        // Flag: this parts will be ignored
     int iFiducial;      // Flag: this component is a fiducial
     int iCV;            // Flag: use CV for this component

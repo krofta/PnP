@@ -116,6 +116,7 @@ void MainWindow::on_csvButton_clicked(){
                 this->file_parser.parse_BOM_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
     if(!res){
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
         this->csv_initialised = 1;
     }
     else{
@@ -146,6 +147,7 @@ void MainWindow::on_btnFranzisStuekcliste_clicked()
 
     if(!res){
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
         this->csv_initialised = 1;
     }
     else{
@@ -175,6 +177,7 @@ void MainWindow::on_rptButton_clicked(){
     this->ui->treeWidget->clear();
     if(!res){
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
         this->rpt_initialised = 1;
     }
     else
@@ -325,7 +328,7 @@ void MainWindow::loadSettings(){
 }
 
 void MainWindow::saveSettings(){
-    QSettings setting("datakamo","PartPlaceHelper");
+    QSettings setting("kPlacer","MainWindowSettings");
     setting.beginGroup("MainWindow");
     setting.setValue("position", this->geometry());
     setting.setValue("dot_brush_red",this->dot_color.red());
@@ -388,6 +391,7 @@ void MainWindow::on_reloadButton_clicked()
                 this->file_parser.parse_BOM_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
     if(!res){
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
         this->csv_initialised = 1;
     }
     // rpt Datei einlesen und zu den csv Daten matchen
@@ -399,6 +403,7 @@ void MainWindow::on_reloadButton_clicked()
     this->ui->treeWidget->clear();
     if(!res){
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
         this->rpt_initialised = 1;
     }
 
