@@ -4,6 +4,8 @@
 #include <QTableWidgetItem>
 #include "pcb_part.h"
 
+// just a comment
+
 class CustomTableWidgetItem : public QTableWidgetItem
 {
 public:
