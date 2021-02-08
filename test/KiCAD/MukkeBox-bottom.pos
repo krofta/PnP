@@ -1,0 +1,14 @@
+### Module positions - created on Sa 18 Apr 2020 01:29:58 CEST ###
+### Printed by Pcbnew version kicad 5.0.2-bee76a0~70~ubuntu18.04.1
+## Unit = mm, Angle = deg.
+## Side : bottom
+# Ref     Val                  Package                                            PosX       PosY       Rot  Side
+G***      LOGO                 Gurki50x50                                     -76.1660  -116.0840  180.0000  bottom
+J104      Conn_02x05_Odd_Even  PinHeader_2x05_P2.54mm_Vertical_SMD           -174.2160  -102.5840    0.0000  bottom
+J107      PinHeader            PinHeader_2x08_P2.54mm_Vertical_SMD           -174.2160  -121.0840    0.0000  bottom
+J108      PinHeader            PinHeader_2x06_P2.54mm_Vertical_SMD           -151.1300  -123.5420    0.0000  bottom
+J109      PinHeader            PinHeader_2x03_P2.54mm_Vertical_SMD           -162.3060  -127.3520    0.0000  bottom
+J601      Conn_01x03_Female    PinHeader_1x03_P2.54mm_Vertical_SMD_Pin1Left  -240.8660  -110.2840  180.0000  bottom
+J602      Conn_02x01           PinHeader_1x02_P2.54mm_Vertical_SMD_Pin1Left  -181.1660   -86.6840    0.0000  bottom
+J603      Conn_02x05_Odd_Even  PinHeader_2x05_P2.54mm_Vertical_SMD           -203.5660  -104.1840    0.0000  bottom
+## End

@@ -1,1 +1,9 @@
-Stückliste_Test.csv
+*.o
+pro.user.*
+*.pro.user
+.user.*
+*.user.*
+moc_*
+*.user
+*.autosave
+.directory

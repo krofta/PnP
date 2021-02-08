@@ -31,6 +31,7 @@ public:
     DXFInterface(QString filename);
     DXFInterface();
     ~DXFInterface();
+    QGraphicsScene mScene;
 
     void iniDXF(QString filename);
 
@@ -85,7 +86,7 @@ public:
     void addArc(const DRW_Arc& data);
 
     /** Called for every circle */
-    void addCircle(const DRW_Circle& data);
+    QGraphicsEllipseItem* addCircle(const DRW_Circle& data);
 
     /** Called for every ellipse */
     void addEllipse(const DRW_Ellipse& data);
@@ -207,7 +208,7 @@ public:
 
 
 private:
-    QGraphicsScene mScene;
+
     QList<DRW_Layer> layers;
     QList<SceneArc*> arches;
 };

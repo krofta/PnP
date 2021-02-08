@@ -14,6 +14,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
+    customtablewidgetitem.cpp \
         mainwindow.cpp \
     libdxfrw/src/intern/drw_textcodec.cpp \
     libdxfrw/src/intern/dxfreader.cpp \
@@ -21,15 +22,19 @@ SOURCES += main.cpp\
     libdxfrw/src/drw_entities.cpp \
     libdxfrw/src/drw_objects.cpp \
     libdxfrw/src/libdxfrw.cpp \
+    pnp_options.cpp \
     src/dxfinterface.cpp \
     src/dxfsceneview.cpp \
     src/mtexttohtml.cpp \
     src/spline.cpp \
     csv_parser.cpp \
-    treeitem.cpp \
-    treemodel.cpp
+    pcb_part.cpp \
+    customitem.cpp \
+    ColorPickerActionWidget.cpp \
+    ColorPickerToolButton.cpp
 
 HEADERS  += mainwindow.h \
+    customtablewidgetitem.h \
     libdxfrw/src/intern/drw_cptable932.h \
     libdxfrw/src/intern/drw_cptable936.h \
     libdxfrw/src/intern/drw_cptable949.h \
@@ -43,13 +48,20 @@ HEADERS  += mainwindow.h \
     libdxfrw/src/drw_interface.h \
     libdxfrw/src/drw_objects.h \
     libdxfrw/src/libdxfrw.h \
+    pnp_options.h \
     src/dxfinterface.h \
     src/dxfsceneview.h \
     src/mtexttohtml.h \
     src/scene_items.h \
     src/spline.h \
     csv_parser.h \
-    treeitem.h \
-    treemodel.h
+    pcb_part.h \
+    customitem.h \
+    ColorPickerActionWidget.h \
+    ColorPickerToolButton.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    pnp_options.ui
+
+RESOURCES += \
+    icons.qrc

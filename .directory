@@ -1,6 +1,8 @@
 [Dolphin]
-Timestamp=2020,5,4,22,26,34
+HeaderColumnWidths=286,88,100
+SortOrder=1
+Timestamp=2021,1,20,21,51,11
 Version=4
-
+ViewMode=1
 [Settings]
 HiddenFilesShown=true
