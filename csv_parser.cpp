@@ -144,10 +144,26 @@ int CSV_Parser::partKindstoTableView(QList<PCB_PartKind> &part_kinds, QTableWidg
         << "Offset rot."
         );
     table->setRowCount(part_kinds.count());
-    for(int i = 0; i < part_kinds.count(); i++){
-        CustomTableWidgetItem *item = new CustomTableWidgetItem(&part_kinds[i]);
-        table->setItem(i, 0, item);
-
+    for(int i = 0, column = 0; i < part_kinds.count(); i++){
+        column = 0;
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::name));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::barcode));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::ignore));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::fiducial));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::cv));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::nozzle));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::velx));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::accx));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::vely));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::accy));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::velz));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::accz));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::velrot));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::accrot));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::height));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::offsetx));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::offsety));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::offsetrot));
     }
     return 0;
 }
