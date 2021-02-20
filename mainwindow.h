@@ -6,12 +6,20 @@
 #include <QTreeWidgetItem>
 #include <QList>
 #include <QSettings>
+#include <QtWidgets>
 #include "src/dxfinterface.h"
 #include "libdxfrw/src/libdxfrw.h"
 #include <src/dxfsceneview.h>
 
 #include "pcb_part.h"
 #include "csv_parser.h"
+
+QT_BEGIN_NAMESPACE
+class QAction;
+class QActionGroup;
+class QLabel;
+class QMenu;
+QT_END_NAMESPACE
 
 namespace Ui {
 class MainWindow;
@@ -57,6 +65,7 @@ private slots:
 
     void on_toggleButton_clicked();
 
+
 private Q_SLOTS:
     void onTextColorSelected(QColor color);
 
@@ -76,8 +85,21 @@ private Q_SLOTS:
 private:
     Ui::MainWindow *ui;
     void showEventHelper();
+    void addActions();
+
+
     void loadSettings();
     void saveSettings();
+
+    void add_dxf_file();
+    void open_BOM_file(bool KiCAD);
+    void open_pos_file(bool KiCAD);
+    void open_franzisStueckliste();
+
+    void reload_files();
+    void clear_files();
+
+    void toggle_parts();
 
 
 };

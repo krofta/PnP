@@ -26,9 +26,11 @@ CustomTableWidgetItem::CustomTableWidgetItem(PCB_PartKind *pcb_part_kind, proces
     case processParameter::cv:
         //this->setText(QString::number(pcb_part_kind->parameters.iCV));
         this->setCheckState(pcb_part_kind->parameters.iCV ? Qt::Checked : Qt::Unchecked);
+        this->setBackground(QBrush(QColor(0x2F,0x4F,0x4F)));//QColor(0x2F,0x4F,0x4F));
         break;
     case processParameter::fiducial:
         this->setCheckState(pcb_part_kind->parameters.iFiducial ? Qt::Checked : Qt::Unchecked);
+        this->setBackground(QBrush(QColor(0x2F,0x4F,0x4F)));
         //this->setText(QString::number(pcb_part_kind->parameters.iFiducial));
         break;
     case processParameter::height:
@@ -37,6 +39,7 @@ CustomTableWidgetItem::CustomTableWidgetItem(PCB_PartKind *pcb_part_kind, proces
     case processParameter::ignore:
         //this->setText(QString::number(pcb_part_kind->parameters.iIgnore));
         this->setCheckState(pcb_part_kind->parameters.iIgnore ? Qt::Checked : Qt::Unchecked);
+        this->setBackground(QBrush(QColor(0x2F,0x4F,0x4F)));
         break;
     case processParameter::matched:
         break;

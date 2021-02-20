@@ -11,6 +11,7 @@
 
 #include <QtCore/QVariant>
 #include <QtGui/QIcon>
+#include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
@@ -18,14 +19,14 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
 #include <QtWidgets/QTableWidget>
-#include <QtWidgets/QToolButton>
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
@@ -37,35 +38,24 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
+    QAction *actionOpen;
+    QAction *actionNew;
+    QAction *actionAdd_dxf_file;
+    QAction *actionKiCAD_BOM;
+    QAction *actionOrCAD_BOM;
+    QAction *actionKiCAD_position_file;
+    QAction *actionOrCAD_position_file;
+    QAction *actionReload_files;
+    QAction *actionRemove_all;
+    QAction *actionFranzis_BOM;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
-    QHBoxLayout *horizontalLayout_2;
-    QVBoxLayout *verticalLayout_7;
-    QGroupBox *groupBox_5;
-    QToolButton *dxfButton;
-    QGroupBox *groupBox_3;
-    QWidget *verticalLayoutWidget_2;
-    QVBoxLayout *verticalLayout_5;
-    QRadioButton *rbOrCAD;
-    QRadioButton *rbKiCAD;
-    QGroupBox *groupBox_4;
-    QWidget *verticalLayoutWidget_3;
-    QVBoxLayout *verticalLayout_2;
-    QToolButton *csvButton;
-    QPushButton *btnFranzisStueckliste;
-    QGroupBox *groupBox_2;
-    QWidget *verticalLayoutWidget_4;
-    QVBoxLayout *verticalLayout_3;
-    QToolButton *rptButton;
-    QVBoxLayout *verticalLayout_6;
-    QPushButton *clearButton;
-    QPushButton *reloadButton;
-    QVBoxLayout *verticalLayout_4;
+    QHBoxLayout *horizontalLayout;
     QGroupBox *groupBox;
-    QVBoxLayout *verticalLayout_8;
-    QSlider *horizontalSlider;
-    ColorPickerToolButton *toolButton;
+    QHBoxLayout *horizontalLayout_3;
     QPushButton *toggleButton;
+    ColorPickerToolButton *toolButton;
+    QSlider *horizontalSlider;
     QGridLayout *gridLayout;
     QSplitter *splitter;
     QTabWidget *tabWidget;
@@ -78,6 +68,10 @@ public:
     QTableWidget *tableWidget;
     DXFSceneView *graphicsView;
     QStatusBar *statusBar;
+    QMenuBar *menuBar;
+    QMenu *menuFile;
+    QMenu *menuOpen_BOM_file;
+    QMenu *menuOpen_pos_file;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -85,145 +79,52 @@ public:
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
         MainWindow->resize(1096, 669);
         MainWindow->setContextMenuPolicy(Qt::NoContextMenu);
+        actionOpen = new QAction(MainWindow);
+        actionOpen->setObjectName(QString::fromUtf8("actionOpen"));
+        actionNew = new QAction(MainWindow);
+        actionNew->setObjectName(QString::fromUtf8("actionNew"));
+        actionAdd_dxf_file = new QAction(MainWindow);
+        actionAdd_dxf_file->setObjectName(QString::fromUtf8("actionAdd_dxf_file"));
+        actionKiCAD_BOM = new QAction(MainWindow);
+        actionKiCAD_BOM->setObjectName(QString::fromUtf8("actionKiCAD_BOM"));
+        actionOrCAD_BOM = new QAction(MainWindow);
+        actionOrCAD_BOM->setObjectName(QString::fromUtf8("actionOrCAD_BOM"));
+        actionKiCAD_position_file = new QAction(MainWindow);
+        actionKiCAD_position_file->setObjectName(QString::fromUtf8("actionKiCAD_position_file"));
+        actionOrCAD_position_file = new QAction(MainWindow);
+        actionOrCAD_position_file->setObjectName(QString::fromUtf8("actionOrCAD_position_file"));
+        actionReload_files = new QAction(MainWindow);
+        actionReload_files->setObjectName(QString::fromUtf8("actionReload_files"));
+        actionRemove_all = new QAction(MainWindow);
+        actionRemove_all->setObjectName(QString::fromUtf8("actionRemove_all"));
+        actionFranzis_BOM = new QAction(MainWindow);
+        actionFranzis_BOM->setObjectName(QString::fromUtf8("actionFranzis_BOM"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        horizontalLayout_2 = new QHBoxLayout();
-        horizontalLayout_2->setSpacing(6);
-        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
-        verticalLayout_7 = new QVBoxLayout();
-        verticalLayout_7->setSpacing(6);
-        verticalLayout_7->setObjectName(QString::fromUtf8("verticalLayout_7"));
-        groupBox_5 = new QGroupBox(centralWidget);
-        groupBox_5->setObjectName(QString::fromUtf8("groupBox_5"));
-        dxfButton = new QToolButton(groupBox_5);
-        dxfButton->setObjectName(QString::fromUtf8("dxfButton"));
-        dxfButton->setGeometry(QRect(0, 30, 86, 22));
-        dxfButton->setFocusPolicy(Qt::NoFocus);
-
-        verticalLayout_7->addWidget(groupBox_5);
-
-
-        horizontalLayout_2->addLayout(verticalLayout_7);
-
-        groupBox_3 = new QGroupBox(centralWidget);
-        groupBox_3->setObjectName(QString::fromUtf8("groupBox_3"));
-        verticalLayoutWidget_2 = new QWidget(groupBox_3);
-        verticalLayoutWidget_2->setObjectName(QString::fromUtf8("verticalLayoutWidget_2"));
-        verticalLayoutWidget_2->setGeometry(QRect(0, 20, 160, 80));
-        verticalLayout_5 = new QVBoxLayout(verticalLayoutWidget_2);
-        verticalLayout_5->setSpacing(6);
-        verticalLayout_5->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
-        verticalLayout_5->setContentsMargins(0, 0, 0, 0);
-        rbOrCAD = new QRadioButton(verticalLayoutWidget_2);
-        rbOrCAD->setObjectName(QString::fromUtf8("rbOrCAD"));
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setSpacing(6);
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        groupBox = new QGroupBox(centralWidget);
+        groupBox->setObjectName(QString::fromUtf8("groupBox"));
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(rbOrCAD->sizePolicy().hasHeightForWidth());
-        rbOrCAD->setSizePolicy(sizePolicy);
-        rbOrCAD->setChecked(true);
-
-        verticalLayout_5->addWidget(rbOrCAD);
-
-        rbKiCAD = new QRadioButton(verticalLayoutWidget_2);
-        rbKiCAD->setObjectName(QString::fromUtf8("rbKiCAD"));
-        sizePolicy.setHeightForWidth(rbKiCAD->sizePolicy().hasHeightForWidth());
-        rbKiCAD->setSizePolicy(sizePolicy);
-
-        verticalLayout_5->addWidget(rbKiCAD);
-
-
-        horizontalLayout_2->addWidget(groupBox_3);
-
-        groupBox_4 = new QGroupBox(centralWidget);
-        groupBox_4->setObjectName(QString::fromUtf8("groupBox_4"));
-        verticalLayoutWidget_3 = new QWidget(groupBox_4);
-        verticalLayoutWidget_3->setObjectName(QString::fromUtf8("verticalLayoutWidget_3"));
-        verticalLayoutWidget_3->setGeometry(QRect(0, 20, 160, 80));
-        verticalLayout_2 = new QVBoxLayout(verticalLayoutWidget_3);
-        verticalLayout_2->setSpacing(6);
-        verticalLayout_2->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
-        verticalLayout_2->setContentsMargins(0, 0, 0, 0);
-        csvButton = new QToolButton(verticalLayoutWidget_3);
-        csvButton->setObjectName(QString::fromUtf8("csvButton"));
-        csvButton->setFocusPolicy(Qt::NoFocus);
-
-        verticalLayout_2->addWidget(csvButton);
-
-        btnFranzisStueckliste = new QPushButton(verticalLayoutWidget_3);
-        btnFranzisStueckliste->setObjectName(QString::fromUtf8("btnFranzisStueckliste"));
-        sizePolicy.setHeightForWidth(btnFranzisStueckliste->sizePolicy().hasHeightForWidth());
-        btnFranzisStueckliste->setSizePolicy(sizePolicy);
-
-        verticalLayout_2->addWidget(btnFranzisStueckliste);
-
-
-        horizontalLayout_2->addWidget(groupBox_4);
-
-        groupBox_2 = new QGroupBox(centralWidget);
-        groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
-        verticalLayoutWidget_4 = new QWidget(groupBox_2);
-        verticalLayoutWidget_4->setObjectName(QString::fromUtf8("verticalLayoutWidget_4"));
-        verticalLayoutWidget_4->setGeometry(QRect(0, 20, 160, 80));
-        verticalLayout_3 = new QVBoxLayout(verticalLayoutWidget_4);
-        verticalLayout_3->setSpacing(6);
-        verticalLayout_3->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
-        verticalLayout_3->setContentsMargins(0, 0, 0, 0);
-        rptButton = new QToolButton(verticalLayoutWidget_4);
-        rptButton->setObjectName(QString::fromUtf8("rptButton"));
-        rptButton->setFocusPolicy(Qt::NoFocus);
-
-        verticalLayout_3->addWidget(rptButton);
-
-
-        horizontalLayout_2->addWidget(groupBox_2);
-
-        verticalLayout_6 = new QVBoxLayout();
-        verticalLayout_6->setSpacing(6);
-        verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
-        clearButton = new QPushButton(centralWidget);
-        clearButton->setObjectName(QString::fromUtf8("clearButton"));
-        sizePolicy.setHeightForWidth(clearButton->sizePolicy().hasHeightForWidth());
-        clearButton->setSizePolicy(sizePolicy);
-
-        verticalLayout_6->addWidget(clearButton);
-
-        reloadButton = new QPushButton(centralWidget);
-        reloadButton->setObjectName(QString::fromUtf8("reloadButton"));
-        sizePolicy.setHeightForWidth(reloadButton->sizePolicy().hasHeightForWidth());
-        reloadButton->setSizePolicy(sizePolicy);
-
-        verticalLayout_6->addWidget(reloadButton);
-
-
-        horizontalLayout_2->addLayout(verticalLayout_6);
-
-        verticalLayout_4 = new QVBoxLayout();
-        verticalLayout_4->setSpacing(6);
-        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
-        groupBox = new QGroupBox(centralWidget);
-        groupBox->setObjectName(QString::fromUtf8("groupBox"));
         sizePolicy.setHeightForWidth(groupBox->sizePolicy().hasHeightForWidth());
         groupBox->setSizePolicy(sizePolicy);
-        verticalLayout_8 = new QVBoxLayout(groupBox);
-        verticalLayout_8->setSpacing(6);
-        verticalLayout_8->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_8->setObjectName(QString::fromUtf8("verticalLayout_8"));
-        horizontalSlider = new QSlider(groupBox);
-        horizontalSlider->setObjectName(QString::fromUtf8("horizontalSlider"));
-        sizePolicy.setHeightForWidth(horizontalSlider->sizePolicy().hasHeightForWidth());
-        horizontalSlider->setSizePolicy(sizePolicy);
-        horizontalSlider->setMaximum(100);
-        horizontalSlider->setOrientation(Qt::Horizontal);
+        horizontalLayout_3 = new QHBoxLayout(groupBox);
+        horizontalLayout_3->setSpacing(6);
+        horizontalLayout_3->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
+        toggleButton = new QPushButton(groupBox);
+        toggleButton->setObjectName(QString::fromUtf8("toggleButton"));
+        sizePolicy.setHeightForWidth(toggleButton->sizePolicy().hasHeightForWidth());
+        toggleButton->setSizePolicy(sizePolicy);
 
-        verticalLayout_8->addWidget(horizontalSlider);
+        horizontalLayout_3->addWidget(toggleButton);
 
         toolButton = new ColorPickerToolButton(groupBox);
         toolButton->setObjectName(QString::fromUtf8("toolButton"));
@@ -231,23 +132,22 @@ public:
         icon.addFile(QString::fromUtf8(":/color_wheel.png"), QSize(), QIcon::Normal, QIcon::Off);
         toolButton->setIcon(icon);
 
-        verticalLayout_8->addWidget(toolButton);
+        horizontalLayout_3->addWidget(toolButton);
 
-        toggleButton = new QPushButton(groupBox);
-        toggleButton->setObjectName(QString::fromUtf8("toggleButton"));
-        sizePolicy.setHeightForWidth(toggleButton->sizePolicy().hasHeightForWidth());
-        toggleButton->setSizePolicy(sizePolicy);
+        horizontalSlider = new QSlider(groupBox);
+        horizontalSlider->setObjectName(QString::fromUtf8("horizontalSlider"));
+        sizePolicy.setHeightForWidth(horizontalSlider->sizePolicy().hasHeightForWidth());
+        horizontalSlider->setSizePolicy(sizePolicy);
+        horizontalSlider->setMaximum(100);
+        horizontalSlider->setOrientation(Qt::Horizontal);
 
-        verticalLayout_8->addWidget(toggleButton);
-
-
-        verticalLayout_4->addWidget(groupBox);
-
-
-        horizontalLayout_2->addLayout(verticalLayout_4);
+        horizontalLayout_3->addWidget(horizontalSlider);
 
 
-        verticalLayout->addLayout(horizontalLayout_2);
+        horizontalLayout->addWidget(groupBox);
+
+
+        verticalLayout->addLayout(horizontalLayout);
 
         gridLayout = new QGridLayout();
         gridLayout->setSpacing(6);
@@ -321,6 +221,31 @@ public:
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QString::fromUtf8("statusBar"));
         MainWindow->setStatusBar(statusBar);
+        menuBar = new QMenuBar(MainWindow);
+        menuBar->setObjectName(QString::fromUtf8("menuBar"));
+        menuBar->setGeometry(QRect(0, 0, 1096, 20));
+        menuFile = new QMenu(menuBar);
+        menuFile->setObjectName(QString::fromUtf8("menuFile"));
+        menuOpen_BOM_file = new QMenu(menuFile);
+        menuOpen_BOM_file->setObjectName(QString::fromUtf8("menuOpen_BOM_file"));
+        menuOpen_pos_file = new QMenu(menuFile);
+        menuOpen_pos_file->setObjectName(QString::fromUtf8("menuOpen_pos_file"));
+        MainWindow->setMenuBar(menuBar);
+
+        menuBar->addAction(menuFile->menuAction());
+        menuFile->addSeparator();
+        menuFile->addAction(actionOpen);
+        menuFile->addAction(actionNew);
+        menuFile->addAction(actionAdd_dxf_file);
+        menuFile->addAction(menuOpen_BOM_file->menuAction());
+        menuFile->addAction(menuOpen_pos_file->menuAction());
+        menuFile->addAction(actionReload_files);
+        menuFile->addAction(actionRemove_all);
+        menuOpen_BOM_file->addAction(actionKiCAD_BOM);
+        menuOpen_BOM_file->addAction(actionOrCAD_BOM);
+        menuOpen_BOM_file->addAction(actionFranzis_BOM);
+        menuOpen_pos_file->addAction(actionKiCAD_position_file);
+        menuOpen_pos_file->addAction(actionOrCAD_position_file);
 
         retranslateUi(MainWindow);
 
@@ -333,24 +258,25 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "K\303\244fer Futter f\303\274r die H\303\274hners", nullptr));
-        groupBox_5->setTitle(QCoreApplication::translate("MainWindow", "Graphics", nullptr));
-        dxfButton->setText(QCoreApplication::translate("MainWindow", "Add dxf-File", nullptr));
-        groupBox_3->setTitle(QCoreApplication::translate("MainWindow", "CAD Format", nullptr));
-        rbOrCAD->setText(QCoreApplication::translate("MainWindow", "OrCAD", nullptr));
-        rbKiCAD->setText(QCoreApplication::translate("MainWindow", "KiCAD", nullptr));
-        groupBox_4->setTitle(QCoreApplication::translate("MainWindow", "Bill of Material", nullptr));
-        csvButton->setText(QCoreApplication::translate("MainWindow", "Open BOM-File", nullptr));
-        btnFranzisStueckliste->setText(QCoreApplication::translate("MainWindow", "Franzis St\303\274ckliste", nullptr));
-        groupBox_2->setTitle(QCoreApplication::translate("MainWindow", "Position of Parts", nullptr));
-        rptButton->setText(QCoreApplication::translate("MainWindow", "Open rpt-File", nullptr));
-        clearButton->setText(QCoreApplication::translate("MainWindow", "Clear all", nullptr));
-        reloadButton->setText(QCoreApplication::translate("MainWindow", "Reload Files", nullptr));
+        actionOpen->setText(QCoreApplication::translate("MainWindow", "Open project", nullptr));
+        actionNew->setText(QCoreApplication::translate("MainWindow", "New project", nullptr));
+        actionAdd_dxf_file->setText(QCoreApplication::translate("MainWindow", "Add dxf file", nullptr));
+        actionKiCAD_BOM->setText(QCoreApplication::translate("MainWindow", "KiCAD BOM", nullptr));
+        actionOrCAD_BOM->setText(QCoreApplication::translate("MainWindow", "OrCAD BOM", nullptr));
+        actionKiCAD_position_file->setText(QCoreApplication::translate("MainWindow", "KiCAD position file", nullptr));
+        actionOrCAD_position_file->setText(QCoreApplication::translate("MainWindow", "OrCAD position file", nullptr));
+        actionReload_files->setText(QCoreApplication::translate("MainWindow", "Reload files", nullptr));
+        actionRemove_all->setText(QCoreApplication::translate("MainWindow", "Remove all", nullptr));
+        actionFranzis_BOM->setText(QCoreApplication::translate("MainWindow", "Franzis BOM", nullptr));
         groupBox->setTitle(QCoreApplication::translate("MainWindow", "P\303\274nktchen", nullptr));
-        toolButton->setText(QCoreApplication::translate("MainWindow", "...", nullptr));
         toggleButton->setText(QCoreApplication::translate("MainWindow", "Toggle alle", nullptr));
+        toolButton->setText(QCoreApplication::translate("MainWindow", "...", nullptr));
         label->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabComponents), QCoreApplication::translate("MainWindow", "Components", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabComponentPara), QCoreApplication::translate("MainWindow", "Process Parameter", nullptr));
+        menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
+        menuOpen_BOM_file->setTitle(QCoreApplication::translate("MainWindow", "Open BOM file", nullptr));
+        menuOpen_pos_file->setTitle(QCoreApplication::translate("MainWindow", "Open pos file", nullptr));
     } // retranslateUi
 
 };

@@ -10,6 +10,7 @@
 #include "libdxfrw/src/libdxfrw.h"
 #include <src/dxfsceneview.h>
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -19,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->csv_initialised = this->rpt_initialised = this->dxf_initialised = 0;
     this->ui->splitter->setStretchFactor(1,3);
 
+    addActions();
 }
 
 MainWindow::~MainWindow()
@@ -69,6 +71,52 @@ void MainWindow::showEventHelper()
 
     this->loadSettings();
 }
+
+void MainWindow::addActions()
+{
+    // Adds a dxf graphic to the scene view
+    this->ui->actionAdd_dxf_file->setStatusTip("Adds a dxf file to graphics scene");
+    connect(this->ui->actionAdd_dxf_file, &QAction::triggered, this, &MainWindow::add_dxf_file);
+    // open BOM file KiCAD
+    this->ui->actionKiCAD_BOM->setStatusTip("Loads all kinds of parts of the pcb to the tree view");
+    connect(this->ui->actionKiCAD_BOM, &QAction::triggered, this,
+        [this]{
+            open_BOM_file(true);
+        }
+    );
+    // Open position file KiCAD
+    this->ui->actionKiCAD_position_file->setStatusTip("Loads the coordinates of all parts");
+    connect(this->ui->actionKiCAD_position_file, &QAction::triggered, this,
+        [this]{
+            this->open_pos_file(true);
+        }
+    );
+    // Open BOM file OrCAD
+    this->ui->actionOrCAD_BOM->setStatusTip("Loads all kinds of parts of the pcb to the tree view");
+    connect(this->ui->actionOrCAD_BOM, &QAction::triggered, this,
+        [this]{
+            open_BOM_file(false);
+        }
+    );
+    // Open position file OrCAD
+    this->ui->actionOrCAD_position_file->setStatusTip("Loads the coordinates of all parts");
+    connect(this->ui->actionOrCAD_position_file, &QAction::triggered, this,
+        [this]{
+            this->open_pos_file(false);
+        }
+    );
+    // Open franzis Stückliste
+    this->ui->actionFranzis_BOM->setStatusTip("Loads all kinds of parts of the pcb to the tree view");
+    connect(this->ui->actionFranzis_BOM, &QAction::triggered, this, &MainWindow::open_franzisStueckliste);
+
+    //newAct->setShortcuts(QKeySequence::New);
+    // Reload all files of the specific project
+    this->ui->actionReload_files->setStatusTip("Reload all project specific files");
+    connect(this->ui->actionReload_files, &QAction::triggered, this, &MainWindow::reload_files);
+    // set program to default state
+    this->ui->actionRemove_all->setStatusTip("Sets program to default state");
+    connect(this->ui->actionRemove_all, &QAction::triggered, this, &MainWindow::clear_files);
+}
 void MainWindow::onTextColorSelected(QColor color)
 {
     //ui->textEdit->setTextColor(color);
@@ -77,114 +125,21 @@ void MainWindow::onTextColorSelected(QColor color)
 
 
 
-void MainWindow::on_dxfButton_clicked()
-{
-    this->dxf_filename = QFileDialog::getOpenFileName(this, "Open DXF", this->lastFilePath, "DXF Files (*.dxf)");
-    if(dxf_filename.isEmpty())
-    {
-        return;
-    }
-    QFileInfo fi(this->dxf_filename);
-    this->lastFilePath = fi.path();
-    this->ui->statusBar->showMessage(this->dxf_filename);
-    dxf.iniDXF(this->dxf_filename);
-    this->ui->graphicsView->setScene(dxf.scene());
-    this->ui->graphicsView->fitInView(dxf.scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
-    this->ui->graphicsView->show();
-    this->dxf_initialised = 1;
-
+void MainWindow::on_dxfButton_clicked(){
+    this->add_dxf_file();
 }
 
 
 void MainWindow::on_csvButton_clicked(){
-    // Noch keine Szene initialisiert? Dann zurück
-    if(this->dxf_initialised == 0){
-        this->msgBox.setText("Erst mal 'ne DXF-Datei importieren, min Jung!");
-        this->msgBox.exec();
-        return;
-    }
-    this->BillOfMaterialFile = QFileDialog::getOpenFileName(this, "Open CSV", this->lastFilePath, this->ui->rbKiCAD->isChecked()?"csv Files (*.csv)" :"BOM Files (*.BOM)");
-    if(this->BillOfMaterialFile.isEmpty())
-    {
-        return;
-    }
-
-    this->file_parser = CSV_Parser();
-    int res = 0;
-    res= this->ui->rbKiCAD->isChecked() ?
-                this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds, true) :
-                this->file_parser.parse_BOM_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
-    if(!res){
-        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
-        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
-        this->csv_initialised = 1;
-    }
-    else{
-        this->msgBox.setText("csv - Datei existiert nicht.");
-        this->msgBox.exec();
-    }
-
 }
 
-void MainWindow::on_btnFranzisStuekcliste_clicked()
-{
-
-    // Noch keine Szene initialisiert? Dann zurück
-    if(this->dxf_initialised == 0){
-        this->msgBox.setText("Erst mal 'ne DXF-Datei importieren, min Jung!");
-        this->msgBox.exec();
-        return;
-    }
-    this->BillOfMaterialFile = QFileDialog::getOpenFileName(this, "Open CSV",  this->lastFilePath, "CSV Files (*.csv)");
-    if(this->BillOfMaterialFile.isEmpty())
-    {
-        return;
-    }
-
-    this->file_parser = CSV_Parser();
-    int res = 0;
-    res= this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
-
-    if(!res){
-        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
-        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
-        this->csv_initialised = 1;
-    }
-    else{
-        this->msgBox.setText("csv - Datei existiert nicht.");
-        this->msgBox.exec();
-    }
+void MainWindow::on_btnFranzisStuekcliste_clicked(){
+    this->open_franzisStueckliste();
 }
 
 
 
 void MainWindow::on_rptButton_clicked(){
-    if(this->dxf_initialised == 0 || this->csv_initialised == 0){
-        this->msgBox.setText("Erst mal 'ne DXF- und CSV-Datei importieren, min Jung!");
-        this->msgBox.exec();
-        return;
-    }
-    this->PickAndPlaceFile = QFileDialog::getOpenFileName(this, "Open RPT",  this->lastFilePath, this->ui->rbKiCAD->isChecked()?"POS Files (*.pos)" :"RPT Files (*.rpt)");
-    if(this->PickAndPlaceFile.isEmpty())
-    {
-        return;
-    }
-    this->file_parser = CSV_Parser();
-    int res = 0;
-    res= this->ui->rbKiCAD->isChecked() ?
-                this->file_parser.parse_pos_datei(this->PickAndPlaceFile, this->pcb_partkinds) :
-                this->file_parser.parse_rpt_datei(this->PickAndPlaceFile, this->pcb_partkinds) ;
-    this->ui->treeWidget->clear();
-    if(!res){
-        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
-        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
-        this->rpt_initialised = 1;
-    }
-    else
-    {
-        this->msgBox.setText("rpt - Datei existiert nicht.");
-        this->msgBox.exec();
-    }
 }
 
 
@@ -257,48 +212,8 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 }
 
 // Alle Bauteile ein- oder ausschalten
-void MainWindow::on_toggleButton_clicked()
-{
-    int itemsCount = this->ui->treeWidget->topLevelItemCount();
-    int visible = 0;
-    // checken ob items aktiviert sind
-    for(int i = 0; i < itemsCount; i++){
-        QTreeWidgetItem *item = (QTreeWidgetItem *)this->ui->treeWidget->topLevelItem(i);
-        for(int j = 0; j < item->childCount(); j++){
-            CustomItem *citem = (CustomItem*)item->child(j);
-            if(citem->part->get_visible()){
-                visible = 1;
-            }
-        }
-    }
-    if(visible){
-        for(int i = 0; i < itemsCount; i++){
-            QTreeWidgetItem *item = (QTreeWidgetItem *)this->ui->treeWidget->topLevelItem(i);
-            for(int j = 0; j < item->childCount(); j++){
-                CustomItem *citem = (CustomItem*)item->child(j);
-                citem->part->set_visible(0);
-                if(citem->part->ellipse != nullptr)
-                    this->dxf.mScene.removeItem(citem->part->ellipse);
-                QBrush brush_white(Qt::white);
-                citem->setBackground(1, brush_white);
-            }
-        }
-    }
-    else{
-        for(int i = 0; i < itemsCount; i++){
-            QTreeWidgetItem *item = (QTreeWidgetItem *)this->ui->treeWidget->topLevelItem(i);
-            for(int j = 0; j < item->childCount(); j++){
-                CustomItem *citem = (CustomItem*)item->child(j);
-                citem->part->set_visible(1);
-                citem->part->circle.colorName = "green";
-                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-this->dot_size, citem->part->circle.basePoint.y-this->dot_size,
-                                            2*this->dot_size,2*this->dot_size,QPen(this->dot_color),QBrush(this->dot_color));
-                QBrush brush_green(this->dot_color);
-                citem->setBackground(1, brush_green);
-            }
-        }
-    }
-
+void MainWindow::on_toggleButton_clicked(){
+    this->toggle_parts();
 }
 
 void MainWindow::loadSettings(){
@@ -317,11 +232,6 @@ void MainWindow::loadSettings(){
     this->lastFilePath = setting.value("last_file_path", QDir::currentPath()).toString();
     this->dot_size = setting.value("dot_size", 0.5).toDouble();
     this->ui->horizontalSlider->setValue((int)(this->dot_size * 100));
-    int CAD_Kind = setting.value("CAD_kind",1).toInt();
-    if(CAD_Kind == 1)
-        this->ui->rbOrCAD->setChecked(true);
-    else if( CAD_Kind == 2)
-        this->ui->rbKiCAD->setChecked(true);
 
     setting.endGroup();
 
@@ -339,15 +249,117 @@ void MainWindow::saveSettings(){
     setting.setValue("rpt_path", this->PickAndPlaceFile);
     setting.setValue("last_file_path", this->lastFilePath);
     setting.setValue("dot_size", this->dot_size);
-    if(this->ui->rbOrCAD->isChecked())
-        setting.setValue("CAD_kind", 1);
-    else if(this->ui->rbKiCAD->isChecked())
-        setting.setValue("CAD_kind", 2);
 
     setting.endGroup();
 }
 
-void MainWindow::on_reloadButton_clicked()
+void MainWindow::add_dxf_file()
+{
+    this->dxf_filename = QFileDialog::getOpenFileName(this, "Open DXF", this->lastFilePath, "DXF Files (*.dxf)");
+    if(dxf_filename.isEmpty())
+    {
+        return;
+    }
+    QFileInfo fi(this->dxf_filename);
+    this->lastFilePath = fi.path();
+    this->ui->statusBar->showMessage(this->dxf_filename);
+    dxf.iniDXF(this->dxf_filename);
+    this->ui->graphicsView->setScene(dxf.scene());
+    this->ui->graphicsView->fitInView(dxf.scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
+    this->ui->graphicsView->show();
+    this->dxf_initialised = 1;
+}
+
+void MainWindow::open_BOM_file(bool KiCad)
+{
+    // Noch keine Szene initialisiert? Dann zurück
+    if(this->dxf_initialised == 0){
+        this->msgBox.setText("Erst mal 'ne DXF-Datei importieren, min Jung!");
+        this->msgBox.exec();
+        return;
+    }
+    this->BillOfMaterialFile = QFileDialog::getOpenFileName(this, "Open CSV", this->lastFilePath,KiCad?"csv Files (*.csv)" :"BOM Files (*.BOM)");
+    if(this->BillOfMaterialFile.isEmpty())
+    {
+        return;
+    }
+
+    this->file_parser = CSV_Parser();
+    int res = 0;
+    res= this->ui->rbKiCAD->isChecked() ?
+                this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds, true) :
+                this->file_parser.parse_BOM_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
+    if(!res){
+        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
+        this->csv_initialised = 1;
+    }
+    else{
+        this->msgBox.setText("csv - Datei existiert nicht.");
+        this->msgBox.exec();
+    }
+}
+
+void MainWindow::open_pos_file(bool KiCAD)
+{
+    if(this->dxf_initialised == 0 || this->csv_initialised == 0){
+        this->msgBox.setText("Erst mal 'ne DXF- und CSV-Datei importieren, min Jung!");
+        this->msgBox.exec();
+        return;
+    }
+    this->PickAndPlaceFile = QFileDialog::getOpenFileName(this, "Open RPT",  this->lastFilePath, KiCAD?"POS Files (*.pos)" :"RPT Files (*.rpt)");
+    if(this->PickAndPlaceFile.isEmpty())
+    {
+        return;
+    }
+    this->file_parser = CSV_Parser();
+    int res = 0;
+    res= this->ui->rbKiCAD->isChecked() ?
+                this->file_parser.parse_pos_datei(this->PickAndPlaceFile, this->pcb_partkinds) :
+                this->file_parser.parse_rpt_datei(this->PickAndPlaceFile, this->pcb_partkinds) ;
+    this->ui->treeWidget->clear();
+    if(!res){
+        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
+        this->rpt_initialised = 1;
+    }
+    else
+    {
+        this->msgBox.setText("rpt - Datei existiert nicht.");
+        this->msgBox.exec();
+    }
+}
+
+void MainWindow::open_franzisStueckliste()
+{
+    // Noch keine Szene initialisiert? Dann zurück
+    if(this->dxf_initialised == 0){
+        this->msgBox.setText("Erst mal 'ne DXF-Datei importieren, min Jung!");
+        this->msgBox.exec();
+        return;
+    }
+    this->BillOfMaterialFile = QFileDialog::getOpenFileName(this, "Open CSV",  this->lastFilePath, "CSV Files (*.csv)");
+    if(this->BillOfMaterialFile.isEmpty())
+    {
+        return;
+    }
+
+    this->file_parser = CSV_Parser();
+    int res = 0;
+    res= this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
+
+    if(!res){
+        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
+        this->csv_initialised = 1;
+    }
+    else{
+        this->msgBox.setText("csv - Datei existiert nicht.");
+        this->msgBox.exec();
+    }
+}
+
+void MainWindow::reload_files()
 {
     this->ui->treeWidget->clear();
     this->pcb_partkinds.clear();
@@ -409,6 +421,62 @@ void MainWindow::on_reloadButton_clicked()
 
 }
 
+void MainWindow::clear_files()
+{
+    this->ui->treeWidget->clear();
+    this->ui->tableWidget->clear();
+    this->pcb_partkinds.clear();
+    this->dxf.mScene.clear();
+}
+
+void MainWindow::toggle_parts()
+{
+    int itemsCount = this->ui->treeWidget->topLevelItemCount();
+    int visible = 0;
+    // checken ob items aktiviert sind
+    for(int i = 0; i < itemsCount; i++){
+        QTreeWidgetItem *item = (QTreeWidgetItem *)this->ui->treeWidget->topLevelItem(i);
+        for(int j = 0; j < item->childCount(); j++){
+            CustomItem *citem = (CustomItem*)item->child(j);
+            if(citem->part->get_visible()){
+                visible = 1;
+            }
+        }
+    }
+    if(visible){
+        for(int i = 0; i < itemsCount; i++){
+            QTreeWidgetItem *item = (QTreeWidgetItem *)this->ui->treeWidget->topLevelItem(i);
+            for(int j = 0; j < item->childCount(); j++){
+                CustomItem *citem = (CustomItem*)item->child(j);
+                citem->part->set_visible(0);
+                if(citem->part->ellipse != nullptr)
+                    this->dxf.mScene.removeItem(citem->part->ellipse);
+                QBrush brush_white(Qt::white);
+                citem->setBackground(1, brush_white);
+            }
+        }
+    }
+    else{
+        for(int i = 0; i < itemsCount; i++){
+            QTreeWidgetItem *item = (QTreeWidgetItem *)this->ui->treeWidget->topLevelItem(i);
+            for(int j = 0; j < item->childCount(); j++){
+                CustomItem *citem = (CustomItem*)item->child(j);
+                citem->part->set_visible(1);
+                citem->part->circle.colorName = "green";
+                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-this->dot_size, citem->part->circle.basePoint.y-this->dot_size,
+                                            2*this->dot_size,2*this->dot_size,QPen(this->dot_color),QBrush(this->dot_color));
+                QBrush brush_green(this->dot_color);
+                citem->setBackground(1, brush_green);
+            }
+        }
+    }
+
+}
+
+void MainWindow::on_reloadButton_clicked(){
+    this->reload_files();
+}
+
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
    this->dot_size = ((double)position) / 100.0;
@@ -416,9 +484,11 @@ void MainWindow::on_horizontalSlider_sliderMoved(int position)
 
 void MainWindow::on_rbOrCAD_toggled(bool checked)
 {
+    /*
     this->ui->rptButton->setText(checked ? "Open rpt-File" : "Open pos-File");
     this->ui->btnFranzisStueckliste->setVisible(checked);
     this->ui->csvButton->setText(checked ? "Open BOM-File" : "Open csv-File");
+    */
 }
 
 void MainWindow::on_rbKiCAD_toggled(bool checked)
@@ -426,15 +496,7 @@ void MainWindow::on_rbKiCAD_toggled(bool checked)
 
 }
 
-
-
-
-
-
-
 void MainWindow::on_clearButton_clicked()
 {
-    this->ui->treeWidget->clear();
-    this->pcb_partkinds.clear();
-    this->dxf.mScene.clear();
+    this->clear_files();
 }
