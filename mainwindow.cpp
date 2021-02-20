@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <QFileInfo>
 #include "ColorPickerToolButton.h"
+#include <QAction>
 
 #include "customitem.h"
 #include "src/dxfinterface.h"
@@ -19,8 +20,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->csv_initialised = this->rpt_initialised = this->dxf_initialised = 0;
     this->ui->splitter->setStretchFactor(1,3);
-
+    this->project = new pnp_project();
     addActions();
+
+    connect(this->project, &pnp_project::send_new_project, this, &MainWindow::receive_new_project);
 }
 
 MainWindow::~MainWindow()
@@ -72,8 +75,40 @@ void MainWindow::showEventHelper()
     this->loadSettings();
 }
 
+void MainWindow::openRecentFile()
+{
+    QAction *action = qobject_cast<QAction *>(sender());
+    if (action)
+        qDebug() << action->data().toString();
+}
+
 void MainWindow::addActions()
 {
+
+    for (int i = 0; i < 10; ++i) {
+        recentFileActs[i] = new QAction(this);
+        recentFileActs[i]->setVisible(false);
+        connect(this->recentFileActs[i], &QAction::triggered,
+                this, &MainWindow::openRecentFile);
+    }
+
+    // File-----------------------------------
+
+    /*this->ui->actionOpenProject->setStatusTip("Opens an existing project");
+    connect(this->ui->actionOpenProject, &QAction::triggered, this,
+        [this]{
+            this->project->load_project(this->last_projects.first());
+        }
+    );
+    */
+
+    this->ui->actionNewProject->setStatusTip("Creates a new project");
+    connect(this->ui->actionNewProject, &QAction::triggered, this,
+        [this]{
+            this->project->new_project();
+        }
+    );
+
     // Adds a dxf graphic to the scene view
     this->ui->actionAdd_dxf_file->setStatusTip("Adds a dxf file to graphics scene");
     connect(this->ui->actionAdd_dxf_file, &QAction::triggered, this, &MainWindow::add_dxf_file);
@@ -116,6 +151,19 @@ void MainWindow::addActions()
     // set program to default state
     this->ui->actionRemove_all->setStatusTip("Sets program to default state");
     connect(this->ui->actionRemove_all, &QAction::triggered, this, &MainWindow::clear_files);
+
+
+    // Tools-------------------------------
+    this->ui->actionToggle_all_parts->setStatusTip("Toggles position dot of all existing parts");
+    connect(this->ui->actionToggle_all_parts, &QAction::triggered, this, &MainWindow::toggle_parts);
+
+}
+
+void MainWindow::createRecentFileMenu()
+{
+    for (int i = 0; i < 10; ++i)
+        this->ui->menuOpen_project->addAction(recentFileActs[i]);
+            //menuOpen_project->addAction(recentFileActs[i]);
 }
 void MainWindow::onTextColorSelected(QColor color)
 {
@@ -216,9 +264,19 @@ void MainWindow::on_toggleButton_clicked(){
     this->toggle_parts();
 }
 
+void MainWindow::receive_new_project(QString project)
+{
+    if(project != ""){
+        this->last_projects.insert(0,project);
+        if(this->last_projects.count()>10)
+            this->last_projects.removeLast();
+    }
+}
+
 void MainWindow::loadSettings(){
     QSettings setting("kPlacer","MainWindowSettings");
     setting.beginGroup("MainWindow");
+    this->last_projects= setting.value("recent_projects").value<QList<QString>>();
     QRect myRect = setting.value("position", QRect(100,100,800,600)).toRect();
     setGeometry(myRect);
     this->dot_color  = QColor(
@@ -238,8 +296,10 @@ void MainWindow::loadSettings(){
 }
 
 void MainWindow::saveSettings(){
+    qRegisterMetaTypeStreamOperators<QList<QString>>("Stuff");
     QSettings setting("kPlacer","MainWindowSettings");
     setting.beginGroup("MainWindow");
+    setting.setValue("recent_projects", QVariant::fromValue(this->last_projects));
     setting.setValue("position", this->geometry());
     setting.setValue("dot_brush_red",this->dot_color.red());
     setting.setValue("dot_brush_green",this->dot_color.green());
@@ -286,7 +346,7 @@ void MainWindow::open_BOM_file(bool KiCad)
 
     this->file_parser = CSV_Parser();
     int res = 0;
-    res= this->ui->rbKiCAD->isChecked() ?
+    res= KiCad ?
                 this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds, true) :
                 this->file_parser.parse_BOM_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
     if(!res){
@@ -314,7 +374,7 @@ void MainWindow::open_pos_file(bool KiCAD)
     }
     this->file_parser = CSV_Parser();
     int res = 0;
-    res= this->ui->rbKiCAD->isChecked() ?
+    res= KiCAD ?
                 this->file_parser.parse_pos_datei(this->PickAndPlaceFile, this->pcb_partkinds) :
                 this->file_parser.parse_rpt_datei(this->PickAndPlaceFile, this->pcb_partkinds) ;
     this->ui->treeWidget->clear();
@@ -398,7 +458,8 @@ void MainWindow::reload_files()
     // csv Datei einlesen und anzeigen
     this->file_parser = CSV_Parser();
     int res= 0;
-    res= this->ui->rbKiCAD->isChecked() ?
+    //TODO: check project settings if kicad is checked
+    res= true ?
                 this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds, true) :
                 this->file_parser.parse_BOM_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
     if(!res){
@@ -408,8 +469,8 @@ void MainWindow::reload_files()
     }
     // rpt Datei einlesen und zu den csv Daten matchen
     this->file_parser = CSV_Parser();
-
-    res= this->ui->rbKiCAD->isChecked() ?
+    //TODO: check project settings if kicad is checked
+    res= true ?
                 this->file_parser.parse_pos_datei(this->PickAndPlaceFile, this->pcb_partkinds) :
                 this->file_parser.parse_rpt_datei(this->PickAndPlaceFile, this->pcb_partkinds) ;
     this->ui->treeWidget->clear();

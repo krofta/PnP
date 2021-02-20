@@ -38,8 +38,7 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
-    QAction *actionOpen;
-    QAction *actionNew;
+    QAction *actionNewProject;
     QAction *actionAdd_dxf_file;
     QAction *actionKiCAD_BOM;
     QAction *actionOrCAD_BOM;
@@ -48,6 +47,8 @@ public:
     QAction *actionReload_files;
     QAction *actionRemove_all;
     QAction *actionFranzis_BOM;
+    QAction *actionToggle_all_parts;
+    QAction *actiontest;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout;
@@ -72,6 +73,8 @@ public:
     QMenu *menuFile;
     QMenu *menuOpen_BOM_file;
     QMenu *menuOpen_pos_file;
+    QMenu *menuOpen_project;
+    QMenu *menuTools;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -79,10 +82,8 @@ public:
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
         MainWindow->resize(1096, 669);
         MainWindow->setContextMenuPolicy(Qt::NoContextMenu);
-        actionOpen = new QAction(MainWindow);
-        actionOpen->setObjectName(QString::fromUtf8("actionOpen"));
-        actionNew = new QAction(MainWindow);
-        actionNew->setObjectName(QString::fromUtf8("actionNew"));
+        actionNewProject = new QAction(MainWindow);
+        actionNewProject->setObjectName(QString::fromUtf8("actionNewProject"));
         actionAdd_dxf_file = new QAction(MainWindow);
         actionAdd_dxf_file->setObjectName(QString::fromUtf8("actionAdd_dxf_file"));
         actionKiCAD_BOM = new QAction(MainWindow);
@@ -99,6 +100,10 @@ public:
         actionRemove_all->setObjectName(QString::fromUtf8("actionRemove_all"));
         actionFranzis_BOM = new QAction(MainWindow);
         actionFranzis_BOM->setObjectName(QString::fromUtf8("actionFranzis_BOM"));
+        actionToggle_all_parts = new QAction(MainWindow);
+        actionToggle_all_parts->setObjectName(QString::fromUtf8("actionToggle_all_parts"));
+        actiontest = new QAction(MainWindow);
+        actiontest->setObjectName(QString::fromUtf8("actiontest"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -230,12 +235,17 @@ public:
         menuOpen_BOM_file->setObjectName(QString::fromUtf8("menuOpen_BOM_file"));
         menuOpen_pos_file = new QMenu(menuFile);
         menuOpen_pos_file->setObjectName(QString::fromUtf8("menuOpen_pos_file"));
+        menuOpen_project = new QMenu(menuFile);
+        menuOpen_project->setObjectName(QString::fromUtf8("menuOpen_project"));
+        menuTools = new QMenu(menuBar);
+        menuTools->setObjectName(QString::fromUtf8("menuTools"));
         MainWindow->setMenuBar(menuBar);
 
         menuBar->addAction(menuFile->menuAction());
+        menuBar->addAction(menuTools->menuAction());
         menuFile->addSeparator();
-        menuFile->addAction(actionOpen);
-        menuFile->addAction(actionNew);
+        menuFile->addAction(menuOpen_project->menuAction());
+        menuFile->addAction(actionNewProject);
         menuFile->addAction(actionAdd_dxf_file);
         menuFile->addAction(menuOpen_BOM_file->menuAction());
         menuFile->addAction(menuOpen_pos_file->menuAction());
@@ -246,6 +256,8 @@ public:
         menuOpen_BOM_file->addAction(actionFranzis_BOM);
         menuOpen_pos_file->addAction(actionKiCAD_position_file);
         menuOpen_pos_file->addAction(actionOrCAD_position_file);
+        menuOpen_project->addAction(actiontest);
+        menuTools->addAction(actionToggle_all_parts);
 
         retranslateUi(MainWindow);
 
@@ -258,8 +270,7 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "K\303\244fer Futter f\303\274r die H\303\274hners", nullptr));
-        actionOpen->setText(QCoreApplication::translate("MainWindow", "Open project", nullptr));
-        actionNew->setText(QCoreApplication::translate("MainWindow", "New project", nullptr));
+        actionNewProject->setText(QCoreApplication::translate("MainWindow", "New project", nullptr));
         actionAdd_dxf_file->setText(QCoreApplication::translate("MainWindow", "Add dxf file", nullptr));
         actionKiCAD_BOM->setText(QCoreApplication::translate("MainWindow", "KiCAD BOM", nullptr));
         actionOrCAD_BOM->setText(QCoreApplication::translate("MainWindow", "OrCAD BOM", nullptr));
@@ -268,6 +279,8 @@ public:
         actionReload_files->setText(QCoreApplication::translate("MainWindow", "Reload files", nullptr));
         actionRemove_all->setText(QCoreApplication::translate("MainWindow", "Remove all", nullptr));
         actionFranzis_BOM->setText(QCoreApplication::translate("MainWindow", "Franzis BOM", nullptr));
+        actionToggle_all_parts->setText(QCoreApplication::translate("MainWindow", "Toggle all parts", nullptr));
+        actiontest->setText(QCoreApplication::translate("MainWindow", "test", nullptr));
         groupBox->setTitle(QCoreApplication::translate("MainWindow", "P\303\274nktchen", nullptr));
         toggleButton->setText(QCoreApplication::translate("MainWindow", "Toggle alle", nullptr));
         toolButton->setText(QCoreApplication::translate("MainWindow", "...", nullptr));
@@ -277,6 +290,8 @@ public:
         menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
         menuOpen_BOM_file->setTitle(QCoreApplication::translate("MainWindow", "Open BOM file", nullptr));
         menuOpen_pos_file->setTitle(QCoreApplication::translate("MainWindow", "Open pos file", nullptr));
+        menuOpen_project->setTitle(QCoreApplication::translate("MainWindow", "Open project", nullptr));
+        menuTools->setTitle(QCoreApplication::translate("MainWindow", "Tools", nullptr));
     } // retranslateUi
 
 };

@@ -61,6 +61,7 @@ SOURCES       = main.cpp \
 		libdxfrw/src/drw_entities.cpp \
 		libdxfrw/src/drw_objects.cpp \
 		libdxfrw/src/libdxfrw.cpp \
+		pnp_project.cpp \
 		src/dxfinterface.cpp \
 		src/dxfsceneview.cpp \
 		src/mtexttohtml.cpp \
@@ -71,6 +72,7 @@ SOURCES       = main.cpp \
 		ColorPickerActionWidget.cpp \
 		ColorPickerToolButton.cpp qrc_icons.cpp \
 		moc_mainwindow.cpp \
+		moc_pnp_project.cpp \
 		moc_dxfsceneview.cpp \
 		moc_ColorPickerActionWidget.cpp \
 		moc_ColorPickerToolButton.cpp
@@ -83,6 +85,7 @@ OBJECTS       = main.o \
 		drw_entities.o \
 		drw_objects.o \
 		libdxfrw.o \
+		pnp_project.o \
 		dxfinterface.o \
 		dxfsceneview.o \
 		mtexttohtml.o \
@@ -94,6 +97,7 @@ OBJECTS       = main.o \
 		ColorPickerToolButton.o \
 		qrc_icons.o \
 		moc_mainwindow.o \
+		moc_pnp_project.o \
 		moc_dxfsceneview.o \
 		moc_ColorPickerActionWidget.o \
 		moc_ColorPickerToolButton.o
@@ -323,6 +327,7 @@ DIST          = /opt/Qt/5.14.2/gcc_64/mkspecs/features/spec_pre.prf \
 		libdxfrw/src/drw_interface.h \
 		libdxfrw/src/drw_objects.h \
 		libdxfrw/src/libdxfrw.h \
+		pnp_project.h \
 		src/dxfinterface.h \
 		src/dxfsceneview.h \
 		src/mtexttohtml.h \
@@ -341,6 +346,7 @@ DIST          = /opt/Qt/5.14.2/gcc_64/mkspecs/features/spec_pre.prf \
 		libdxfrw/src/drw_entities.cpp \
 		libdxfrw/src/drw_objects.cpp \
 		libdxfrw/src/libdxfrw.cpp \
+		pnp_project.cpp \
 		src/dxfinterface.cpp \
 		src/dxfsceneview.cpp \
 		src/mtexttohtml.cpp \
@@ -804,8 +810,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents icons.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/Qt/5.14.2/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h customtablewidgetitem.h libdxfrw/src/intern/drw_cptable932.h libdxfrw/src/intern/drw_cptable936.h libdxfrw/src/intern/drw_cptable949.h libdxfrw/src/intern/drw_cptable950.h libdxfrw/src/intern/drw_cptables.h libdxfrw/src/intern/drw_textcodec.h libdxfrw/src/intern/dxfreader.h libdxfrw/src/intern/dxfwriter.h libdxfrw/src/drw_base.h libdxfrw/src/drw_entities.h libdxfrw/src/drw_interface.h libdxfrw/src/drw_objects.h libdxfrw/src/libdxfrw.h src/dxfinterface.h src/dxfsceneview.h src/mtexttohtml.h src/scene_items.h src/spline.h csv_parser.h pcb_part.h customitem.h ColorPickerActionWidget.h ColorPickerToolButton.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp customtablewidgetitem.cpp mainwindow.cpp libdxfrw/src/intern/drw_textcodec.cpp libdxfrw/src/intern/dxfreader.cpp libdxfrw/src/intern/dxfwriter.cpp libdxfrw/src/drw_entities.cpp libdxfrw/src/drw_objects.cpp libdxfrw/src/libdxfrw.cpp src/dxfinterface.cpp src/dxfsceneview.cpp src/mtexttohtml.cpp src/spline.cpp csv_parser.cpp pcb_part.cpp customitem.cpp ColorPickerActionWidget.cpp ColorPickerToolButton.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h customtablewidgetitem.h libdxfrw/src/intern/drw_cptable932.h libdxfrw/src/intern/drw_cptable936.h libdxfrw/src/intern/drw_cptable949.h libdxfrw/src/intern/drw_cptable950.h libdxfrw/src/intern/drw_cptables.h libdxfrw/src/intern/drw_textcodec.h libdxfrw/src/intern/dxfreader.h libdxfrw/src/intern/dxfwriter.h libdxfrw/src/drw_base.h libdxfrw/src/drw_entities.h libdxfrw/src/drw_interface.h libdxfrw/src/drw_objects.h libdxfrw/src/libdxfrw.h pnp_project.h src/dxfinterface.h src/dxfsceneview.h src/mtexttohtml.h src/scene_items.h src/spline.h csv_parser.h pcb_part.h customitem.h ColorPickerActionWidget.h ColorPickerToolButton.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp customtablewidgetitem.cpp mainwindow.cpp libdxfrw/src/intern/drw_textcodec.cpp libdxfrw/src/intern/dxfreader.cpp libdxfrw/src/intern/dxfwriter.cpp libdxfrw/src/drw_entities.cpp libdxfrw/src/drw_objects.cpp libdxfrw/src/libdxfrw.cpp pnp_project.cpp src/dxfinterface.cpp src/dxfsceneview.cpp src/mtexttohtml.cpp src/spline.cpp csv_parser.cpp pcb_part.cpp customitem.cpp ColorPickerActionWidget.cpp ColorPickerToolButton.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
 
@@ -844,9 +850,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /opt/Qt/5.14.2/gcc_64/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++11 -Wall -Wextra -dM -E -o moc_predefs.h /opt/Qt/5.14.2/gcc_64/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_dxfsceneview.cpp moc_ColorPickerActionWidget.cpp moc_ColorPickerToolButton.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_pnp_project.cpp moc_dxfsceneview.cpp moc_ColorPickerActionWidget.cpp moc_ColorPickerToolButton.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_dxfsceneview.cpp moc_ColorPickerActionWidget.cpp moc_ColorPickerToolButton.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_pnp_project.cpp moc_dxfsceneview.cpp moc_ColorPickerActionWidget.cpp moc_ColorPickerToolButton.cpp
 moc_mainwindow.cpp: mainwindow.h \
 		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QMainWindow \
 		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/qmainwindow.h \
@@ -1339,9 +1345,117 @@ moc_mainwindow.cpp: mainwindow.h \
 		csv_parser.h \
 		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QTreeWidget \
 		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QTableWidget \
+		pnp_project.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/QColor \
 		moc_predefs.h \
 		/opt/Qt/5.14.2/gcc_64/bin/moc
 	/opt/Qt/5.14.2/gcc_64/bin/moc $(DEFINES) --include /home/niko/Dokumente/Pick_n_Place/01_Software/PnP/moc_predefs.h -I/opt/Qt/5.14.2/gcc_64/mkspecs/linux-g++ -I/home/niko/Dokumente/Pick_n_Place/01_Software/PnP -I/opt/Qt/5.14.2/gcc_64/include -I/opt/Qt/5.14.2/gcc_64/include/QtWidgets -I/opt/Qt/5.14.2/gcc_64/include/QtGui -I/opt/Qt/5.14.2/gcc_64/include/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o moc_mainwindow.cpp
+
+moc_pnp_project.cpp: pnp_project.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/QList \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qlist.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qglobal.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qconfig.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qtcore-config.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qlogging.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qflags.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qatomic.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qatomic_msvc.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qmutex.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qnumeric.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qversiontagging.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qiterator.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qrefcount.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qarraydata.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qhashfunctions.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstring.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qchar.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qbytearray.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qnamespace.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstringliteral.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstringalgorithms.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstringview.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qbytearraylist.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstringlist.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/QSettings \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qsettings.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qmetatype.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qvariant.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qmap.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qdebug.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qtextstream.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qiodevice.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qlocale.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qset.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/QColor \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qcolor.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qtguiglobal.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qtgui-config.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qrgb.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qrgba64.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/QObject \
+		pcb_part.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/QString \
+		libdxfrw/src/libdxfrw.h \
+		libdxfrw/src/drw_entities.h \
+		libdxfrw/src/drw_base.h \
+		libdxfrw/src/drw_objects.h \
+		libdxfrw/src/drw_interface.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QGraphicsEllipseItem \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/qgraphicsitem.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qsize.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qmatrix.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qpolygon.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qregion.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qdatastream.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qline.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qpixmap.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qimage.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qpixelformat.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qtransform.h \
+		moc_predefs.h \
+		/opt/Qt/5.14.2/gcc_64/bin/moc
+	/opt/Qt/5.14.2/gcc_64/bin/moc $(DEFINES) --include /home/niko/Dokumente/Pick_n_Place/01_Software/PnP/moc_predefs.h -I/opt/Qt/5.14.2/gcc_64/mkspecs/linux-g++ -I/home/niko/Dokumente/Pick_n_Place/01_Software/PnP -I/opt/Qt/5.14.2/gcc_64/include -I/opt/Qt/5.14.2/gcc_64/include/QtWidgets -I/opt/Qt/5.14.2/gcc_64/include/QtGui -I/opt/Qt/5.14.2/gcc_64/include/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include pnp_project.h -o moc_pnp_project.cpp
 
 moc_dxfsceneview.cpp: src/dxfsceneview.h \
 		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QGraphicsView \
@@ -2423,6 +2537,8 @@ main.o: main.cpp mainwindow.h \
 		csv_parser.h \
 		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QTreeWidget \
 		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QTableWidget \
+		pnp_project.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/QColor \
 		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QApplication
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
@@ -3054,29 +3170,14 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		csv_parser.h \
 		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QTreeWidget \
 		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QTableWidget \
+		pnp_project.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/QColor \
 		ui_mainwindow.h \
-		/opt/Qt/5.14.2/gcc_64/include/QtGui/QIcon \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QAction \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QApplication \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QGridLayout \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QGroupBox \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QHBoxLayout \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QHeaderView \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QLabel \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QMenu \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QMenuBar \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QFileDialog \
 		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QPushButton \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QRadioButton \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QSlider \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QSplitter \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QStatusBar \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QTabWidget \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QVBoxLayout \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/QFileInfo \
 		ColorPickerToolButton.h \
 		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QToolButton \
-		/opt/Qt/5.14.2/gcc_64/include/QtGui/QColor \
-		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QFileDialog \
-		/opt/Qt/5.14.2/gcc_64/include/QtCore/QFileInfo \
 		customitem.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
@@ -3208,6 +3309,132 @@ libdxfrw.o: libdxfrw/src/libdxfrw.cpp libdxfrw/src/libdxfrw.h \
 		libdxfrw/src/intern/dxfreader.h \
 		libdxfrw/src/intern/dxfwriter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o libdxfrw.o libdxfrw/src/libdxfrw.cpp
+
+pnp_project.o: pnp_project.cpp pnp_project.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/QList \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qlist.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qglobal.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qconfig.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qtcore-config.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qlogging.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qflags.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qatomic.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qatomic_msvc.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qmutex.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qnumeric.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qversiontagging.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qiterator.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qrefcount.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qarraydata.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qhashfunctions.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstring.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qchar.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qbytearray.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qnamespace.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstringliteral.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstringalgorithms.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstringview.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qbytearraylist.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstringlist.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/QSettings \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qsettings.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qmetatype.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qvariant.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qmap.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qdebug.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qtextstream.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qiodevice.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qlocale.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qset.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/QColor \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qcolor.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qtguiglobal.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qtgui-config.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qrgb.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qrgba64.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/QObject \
+		pcb_part.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/QString \
+		libdxfrw/src/libdxfrw.h \
+		libdxfrw/src/drw_entities.h \
+		libdxfrw/src/drw_base.h \
+		libdxfrw/src/drw_objects.h \
+		libdxfrw/src/drw_interface.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QGraphicsEllipseItem \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/qgraphicsitem.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qsize.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qmatrix.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qpolygon.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qregion.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qdatastream.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qline.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qpixmap.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qimage.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qpixelformat.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qtransform.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/QFileDialog \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/qfiledialog.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qdir.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qfileinfo.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qfile.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qfiledevice.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qurl.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/qurlquery.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/qdialog.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/qwidget.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qpalette.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qbrush.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qfont.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qfontmetrics.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qcursor.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qevent.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qvector2d.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt/5.14.2/gcc_64/include/QtCore/QDebug
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o pnp_project.o pnp_project.cpp
 
 dxfinterface.o: src/dxfinterface.cpp src/dxfinterface.h \
 		libdxfrw/src/drw_interface.h \
@@ -4276,6 +4503,9 @@ qrc_icons.o: qrc_icons.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
+
+moc_pnp_project.o: moc_pnp_project.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_pnp_project.o moc_pnp_project.cpp
 
 moc_dxfsceneview.o: moc_dxfsceneview.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_dxfsceneview.o moc_dxfsceneview.cpp

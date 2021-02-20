@@ -22,6 +22,7 @@ SOURCES += main.cpp\
     libdxfrw/src/drw_entities.cpp \
     libdxfrw/src/drw_objects.cpp \
     libdxfrw/src/libdxfrw.cpp \
+    pnp_project.cpp \
     src/dxfinterface.cpp \
     src/dxfsceneview.cpp \
     src/mtexttohtml.cpp \
@@ -47,6 +48,7 @@ HEADERS  += mainwindow.h \
     libdxfrw/src/drw_interface.h \
     libdxfrw/src/drw_objects.h \
     libdxfrw/src/libdxfrw.h \
+    pnp_project.h \
     src/dxfinterface.h \
     src/dxfsceneview.h \
     src/mtexttohtml.h \

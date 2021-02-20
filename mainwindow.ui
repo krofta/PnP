@@ -189,23 +189,31 @@
      <addaction name="actionKiCAD_position_file"/>
      <addaction name="actionOrCAD_position_file"/>
     </widget>
+    <widget class="QMenu" name="menuOpen_project">
+     <property name="title">
+      <string>Open project</string>
+     </property>
+     <addaction name="actiontest"/>
+    </widget>
     <addaction name="separator"/>
-    <addaction name="actionOpen"/>
-    <addaction name="actionNew"/>
+    <addaction name="menuOpen_project"/>
+    <addaction name="actionNewProject"/>
     <addaction name="actionAdd_dxf_file"/>
     <addaction name="menuOpen_BOM_file"/>
     <addaction name="menuOpen_pos_file"/>
     <addaction name="actionReload_files"/>
     <addaction name="actionRemove_all"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionToggle_all_parts"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuTools"/>
   </widget>
-  <action name="actionOpen">
-   <property name="text">
-    <string>Open project</string>
-   </property>
-  </action>
-  <action name="actionNew">
+  <action name="actionNewProject">
    <property name="text">
     <string>New project</string>
    </property>
@@ -248,6 +256,16 @@
   <action name="actionFranzis_BOM">
    <property name="text">
     <string>Franzis BOM</string>
+   </property>
+  </action>
+  <action name="actionToggle_all_parts">
+   <property name="text">
+    <string>Toggle all parts</string>
+   </property>
+  </action>
+  <action name="actiontest">
+   <property name="text">
+    <string>test</string>
    </property>
   </action>
  </widget>
