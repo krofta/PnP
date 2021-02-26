@@ -146,7 +146,7 @@
           </layout>
          </widget>
         </widget>
-        <widget class="DXFSceneView" name="graphicsView">
+        <widget class="SvgView" name="graphicsView">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -199,6 +199,7 @@
     <addaction name="menuOpen_project"/>
     <addaction name="actionNewProject"/>
     <addaction name="actionAdd_dxf_file"/>
+    <addaction name="actionOpen_svg_file"/>
     <addaction name="menuOpen_BOM_file"/>
     <addaction name="menuOpen_pos_file"/>
     <addaction name="actionReload_files"/>
@@ -268,18 +269,23 @@
     <string>test</string>
    </property>
   </action>
+  <action name="actionOpen_svg_file">
+   <property name="text">
+    <string>Open svg file</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>DXFSceneView</class>
-   <extends>QGraphicsView</extends>
-   <header>src/dxfsceneview.h</header>
-  </customwidget>
-  <customwidget>
    <class>ColorPickerToolButton</class>
    <extends>QToolButton</extends>
    <header>ColorPickerToolButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SvgView</class>
+   <extends>QGraphicsView</extends>
+   <header>svgview.h</header>
   </customwidget>
  </customwidgets>
  <resources>

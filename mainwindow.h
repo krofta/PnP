@@ -13,11 +13,15 @@
 
 #include "pcb_part.h"
 #include "csv_parser.h"
+#include "svgview.h"
 #include "pnp_project.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
 class QActionGroup;
+class QGraphicsView;
+class QGraphicsScene;
+class QGraphicsRectItem;
 class QLabel;
 class QMenu;
 QT_END_NAMESPACE
@@ -44,6 +48,7 @@ public:
     // Liste von Objekte um Informationen über Position und Name zu Speichern
 
     // Objekt zum parsen der scv und rpt dateien
+    SvgView *m_svgview;
     CSV_Parser file_parser;
     pnp_project *project;
     int dxf_initialised;
@@ -109,6 +114,7 @@ private:
     void add_dxf_file();
     void open_BOM_file(bool KiCAD);
     void open_pos_file(bool KiCAD);
+    bool open_svg_file();
     void open_franzisStueckliste();
 
     void reload_files();

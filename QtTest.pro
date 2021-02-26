@@ -4,12 +4,15 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui svg widgets
 CONFIG += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = QtTest
+qtHaveModule(opengl): QT += opengl
+
+
+TARGET = part-place-helper
 TEMPLATE = app
 
 
@@ -31,7 +34,8 @@ SOURCES += main.cpp\
     pcb_part.cpp \
     customitem.cpp \
     ColorPickerActionWidget.cpp \
-    ColorPickerToolButton.cpp
+    ColorPickerToolButton.cpp \
+    svgview.cpp
 
 HEADERS  += mainwindow.h \
     customtablewidgetitem.h \
@@ -58,9 +62,13 @@ HEADERS  += mainwindow.h \
     pcb_part.h \
     customitem.h \
     ColorPickerActionWidget.h \
-    ColorPickerToolButton.h
+    ColorPickerToolButton.h \
+    svgview.h
 
 FORMS    += mainwindow.ui
 
 RESOURCES += \
     icons.qrc
+
+target.path = /opt/part-place-helper
+INSTALLS += target

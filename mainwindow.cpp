@@ -14,10 +14,13 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    m_svgview(new SvgView)
 {
 
     ui->setupUi(this);
+
+
     this->csv_initialised = this->rpt_initialised = this->dxf_initialised = 0;
     this->ui->splitter->setStretchFactor(1,3);
     this->project = new pnp_project();
@@ -112,6 +115,11 @@ void MainWindow::addActions()
     // Adds a dxf graphic to the scene view
     this->ui->actionAdd_dxf_file->setStatusTip("Adds a dxf file to graphics scene");
     connect(this->ui->actionAdd_dxf_file, &QAction::triggered, this, &MainWindow::add_dxf_file);
+    // Opens a svg vector file
+    this->ui->actionOpen_svg_file->setStatusTip("Opens a svg file to graphics scene");
+    connect(this->ui->actionOpen_svg_file, &QAction::triggered, this, &MainWindow::open_svg_file);
+
+
     // open BOM file KiCAD
     this->ui->actionKiCAD_BOM->setStatusTip("Loads all kinds of parts of the pcb to the tree view");
     connect(this->ui->actionKiCAD_BOM, &QAction::triggered, this,
@@ -119,6 +127,8 @@ void MainWindow::addActions()
             open_BOM_file(true);
         }
     );
+
+
     // Open position file KiCAD
     this->ui->actionKiCAD_position_file->setStatusTip("Loads the coordinates of all parts");
     connect(this->ui->actionKiCAD_position_file, &QAction::triggered, this,
@@ -388,6 +398,40 @@ void MainWindow::open_pos_file(bool KiCAD)
         this->msgBox.setText("rpt - Datei existiert nicht.");
         this->msgBox.exec();
     }
+}
+
+bool MainWindow::open_svg_file()
+{
+
+    QString svg_file = QFileDialog::getOpenFileName(nullptr, "Open SVG", "/home/", "SVG Files (*.svg)");
+    if(svg_file.isEmpty())
+    {
+        return 1;
+    }
+    QFileInfo fi(svg_file);
+
+    if (!QFileInfo::exists(svg_file) || !this->ui->graphicsView->openFile(svg_file)) {
+        QMessageBox::critical(this, tr("Open SVG File"),
+                              tr("Could not open file '%1'.").arg(QDir::toNativeSeparators(svg_file)));
+        return false;
+    }
+
+    if (!svg_file.startsWith(":/")) {
+        //m_currentPath = svg_file;
+        setWindowFilePath(svg_file);
+        const QSize size = this->ui->graphicsView->svgSize();
+        const QString message =
+            tr("Opened %1, %2x%3").arg(QFileInfo(svg_file).fileName()).arg(size.width()).arg(size.width());
+        statusBar()->showMessage(message);
+    }
+
+    //m_outlineAction->setEnabled(true);
+    //m_backgroundAction->setEnabled(true);
+
+    //const QSize availableSize = QApplication::desktop()->availableGeometry(this).size();
+    //resize(this->ui->graphicsView->sizeHint().expandedTo(availableSize / 4) + QSize(80, 80 + menuBar()->height()));
+
+    return true;
 }
 
 void MainWindow::open_franzisStueckliste()

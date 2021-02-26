@@ -5,6 +5,11 @@
 
 int main(int argc, char *argv[])
 {
+
+    qputenv("QT_QPA_EGLFS_ALWAYS_SET_MODE","1");
+    qputenv("QT_QPA_EGLFS_KMS_ATOMIC","1");
+    qputenv("QT_QPA_PLATFORM", "eglfs");
+
     QApplication a(argc, argv);
     qApp->setStyle(QStyleFactory::create("Fusion"));
 
