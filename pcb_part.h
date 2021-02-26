@@ -38,6 +38,7 @@ public:
     int get_color();
     DRW_Circle* getCircle();
     QGraphicsEllipseItem *ellipse;
+
     DRW_Circle circle;
 
 private:

@@ -211,8 +211,20 @@
     </property>
     <addaction name="actionToggle_all_parts"/>
    </widget>
+   <widget class="QMenu" name="menuRenderer">
+    <property name="title">
+     <string>Renderer</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
+   <addaction name="menuRenderer"/>
+   <addaction name="menuView"/>
   </widget>
   <action name="actionNewProject">
    <property name="text">

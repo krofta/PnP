@@ -7,11 +7,20 @@
 #include <QObject>
 #include "pcb_part.h"
 
-enum CAD_type{
+enum CAD_TYPE{
+    CAD_TYPE_UNDEF,
     KiCAD,
-    OrCAD
+    OrCAD,
+    Franzi
 };
+Q_DECLARE_METATYPE(CAD_TYPE)
 
+enum GRAPIC_TYPE{
+    GRAPIC_TYPE_UNDEF,
+    DXF,
+    SVG
+};
+Q_DECLARE_METATYPE(GRAPIC_TYPE)
 
 class pnp_project : public QObject
 {
@@ -22,13 +31,16 @@ public:
 public:
     QString project_file;
     QList<QString> dxf_files;
+    QString svg_file;
     QString BillOfMaterialFile;
     QString PickAndPlaceFile;
 
     QColor dot_color;
     double dot_size;
 
-    enum CAD_type cad;
+    enum CAD_TYPE bom_type;
+    enum CAD_TYPE pos_type;
+    enum GRAPIC_TYPE graphic_type;
 
     QList<PCB_PartKind> pcb_partkinds;
     void new_project();

@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
 
-    this->csv_initialised = this->rpt_initialised = this->dxf_initialised = 0;
+    this->csv_initialised = this->rpt_initialised = this->graphic_initialised = 0;
     this->ui->splitter->setStretchFactor(1,3);
     this->project = new pnp_project();
     addActions();
@@ -167,6 +167,63 @@ void MainWindow::addActions()
     this->ui->actionToggle_all_parts->setStatusTip("Toggles position dot of all existing parts");
     connect(this->ui->actionToggle_all_parts, &QAction::triggered, this, &MainWindow::toggle_parts);
 
+
+    // Renderer-------------------------------
+
+    m_nativeAction = this->ui->menuRenderer->addAction("Native");
+    m_nativeAction->setCheckable(true);
+    m_nativeAction->setChecked(true);
+    m_nativeAction->setData(int(SvgView::Native));
+#ifndef QT_NO_OPENGL
+    m_glAction = this->ui->menuRenderer->addAction(tr("&OpenGL"));
+    m_glAction->setCheckable(true);
+    m_glAction->setData(int(SvgView::OpenGL));
+#endif
+    m_imageAction = this->ui->menuRenderer->addAction(tr("&Image"));
+    m_imageAction->setCheckable(true);
+    m_imageAction->setData(int(SvgView::Image));
+
+    this->ui->menuRenderer->addSeparator();
+    m_antialiasingAction = this->ui->menuRenderer->addAction(tr("&Antialiasing"));
+    m_antialiasingAction->setCheckable(true);
+    m_antialiasingAction->setChecked(false);
+    connect(m_antialiasingAction, &QAction::toggled, this->ui->graphicsView, &SvgView::setAntialiasing);
+
+    QActionGroup *rendererGroup = new QActionGroup(this);
+    rendererGroup->addAction(m_nativeAction);
+#ifndef QT_NO_OPENGL
+    rendererGroup->addAction(m_glAction);
+#endif
+    rendererGroup->addAction(m_imageAction);
+
+    //menuBar()->addMenu(rendererMenu);
+
+    connect(rendererGroup, &QActionGroup::triggered,
+            [this] (QAction *a) { setRenderer(a->data().toInt()); });
+
+
+    // View-------------------------------
+
+    m_backgroundAction = this->ui->menuView->addAction(tr("&Background"));
+    m_backgroundAction->setEnabled(false);
+    m_backgroundAction->setCheckable(true);
+    m_backgroundAction->setChecked(false);
+    connect(m_backgroundAction, &QAction::toggled, this->ui->graphicsView, &SvgView::setViewBackground);
+
+    m_outlineAction = this->ui->menuView->addAction(tr("&Outline"));
+    m_outlineAction->setEnabled(false);
+    m_outlineAction->setCheckable(true);
+    m_outlineAction->setChecked(true);
+    connect(m_outlineAction, &QAction::toggled, this->ui->graphicsView, &SvgView::setViewOutline);
+
+    this->ui->menuView->addSeparator();
+    QAction *zoomAction = this->ui->menuView->addAction(tr("Zoom &In"), this->ui->graphicsView, &SvgView::zoomIn);
+    zoomAction->setShortcut(QKeySequence::ZoomIn);
+    zoomAction = this->ui->menuView->addAction(tr("Zoom &Out"), this->ui->graphicsView, &SvgView::zoomOut);
+    zoomAction->setShortcut(QKeySequence::ZoomOut);
+    zoomAction = this->ui->menuView->addAction(tr("Reset Zoom"), this->ui->graphicsView, &SvgView::resetZoom);
+    zoomAction->setShortcut(Qt::CTRL + Qt::Key_0);
+
 }
 
 void MainWindow::createRecentFileMenu()
@@ -217,6 +274,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
                 part->circle.colorName = "green";
                 part->ellipse = this->dxf.mScene.addEllipse(part->circle.basePoint.x-this->dot_size, part->circle.basePoint.y-this->dot_size,
                                             2*this->dot_size,2*this->dot_size,QPen(this->dot_color),QBrush(this->dot_color));
+                part->ellipse->setZValue(10);
                 QBrush brush_green(this->dot_color);
                 ui->treeWidget->currentItem()->setBackground(1, brush_green);
             }
@@ -261,6 +319,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
                 citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-this->dot_size, citem->part->circle.basePoint.y-this->dot_size,
                                             2*this->dot_size,2*this->dot_size,QPen(this->dot_color),QBrush(this->dot_color));
                 //part->ellipse = this->dxf.addCircle(*part->getCircle());
+                citem->part->ellipse->setZValue(10);
                 QBrush brush_green(this->dot_color);
                 citem->setBackground(1, brush_green);
 
@@ -281,6 +340,11 @@ void MainWindow::receive_new_project(QString project)
         if(this->last_projects.count()>10)
             this->last_projects.removeLast();
     }
+}
+
+void MainWindow::setRenderer(int renderMode)
+{
+    this->ui->graphicsView->setRenderer(static_cast<SvgView::RendererType>(renderMode));
 }
 
 void MainWindow::loadSettings(){
@@ -326,8 +390,8 @@ void MainWindow::saveSettings(){
 void MainWindow::add_dxf_file()
 {
     this->dxf_filename = QFileDialog::getOpenFileName(this, "Open DXF", this->lastFilePath, "DXF Files (*.dxf)");
-    if(dxf_filename.isEmpty())
-    {
+
+    if(dxf_filename.isEmpty()){
         return;
     }
     QFileInfo fi(this->dxf_filename);
@@ -337,13 +401,50 @@ void MainWindow::add_dxf_file()
     this->ui->graphicsView->setScene(dxf.scene());
     this->ui->graphicsView->fitInView(dxf.scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
     this->ui->graphicsView->show();
-    this->dxf_initialised = 1;
+    this->project->dxf_files.append(this->dxf_filename);
+    this->graphic_initialised = 1;
+    this->project->graphic_type = GRAPIC_TYPE::DXF;
 }
+
+bool MainWindow::open_svg_file()
+{
+
+    this->project->svg_file = QFileDialog::getOpenFileName(nullptr, "Open SVG", "/home/", "SVG Files (*.svg)");
+    if(this->project->svg_file.isEmpty()){
+        return 1;
+    }
+    QFileInfo fi(this->project->svg_file);
+
+    if (!QFileInfo::exists(this->project->svg_file) || !this->ui->graphicsView->openFile(this->project->svg_file)) {
+        QMessageBox::critical(this, tr("Open SVG File"),
+                              tr("Could not open file '%1'.").arg(QDir::toNativeSeparators(this->project->svg_file)));
+        return false;
+    }
+
+    if (!this->project->svg_file.startsWith(":/")) {
+        //m_currentPath = svg_file;
+        setWindowFilePath(this->project->svg_file);
+        const QSize size = this->ui->graphicsView->svgSize();
+        const QString message =
+            tr("Opened %1, %2x%3").arg(QFileInfo(this->project->svg_file).fileName()).arg(size.width()).arg(size.width());
+        statusBar()->showMessage(message);
+    }
+
+    this->m_outlineAction->setEnabled(true);
+    this->m_backgroundAction->setEnabled(true);
+    this->graphic_initialised = 1;
+    this->project->graphic_type = GRAPIC_TYPE::SVG;
+    //const QSize availableSize = QApplication::desktop()->availableGeometry(this).size();
+    //resize(this->ui->graphicsView->sizeHint().expandedTo(availableSize / 4) + QSize(80, 80 + menuBar()->height()));
+
+    return true;
+}
+
 
 void MainWindow::open_BOM_file(bool KiCad)
 {
     // Noch keine Szene initialisiert? Dann zurück
-    if(this->dxf_initialised == 0){
+    if(this->graphic_initialised == 0){
         this->msgBox.setText("Erst mal 'ne DXF-Datei importieren, min Jung!");
         this->msgBox.exec();
         return;
@@ -363,6 +464,8 @@ void MainWindow::open_BOM_file(bool KiCad)
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
         this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
         this->csv_initialised = 1;
+        this->project->BillOfMaterialFile = this->BillOfMaterialFile;
+        this->project->bom_type = KiCad ? CAD_TYPE::KiCAD : CAD_TYPE::OrCAD;
     }
     else{
         this->msgBox.setText("csv - Datei existiert nicht.");
@@ -372,7 +475,7 @@ void MainWindow::open_BOM_file(bool KiCad)
 
 void MainWindow::open_pos_file(bool KiCAD)
 {
-    if(this->dxf_initialised == 0 || this->csv_initialised == 0){
+    if(this->graphic_initialised == 0 || this->csv_initialised == 0){
         this->msgBox.setText("Erst mal 'ne DXF- und CSV-Datei importieren, min Jung!");
         this->msgBox.exec();
         return;
@@ -392,6 +495,8 @@ void MainWindow::open_pos_file(bool KiCAD)
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
         this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
         this->rpt_initialised = 1;
+        this->project->PickAndPlaceFile = this->PickAndPlaceFile;
+        this->project->pos_type = KiCAD ? CAD_TYPE::KiCAD : CAD_TYPE::OrCAD;
     }
     else
     {
@@ -400,44 +505,11 @@ void MainWindow::open_pos_file(bool KiCAD)
     }
 }
 
-bool MainWindow::open_svg_file()
-{
-
-    QString svg_file = QFileDialog::getOpenFileName(nullptr, "Open SVG", "/home/", "SVG Files (*.svg)");
-    if(svg_file.isEmpty())
-    {
-        return 1;
-    }
-    QFileInfo fi(svg_file);
-
-    if (!QFileInfo::exists(svg_file) || !this->ui->graphicsView->openFile(svg_file)) {
-        QMessageBox::critical(this, tr("Open SVG File"),
-                              tr("Could not open file '%1'.").arg(QDir::toNativeSeparators(svg_file)));
-        return false;
-    }
-
-    if (!svg_file.startsWith(":/")) {
-        //m_currentPath = svg_file;
-        setWindowFilePath(svg_file);
-        const QSize size = this->ui->graphicsView->svgSize();
-        const QString message =
-            tr("Opened %1, %2x%3").arg(QFileInfo(svg_file).fileName()).arg(size.width()).arg(size.width());
-        statusBar()->showMessage(message);
-    }
-
-    //m_outlineAction->setEnabled(true);
-    //m_backgroundAction->setEnabled(true);
-
-    //const QSize availableSize = QApplication::desktop()->availableGeometry(this).size();
-    //resize(this->ui->graphicsView->sizeHint().expandedTo(availableSize / 4) + QSize(80, 80 + menuBar()->height()));
-
-    return true;
-}
 
 void MainWindow::open_franzisStueckliste()
 {
     // Noch keine Szene initialisiert? Dann zurück
-    if(this->dxf_initialised == 0){
+    if(this->graphic_initialised == 0){
         this->msgBox.setText("Erst mal 'ne DXF-Datei importieren, min Jung!");
         this->msgBox.exec();
         return;
@@ -456,6 +528,8 @@ void MainWindow::open_franzisStueckliste()
         this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
         this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
         this->csv_initialised = 1;
+        this->project->BillOfMaterialFile = this->BillOfMaterialFile;
+        this->project->bom_type = CAD_TYPE::Franzi;
     }
     else{
         this->msgBox.setText("csv - Datei existiert nicht.");
@@ -493,12 +567,12 @@ void MainWindow::reload_files()
     }
     // dxf einlesen und anzeigen
 
-    this->ui->statusBar->showMessage(this->dxf_filename);
+    //this->ui->statusBar->showMessage(this->dxf_filename);
     dxf.iniDXF(this->dxf_filename);
     this->ui->graphicsView->setScene(dxf.scene());
     this->ui->graphicsView->fitInView(dxf.scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
     this->ui->graphicsView->show();
-    this->dxf_initialised = 1;
+    this->graphic_initialised = 1;
     // csv Datei einlesen und anzeigen
     this->file_parser = CSV_Parser();
     int res= 0;
@@ -570,6 +644,7 @@ void MainWindow::toggle_parts()
                 citem->part->circle.colorName = "green";
                 citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-this->dot_size, citem->part->circle.basePoint.y-this->dot_size,
                                             2*this->dot_size,2*this->dot_size,QPen(this->dot_color),QBrush(this->dot_color));
+                citem->part->ellipse->setZValue(10);
                 QBrush brush_green(this->dot_color);
                 citem->setBackground(1, brush_green);
             }

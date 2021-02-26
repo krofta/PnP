@@ -116,13 +116,13 @@ bool SvgView::openFile(const QString &fileName)
     m_svgItem = svgItem.take();
     m_svgItem->setFlags(QGraphicsItem::ItemClipsToShape);
     m_svgItem->setCacheMode(QGraphicsItem::NoCache);
-    m_svgItem->setZValue(0);
+    m_svgItem->setZValue(-10);
 
     m_backgroundItem = new QGraphicsRectItem(m_svgItem->boundingRect());
     m_backgroundItem->setBrush(Qt::white);
     m_backgroundItem->setPen(Qt::NoPen);
     m_backgroundItem->setVisible(drawBackground);
-    m_backgroundItem->setZValue(-1);
+    m_backgroundItem->setZValue(-20);
 
     m_outlineItem = new QGraphicsRectItem(m_svgItem->boundingRect());
     QPen outline(Qt::black, 2, Qt::DashLine);

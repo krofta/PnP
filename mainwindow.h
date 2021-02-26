@@ -51,7 +51,7 @@ public:
     SvgView *m_svgview;
     CSV_Parser file_parser;
     pnp_project *project;
-    int dxf_initialised;
+    int graphic_initialised;
     int csv_initialised;
     int rpt_initialised;
 
@@ -81,6 +81,7 @@ private slots:
 
 public slots:
     void receive_new_project(QString project);
+    void setRenderer(int renderMode);
 
 
 private Q_SLOTS:
@@ -121,6 +122,13 @@ private:
     void clear_files();
 
     void toggle_parts();
+
+    QAction *m_nativeAction;
+    QAction *m_glAction;
+    QAction *m_imageAction;
+    QAction *m_antialiasingAction;
+    QAction *m_backgroundAction;
+    QAction *m_outlineAction;
 
 
 };
