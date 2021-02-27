@@ -81,23 +81,17 @@ private slots:
 
 public slots:
     void receive_new_project(QString project);
+    void receive_dot_size(double size);
     void setRenderer(int renderMode);
 
 
 private Q_SLOTS:
     void onTextColorSelected(QColor color);
-
     void on_reloadButton_clicked();
-
     void on_horizontalSlider_sliderMoved(int position);
-
     void on_rbOrCAD_toggled(bool checked);
-
     void on_rbKiCAD_toggled(bool checked);
-
-    
     void on_btnFranzisStuekcliste_clicked();
-
     void on_clearButton_clicked();
 
 private:
@@ -118,6 +112,7 @@ private:
     bool open_svg_file();
     void open_franzisStueckliste();
 
+    void open_files_from_project();
     void reload_files();
     void clear_files();
 

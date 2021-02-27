@@ -1,0 +1,12 @@
+[Files]
+bom_file=
+bom_type=0
+dot_brush_blue=100
+dot_brush_green=100
+dot_brush_red=100
+dot_size=1
+dxf_files=@Variant(\0\0\0\x7f\0\0\0\xfQList<QString>\0\0\0\0\0)
+graphic_type=0
+pos_file=
+pos_type=0
+svg_file=

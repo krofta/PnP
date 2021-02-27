@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     addActions();
 
     connect(this->project, &pnp_project::send_new_project, this, &MainWindow::receive_new_project);
+    connect(this->project, &pnp_project::send_dot_size, this, &MainWindow::receive_dot_size);
 }
 
 MainWindow::~MainWindow()
@@ -97,18 +98,31 @@ void MainWindow::addActions()
 
     // File-----------------------------------
 
-    /*this->ui->actionOpenProject->setStatusTip("Opens an existing project");
-    connect(this->ui->actionOpenProject, &QAction::triggered, this,
+    this->ui->actionOpen_project->setStatusTip("Opens an existing project");
+    connect(this->ui->actionOpen_project, &QAction::triggered, this,
         [this]{
-            this->project->load_project(this->last_projects.first());
+            if(!this->project->select_file(this->lastFilePath)){
+                this->project->load_project();
+                this->reload_files();
+                //this->open_files_from_project();
+            }
+
         }
     );
-    */
+
 
     this->ui->actionNewProject->setStatusTip("Creates a new project");
     connect(this->ui->actionNewProject, &QAction::triggered, this,
         [this]{
-            this->project->new_project();
+            if(!this->project->create_file(this->lastFilePath))
+                this->project->new_project();
+        }
+    );
+
+    this->ui->actionSave_project->setStatusTip("Saves all values of the actual project");
+    connect(this->ui->actionSave_project, &QAction::triggered, this,
+        [this]{
+            this->project->save_project();
         }
     );
 
@@ -196,8 +210,6 @@ void MainWindow::addActions()
 #endif
     rendererGroup->addAction(m_imageAction);
 
-    //menuBar()->addMenu(rendererMenu);
-
     connect(rendererGroup, &QActionGroup::triggered,
             [this] (QAction *a) { setRenderer(a->data().toInt()); });
 
@@ -228,14 +240,17 @@ void MainWindow::addActions()
 
 void MainWindow::createRecentFileMenu()
 {
+    /*
     for (int i = 0; i < 10; ++i)
         this->ui->menuOpen_project->addAction(recentFileActs[i]);
             //menuOpen_project->addAction(recentFileActs[i]);
+    */
 }
 void MainWindow::onTextColorSelected(QColor color)
 {
     //ui->textEdit->setTextColor(color);
-    this->dot_color = color;
+    //this->dot_color = color;
+    this->project->dot_color = color;
 }
 
 
@@ -335,11 +350,19 @@ void MainWindow::on_toggleButton_clicked(){
 
 void MainWindow::receive_new_project(QString project)
 {
+    this->ui->statusBar->showMessage(project);
+    /*
     if(project != ""){
         this->last_projects.insert(0,project);
         if(this->last_projects.count()>10)
             this->last_projects.removeLast();
     }
+    */
+}
+
+void MainWindow::receive_dot_size(double size)
+{
+    this->ui->horizontalSlider->setValue((int)(size * 100));
 }
 
 void MainWindow::setRenderer(int renderMode)
@@ -353,17 +376,20 @@ void MainWindow::loadSettings(){
     this->last_projects= setting.value("recent_projects").value<QList<QString>>();
     QRect myRect = setting.value("position", QRect(100,100,800,600)).toRect();
     setGeometry(myRect);
+    /*
     this->dot_color  = QColor(
                 setting.value("dot_brush_red","0").toInt(),
                 setting.value("dot_brush_green",255).toInt(),
                 setting.value("dot_brush_blue",0).toInt()
                 );
-    this->dxf_filename = setting.value("dxf_path", "").toString();
-    this->BillOfMaterialFile = setting.value("csv_path", "").toString();
-    this->PickAndPlaceFile = setting.value("rpt_path", "").toString();
+    */
+    //this->dxf_filename = setting.value("dxf_path", "").toString();
+    //this->BillOfMaterialFile = setting.value("csv_path", "").toString();
+    //this->PickAndPlaceFile = setting.value("rpt_path", "").toString();
     this->lastFilePath = setting.value("last_file_path", QDir::currentPath()).toString();
-    this->dot_size = setting.value("dot_size", 0.5).toDouble();
-    this->ui->horizontalSlider->setValue((int)(this->dot_size * 100));
+    //this->dot_size = setting.value("dot_size", 0.5).toDouble();
+    this->ui->horizontalSlider->setValue(0);
+    //this->ui->horizontalSlider->setValue((int)(this->dot_size * 100));
 
     setting.endGroup();
 
@@ -375,14 +401,14 @@ void MainWindow::saveSettings(){
     setting.beginGroup("MainWindow");
     setting.setValue("recent_projects", QVariant::fromValue(this->last_projects));
     setting.setValue("position", this->geometry());
-    setting.setValue("dot_brush_red",this->dot_color.red());
-    setting.setValue("dot_brush_green",this->dot_color.green());
-    setting.setValue("dot_brush_blue",this->dot_color.blue());
-    setting.setValue("dxf_path", this->dxf_filename);
-    setting.setValue("csv_path", this->BillOfMaterialFile);
-    setting.setValue("rpt_path", this->PickAndPlaceFile);
+    //setting.setValue("dot_brush_red",this->dot_color.red());
+    //setting.setValue("dot_brush_green",this->dot_color.green());
+    //setting.setValue("dot_brush_blue",this->dot_color.blue());
+    //setting.setValue("dxf_path", this->dxf_filename);
+    //setting.setValue("csv_path", this->BillOfMaterialFile);
+    //setting.setValue("rpt_path", this->PickAndPlaceFile);
     setting.setValue("last_file_path", this->lastFilePath);
-    setting.setValue("dot_size", this->dot_size);
+    //setting.setValue("dot_size", this->dot_size);
 
     setting.endGroup();
 }
@@ -396,7 +422,7 @@ void MainWindow::add_dxf_file()
     }
     QFileInfo fi(this->dxf_filename);
     this->lastFilePath = fi.path();
-    this->ui->statusBar->showMessage(this->dxf_filename);
+    //this->ui->statusBar->showMessage(this->dxf_filename);
     dxf.iniDXF(this->dxf_filename);
     this->ui->graphicsView->setScene(dxf.scene());
     this->ui->graphicsView->fitInView(dxf.scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
@@ -537,44 +563,110 @@ void MainWindow::open_franzisStueckliste()
     }
 }
 
+void MainWindow::open_files_from_project()
+{
+
+}
+
 void MainWindow::reload_files()
 {
+    if(this->project->project_file.isEmpty())
+        return;
     this->ui->treeWidget->clear();
     this->pcb_partkinds.clear();
-   this->dxf.mScene.clear();
-    if(this->dxf_filename == "" || this->BillOfMaterialFile == "" || this->PickAndPlaceFile == ""){
-        this->msgBox.setText("Einer der letzten Dateipfade ist leer");
-        this->msgBox.exec();
-        return;
-    }
-    QFileInfo check_dxf(this->dxf_filename);
-    if(!check_dxf.exists() || !check_dxf.isFile()){
-        this->msgBox.setText("dxf - Datei existiert nicht.");
-        this->msgBox.exec();
-        return;
-    }
-    QFileInfo check_csv(this->BillOfMaterialFile);
-    if(!check_csv.exists() || !check_csv.isFile()){
-        this->msgBox.setText("csv - Datei existiert nicht.");
-        this->msgBox.exec();
-        return;
-    }
-    QFileInfo check_rpt(this->PickAndPlaceFile);
-    if(!check_rpt.exists() || !check_rpt.isFile()){
-        this->msgBox.setText("rpt - Datei existiert nicht.");
-        this->msgBox.exec();
-        return;
-    }
-    // dxf einlesen und anzeigen
+    this->dxf.mScene.clear();
 
-    //this->ui->statusBar->showMessage(this->dxf_filename);
-    dxf.iniDXF(this->dxf_filename);
-    this->ui->graphicsView->setScene(dxf.scene());
-    this->ui->graphicsView->fitInView(dxf.scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
-    this->ui->graphicsView->show();
-    this->graphic_initialised = 1;
-    // csv Datei einlesen und anzeigen
+    switch(this->project->graphic_type){
+    case GRAPIC_TYPE::GRAPIC_TYPE_UNDEF:
+        this->msgBox.setText("No graphic file selected. Process skipped.");
+        this->msgBox.exec();
+        return;
+    case GRAPIC_TYPE::DXF:
+        if(this->project->dxf_files.count() == 0){
+            this->msgBox.setText("No dxf file selected. Process skipped.");
+            this->msgBox.exec();
+            return;
+        }
+        for(int i = 0; i < this->project->dxf_files.count(); i++){
+            QFileInfo check_dxf(this->project->dxf_files[i]);
+            if(!check_dxf.exists() || !check_dxf.isFile()){
+                this->msgBox.setText(this->project->dxf_files[i] + " does not exist.");
+                this->msgBox.exec();
+                continue;
+            }
+            dxf.iniDXF(this->project->dxf_files[i]);
+            this->ui->graphicsView->setScene(dxf.scene());
+            this->ui->graphicsView->fitInView(dxf.scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
+            this->ui->graphicsView->show();
+            this->graphic_initialised = 1;
+        }
+
+        break;
+
+    }
+
     this->file_parser = CSV_Parser();
+    QFileInfo check_file;
+    switch(this->project->bom_type){
+    case CAD_TYPE::CAD_TYPE_UNDEF:
+        this->msgBox.setText("No bom file selected. Process skipped.");
+        this->msgBox.exec();
+        return;
+    case CAD_TYPE::KiCAD:
+    case CAD_TYPE::OrCAD:
+    case CAD_TYPE::Franzi:
+        check_file.setFile(this->project->BillOfMaterialFile);
+        if(!check_file.exists() || !check_file.isFile()){
+            this->msgBox.setText("BOM file: " + this->project->BillOfMaterialFile + " does not exist.");
+            this->msgBox.exec();
+            return;
+        }
+        int res= 1;
+        if(this->project->bom_type == CAD_TYPE::KiCAD)
+            res = this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds, true);
+        if(this->project->bom_type == CAD_TYPE::OrCAD)
+            res = this->file_parser.parse_BOM_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
+        //if(this->project->bom_type == CAD_TYPE::Franzi)
+        if(!res){
+            this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+            this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
+            this->csv_initialised = 1;
+        }
+        break;
+    }
+
+    switch(this->project->pos_type){
+    case CAD_TYPE::CAD_TYPE_UNDEF:
+        this->msgBox.setText("No position file selected. Process skipped.");
+        this->msgBox.exec();
+        return;
+    case CAD_TYPE::KiCAD:
+    case CAD_TYPE::OrCAD:
+    case CAD_TYPE::Franzi:
+        check_file.setFile(this->project->PickAndPlaceFile);
+        if(!check_file.exists() || !check_file.isFile()){
+            this->msgBox.setText("Position file: " + this->project->PickAndPlaceFile + " does not exist.");
+            this->msgBox.exec();
+            return;
+        }
+        int res= 1;
+        if(this->project->bom_type == CAD_TYPE::KiCAD)
+            res = this->file_parser.parse_pos_datei(this->PickAndPlaceFile, this->pcb_partkinds);
+        if(this->project->bom_type == CAD_TYPE::OrCAD)
+            res = this->file_parser.parse_rpt_datei(this->PickAndPlaceFile, this->pcb_partkinds);
+
+        this->ui->treeWidget->clear();
+        if(!res){
+            this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
+            this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
+            this->rpt_initialised = 1;
+        }
+        break;
+    }
+
+    return;
+
+
     int res= 0;
     //TODO: check project settings if kicad is checked
     res= true ?
@@ -659,7 +751,7 @@ void MainWindow::on_reloadButton_clicked(){
 
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
-   this->dot_size = ((double)position) / 100.0;
+   this->project->dot_size = ((double)position) / 100.0;
 }
 
 void MainWindow::on_rbOrCAD_toggled(bool checked)

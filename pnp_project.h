@@ -43,12 +43,15 @@ public:
     enum GRAPIC_TYPE graphic_type;
 
     QList<PCB_PartKind> pcb_partkinds;
+    int create_file(QString last_path);
+    int select_file(QString last_path);
     void new_project();
-    void load_project(QString file);
-    void save_project(QString file);
+    void load_project();
+    void save_project();
 
 signals:
     void send_new_project(QString file);
+    void send_dot_size(double size);
 };
 
 #endif // PNP_PROJECT_H

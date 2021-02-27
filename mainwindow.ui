@@ -189,19 +189,18 @@
      <addaction name="actionKiCAD_position_file"/>
      <addaction name="actionOrCAD_position_file"/>
     </widget>
-    <widget class="QMenu" name="menuOpen_project">
-     <property name="title">
-      <string>Open project</string>
-     </property>
-     <addaction name="actiontest"/>
-    </widget>
     <addaction name="separator"/>
-    <addaction name="menuOpen_project"/>
+    <addaction name="actionOpen_project"/>
     <addaction name="actionNewProject"/>
+    <addaction name="actionSave_project"/>
+    <addaction name="separator"/>
     <addaction name="actionAdd_dxf_file"/>
     <addaction name="actionOpen_svg_file"/>
+    <addaction name="separator"/>
     <addaction name="menuOpen_BOM_file"/>
+    <addaction name="separator"/>
     <addaction name="menuOpen_pos_file"/>
+    <addaction name="separator"/>
     <addaction name="actionReload_files"/>
     <addaction name="actionRemove_all"/>
    </widget>
@@ -284,6 +283,16 @@
   <action name="actionOpen_svg_file">
    <property name="text">
     <string>Open svg file</string>
+   </property>
+  </action>
+  <action name="actionSave_project">
+   <property name="text">
+    <string>Save project</string>
+   </property>
+  </action>
+  <action name="actionOpen_project">
+   <property name="text">
+    <string>Open project</string>
    </property>
   </action>
  </widget>

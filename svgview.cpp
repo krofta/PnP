@@ -70,11 +70,14 @@ SvgView::SvgView(QWidget *parent)
     , m_outlineItem(nullptr)
 {
     setScene(new QGraphicsScene(this));
-    setTransformationAnchor(AnchorUnderMouse);
-    setDragMode(ScrollHandDrag);
-    setViewportUpdateMode(FullViewportUpdate);
+    setDragMode(QGraphicsView::ScrollHandDrag);
+    //setViewportUpdateMode(FullViewportUpdate);
+    setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+    setOptimizationFlags(QGraphicsView::DontSavePainterState);
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 
     // Prepare background check-board pattern
+    /*
     QPixmap tilePixmap(64, 64);
     tilePixmap.fill(Qt::white);
     QPainter tilePainter(&tilePixmap);
@@ -82,8 +85,10 @@ SvgView::SvgView(QWidget *parent)
     tilePainter.fillRect(0, 0, 32, 32, color);
     tilePainter.fillRect(32, 32, 32, 32, color);
     tilePainter.end();
+    */
 
-    setBackgroundBrush(tilePixmap);
+    //setBackgroundBrush(tilePixmap);
+    setBackgroundBrush(QBrush(QColor(96,96,96)));
 }
 
 void SvgView::drawBackground(QPainter *p, const QRectF &)
@@ -218,14 +223,23 @@ void SvgView::paintEvent(QPaintEvent *event)
 
 void SvgView::wheelEvent(QWheelEvent *event)
 {
-    zoomBy(qPow(1.2, event->angleDelta().y() / 240.0));
+
+    double scaleFactor = 1.15;
+    if(event->delta() > 0) {
+        // Zoom in
+        scale(scaleFactor, scaleFactor);
+    } else {
+        // Zooming out
+        scale(1.0 / scaleFactor, 1.0 / scaleFactor);
+    }
+
+    //zoomBy(qPow(1.2, event->angleDelta().y() / 240.0));
 }
 
 void SvgView::zoomBy(qreal factor)
 {
-    const qreal currentZoom = zoomFactor();
-    if ((factor < 1 && currentZoom < 0.1) || (factor > 1 && currentZoom > 10))
-        return;
+
+
     scale(factor, factor);
     emit zoomChanged();
 }
