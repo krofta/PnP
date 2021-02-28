@@ -15,10 +15,12 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    scene(new QGraphicsScene(this)),
     m_svgview(new SvgView)
 {
 
     ui->setupUi(this);
+    this->ui->graphicsView->setScene(this->scene);
 
 
     this->csv_initialised = this->rpt_initialised = this->graphic_initialised = 0;
@@ -287,7 +289,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
             if(part->get_visible() == 0){
                 part->set_visible(1);
                 part->circle.colorName = "green";
-                part->ellipse = this->dxf.mScene.addEllipse(part->circle.basePoint.x-this->project->dot_size, part->circle.basePoint.y-this->project->dot_size,
+                part->ellipse = this->scene->addEllipse(part->circle.basePoint.x-this->project->dot_size, part->circle.basePoint.y-this->project->dot_size,
                                             2*this->project->dot_size,2*this->project->dot_size,QPen(this->project->dot_color),QBrush(this->project->dot_color));
                 part->ellipse->setZValue(10);
                 QBrush brush_green(this->project->dot_color);
@@ -297,7 +299,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
             {
                 part->set_visible(0);
                 if(part->ellipse != nullptr)
-                    this->dxf.mScene.removeItem(part->ellipse);
+                    this->scene->removeItem(part->ellipse);
                 QBrush brush_white(Qt::white);
                 ui->treeWidget->currentItem()->setBackground(1, brush_white);
             }
@@ -318,7 +320,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
                 CustomItem* citem = (CustomItem*)item->child(i);
                 citem->part->set_visible(0);
                 if(citem->part->ellipse != nullptr)
-                    this->dxf.mScene.removeItem(citem->part->ellipse);
+                    this->scene->removeItem(citem->part->ellipse);
                 QBrush brush_white(Qt::white);
                 citem->setBackground(1, brush_white);
 
@@ -331,7 +333,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
                 //part->circle.color24 = (0xFFFFFF);
                 citem->part->circle.colorName = "green";
 
-                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-this->project->dot_size, citem->part->circle.basePoint.y-this->project->dot_size,
+                citem->part->ellipse = this->scene->addEllipse(citem->part->circle.basePoint.x-this->project->dot_size, citem->part->circle.basePoint.y-this->project->dot_size,
                                             2*this->project->dot_size,2*this->project->dot_size,QPen(this->project->dot_color),QBrush(this->project->dot_color));
                 //part->ellipse = this->dxf.addCircle(*part->getCircle());
                 citem->part->ellipse->setZValue(10);
@@ -574,7 +576,7 @@ void MainWindow::reload_files()
         return;
     this->ui->treeWidget->clear();
     this->project->pcb_partkinds.clear();
-    this->dxf.mScene.clear();
+    this->scene->clear();
 
     switch(this->project->graphic_type){
     case GRAPIC_TYPE::GRAPIC_TYPE_UNDEF:
@@ -673,7 +675,7 @@ void MainWindow::clear_files()
     this->ui->treeWidget->clear();
     this->ui->tableWidget->clear();
     this->project->pcb_partkinds.clear();
-    this->dxf.mScene.clear();
+    this->scene->clear();
 }
 
 void MainWindow::toggle_parts()
@@ -697,7 +699,7 @@ void MainWindow::toggle_parts()
                 CustomItem *citem = (CustomItem*)item->child(j);
                 citem->part->set_visible(0);
                 if(citem->part->ellipse != nullptr)
-                    this->dxf.mScene.removeItem(citem->part->ellipse);
+                    this->scene->removeItem(citem->part->ellipse);
                 QBrush brush_white(Qt::white);
                 citem->setBackground(1, brush_white);
             }
@@ -710,7 +712,7 @@ void MainWindow::toggle_parts()
                 CustomItem *citem = (CustomItem*)item->child(j);
                 citem->part->set_visible(1);
                 citem->part->circle.colorName = "green";
-                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-this->project->dot_size, citem->part->circle.basePoint.y-this->project->dot_size,
+                citem->part->ellipse = this->scene->addEllipse(citem->part->circle.basePoint.x-this->project->dot_size, citem->part->circle.basePoint.y-this->project->dot_size,
                                             2*this->project->dot_size,2*this->project->dot_size,QPen(this->project->dot_color),QBrush(this->project->dot_color));
                 citem->part->ellipse->setZValue(10);
                 QBrush brush_green(this->project->dot_color);

@@ -166,6 +166,15 @@ public:
         eType = DRW::LINE;
         secPoint.z = 0;
     }
+    DRW_Line(double x1, double y1, double x2, double y2){
+        eType = DRW::LINE;
+        secPoint.z = 0;
+        secPoint.x = x2;
+        secPoint.y = y2;
+        basePoint.x = x1;
+        basePoint.y = y1;
+        basePoint.z = 0;
+    }
 
     virtual void applyExtrusion(){}
     void parseCode(int code, dxfReader *reader);

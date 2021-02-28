@@ -25,154 +25,69 @@
 
 DXFInterface::DXFInterface(QString filename)
 {
-
+    this->dxf_item = new DxfItem(QColor(255,255,255), &this->arcs, &this->circles, &this->lines, &this->points);
     dxfRW *rw = new dxfRW(filename.toUtf8());
     rw->read(this, false);
 
-    mScene.setBackgroundBrush(QBrush(Qt::black));
+    //mScene.setBackgroundBrush(QBrush(Qt::black));
 }
 
-DXFInterface::DXFInterface()
-{
-}
-
-DXFInterface::~DXFInterface()
-{
-
-}
+DXFInterface::DXFInterface(){}
+DXFInterface::~DXFInterface(){}
 
 void DXFInterface::iniDXF(QString filename){
+    this->dxf_item = new DxfItem(QColor(255,255,255), &this->arcs, &this->circles, &this->lines, &this->points);
     dxfRW *rw = new dxfRW(filename.toUtf8());
     rw->read(this, false);
-    mScene.setBackgroundBrush(QBrush(Qt::gray));
+    //mScene.setBackgroundBrush(QBrush(Qt::gray));
 }
 
-void DXFInterface::add3dFace(const DRW_3Dface & /*data*/)
-{
-
-}
 
 void DXFInterface::addArc(const DRW_Arc &data)
 {
+    this->arcs.append(data);
+    /*
     SceneArc *  arc = new SceneArc(data);
     arc->setPen(attributesToPen(&data));
     arches.append(arc);
     mScene.addItem(arc);
+    */
 }
 
-void DXFInterface::addBlock(const DRW_Block & /*data*/)
+
+//QGraphicsEllipseItem* DXFInterface::addCircle(const DRW_Circle &data)
+void DXFInterface::addCircle(const DRW_Circle &data)
 {
-
+    circles.append(data);
+    //return mScene.addEllipse(data.basePoint.x-data.radious, data.basePoint.y-data.radious, 2*data.radious, 2*data.radious, attributesToPen(&data));
 }
 
-void DXFInterface::setBlock(const int /*handle*/)
-{
 
-}
-
-QGraphicsEllipseItem* DXFInterface::addCircle(const DRW_Circle &data)
-{
-    return mScene.addEllipse(data.basePoint.x-data.radious, data.basePoint.y-data.radious, 2*data.radious, 2*data.radious, attributesToPen(&data));
-
-}
-
-void DXFInterface::addComment(const char * /*comment*/)
-{
-
-}
-
-void DXFInterface::addDimAlign(const DRW_DimAligned * /*data*/)
-{
-
-}
-
-void DXFInterface::addDimAngular(const DRW_DimAngular * /*data*/)
-{
-
-}
-
-void DXFInterface::addDimAngular3P(const DRW_DimAngular3p * /*data*/)
-{
-
-}
-
-void DXFInterface::addDimDiametric(const DRW_DimDiametric * /*data*/)
-{
-
-}
-
-void DXFInterface::addDimLinear(const DRW_DimLinear * /*data*/)
-{
-
-}
-
-void DXFInterface::addDimOrdinate(const DRW_DimOrdinate * /*data*/)
-{
-
-}
-
-void DXFInterface::addDimRadial(const DRW_DimRadial * /*data*/)
-{
-
-}
-
-void DXFInterface::addDimStyle(const DRW_Dimstyle & /*data*/)
-{
-
-}
 
 void DXFInterface::addEllipse(const DRW_Ellipse &data)
 {
+    //ellipses.append(data);
+
     DRW_Ellipse *el = new DRW_Ellipse(data);
     DRW_Polyline *pl = new DRW_Polyline();
     el->toPolyline(pl);
-
     drawPolyline(pl->vertlist, attributesToPen(&data));
 
-}
-
-void DXFInterface::addHatch(const DRW_Hatch * /*data*/)
-{
 
 }
 
-void DXFInterface::addHeader(const DRW_Header * /*data*/)
-{
-}
-
-void DXFInterface::addImage(const DRW_Image * /*data*/)
-{
-
-}
-
-void DXFInterface::addInsert(const DRW_Insert & /*data*/)
-{
-
-}
-
-void DXFInterface::addKnot(const DRW_Entity & /*data*/)
-{
-
-}
 
 void DXFInterface::addLayer(const DRW_Layer &data)
 {
     layers.append(data);
 }
 
-void DXFInterface::addLeader(const DRW_Leader * /*data*/)
-{
 
-}
 
 void DXFInterface::addLine(const DRW_Line &data)
 {
-    mScene.addLine(QLineF(data.basePoint.x, data.basePoint.y, data.secPoint.x, data.secPoint.y), attributesToPen(&data));
-}
-
-void DXFInterface::addLType(const DRW_LType & /*data*/)
-{
-
+    lines.append(data);
+    //mScene.addLine(QLineF(data.basePoint.x, data.basePoint.y, data.secPoint.x, data.secPoint.y), attributesToPen(&data));
 }
 
 void DXFInterface::addLWPolyline(const DRW_LWPolyline &data)
@@ -184,32 +99,23 @@ void DXFInterface::addLWPolyline(const DRW_LWPolyline &data)
         DRW_Vertex2D *verta = data.vertlist[i-1];
         DRW_Vertex2D *vertb = data.vertlist[i];
 
-        mScene.addLine(verta->x, verta->y, vertb->x, vertb->y, pen);
+        lines.append(DRW_Line (verta->x, verta->y, vertb->x, vertb->y));
+        //lines.append(new DRW_Line (verta->x, verta->y, vertb->x, vertb->y));
+
+        //mScene.addLine(verta->x, verta->y, vertb->x, vertb->y, pen);
     }
 }
 
-void DXFInterface::addMText(const DRW_MText & /*data*/)
-{
-}
 
 void DXFInterface::addPoint(const DRW_Point &data)
 {
-    mScene.addLine(data.basePoint.x, data.basePoint.y, data.basePoint.x, data.basePoint.y, attributesToPen(&data));
+    points.append(data);
+    //mScene.addLine(data.basePoint.x, data.basePoint.y, data.basePoint.x, data.basePoint.y, attributesToPen(&data));
 }
 
 void DXFInterface::addPolyline(const DRW_Polyline &data)
 {
     drawPolyline(data.vertlist, attributesToPen(&data));
-}
-
-void DXFInterface::addRay(const DRW_Ray & /*data*/)
-{
-
-}
-
-void DXFInterface::addSolid(const DRW_Solid & /*data*/)
-{
-
 }
 
 void DXFInterface::addSpline(const DRW_Spline *data)
@@ -218,97 +124,13 @@ void DXFInterface::addSpline(const DRW_Spline *data)
     Spline sp(data);
     sp.update(qlines);
 
-    QPen pen = attributesToPen(data);
+    //QPen pen = attributesToPen(data);
 
     foreach(QLineF line, qlines)
     {
-        mScene.addLine(line, pen);
-
+        lines.append(DRW_Line(double(line.p1().x()), double(line.p1().y()), double(line.p2().x()), double(line.p2().y())));
+        //mScene.addLine(line, pen);
     }
-}
-
-void DXFInterface::addText(const DRW_Text & /*data*/)
-{
-}
-
-void DXFInterface::addTextStyle(const DRW_Textstyle & /*data*/)
-{
-
-}
-
-void DXFInterface::addTrace(const DRW_Trace & /*data*/)
-{
-
-}
-
-void DXFInterface::addViewport(const DRW_Viewport & /*data*/)
-{
-
-}
-
-void DXFInterface::addVport(const DRW_Vport & /*data*/)
-{
-
-}
-
-void DXFInterface::addXline(const DRW_Xline & /*data*/)
-{
-
-}
-
-void DXFInterface::endBlock()
-{
-
-}
-
-void DXFInterface::linkImage(const DRW_ImageDef * /*data*/)
-{
-
-}
-
-void DXFInterface::writeBlockRecords()
-{
-
-}
-
-void DXFInterface::writeBlocks()
-{
-
-}
-
-void DXFInterface::writeDimstyles()
-{
-
-}
-
-void DXFInterface::writeEntities()
-{
-
-}
-
-void DXFInterface::writeHeader(DRW_Header & /*data*/)
-{
-
-}
-
-void DXFInterface::writeLayers()
-{
-
-}
-
-void DXFInterface::writeLTypes()
-{
-
-}
-
-void DXFInterface::writeTextstyles()
-{
-
-}
-
-void DXFInterface::writeVports()
-{
-
 }
 
 
@@ -412,11 +234,53 @@ void DXFInterface::drawPolyline(std::vector<DRW_Vertex*> vertlist, QPen pen)
         DRW_Vertex *verta = vertlist[i-1];
         DRW_Vertex *vertb = vertlist[i];
 
-        mScene.addLine(verta->basePoint.x, verta->basePoint.y, vertb->basePoint.x, vertb->basePoint.y, pen);
+        lines.append(DRW_Line(verta->basePoint.x, verta->basePoint.y, vertb->basePoint.x, vertb->basePoint.y));
+        //mScene.addLine(verta->basePoint.x, verta->basePoint.y, vertb->basePoint.x, vertb->basePoint.y, pen);
     }
 }
 
 QGraphicsScene * DXFInterface::scene()
 {
-    return &mScene;
+    //return &mScene;
+    return nullptr;
 }
+
+void DXFInterface::add3dFace(const DRW_3Dface & /*data*/){}
+void DXFInterface::addBlock(const DRW_Block & /*data*/){}
+void DXFInterface::setBlock(const int /*handle*/){}
+void DXFInterface::addComment(const char * /*comment*/){}
+void DXFInterface::addDimAlign(const DRW_DimAligned * /*data*/){}
+void DXFInterface::addDimAngular(const DRW_DimAngular * /*data*/){}
+void DXFInterface::addDimAngular3P(const DRW_DimAngular3p * /*data*/){}
+void DXFInterface::addDimDiametric(const DRW_DimDiametric * /*data*/){}
+void DXFInterface::addDimLinear(const DRW_DimLinear * /*data*/){}
+void DXFInterface::addDimOrdinate(const DRW_DimOrdinate * /*data*/){}
+void DXFInterface::addDimRadial(const DRW_DimRadial * /*data*/){}
+void DXFInterface::addDimStyle(const DRW_Dimstyle & /*data*/){}
+void DXFInterface::addHatch(const DRW_Hatch * /*data*/){}
+void DXFInterface::addHeader(const DRW_Header * /*data*/){}
+void DXFInterface::addImage(const DRW_Image * /*data*/){}
+void DXFInterface::addInsert(const DRW_Insert & /*data*/){}
+void DXFInterface::addKnot(const DRW_Entity & /*data*/){}
+void DXFInterface::addLeader(const DRW_Leader * /*data*/){}
+void DXFInterface::addLType(const DRW_LType & /*data*/){}
+void DXFInterface::addMText(const DRW_MText & /*data*/){}
+void DXFInterface::addRay(const DRW_Ray & /*data*/){}
+void DXFInterface::addSolid(const DRW_Solid & /*data*/){}
+void DXFInterface::addText(const DRW_Text & /*data*/){}
+void DXFInterface::addTextStyle(const DRW_Textstyle & /*data*/){}
+void DXFInterface::addTrace(const DRW_Trace & /*data*/){}
+void DXFInterface::addViewport(const DRW_Viewport & /*data*/){}
+void DXFInterface::addVport(const DRW_Vport & /*data*/){}
+void DXFInterface::addXline(const DRW_Xline & /*data*/){}
+void DXFInterface::endBlock(){}
+void DXFInterface::linkImage(const DRW_ImageDef * /*data*/){}
+void DXFInterface::writeBlockRecords(){}
+void DXFInterface::writeBlocks(){}
+void DXFInterface::writeDimstyles(){}
+void DXFInterface::writeEntities(){}
+void DXFInterface::writeHeader(DRW_Header & /*data*/){}
+void DXFInterface::writeLayers(){}
+void DXFInterface::writeLTypes(){}
+void DXFInterface::writeTextstyles(){}
+void DXFInterface::writeVports(){}

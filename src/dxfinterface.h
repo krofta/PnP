@@ -24,6 +24,7 @@
 #include <QPen>
 #include <QGraphicsScene>
 #include "scene_items.h"
+#include "../dxfitem.h"
 
 class DXFInterface : public DRW_Interface
 {
@@ -31,7 +32,7 @@ public:
     DXFInterface(QString filename);
     DXFInterface();
     ~DXFInterface();
-    QGraphicsScene mScene;
+    //QGraphicsScene mScene;
 
     void iniDXF(QString filename);
 
@@ -86,7 +87,8 @@ public:
     void addArc(const DRW_Arc& data);
 
     /** Called for every circle */
-    QGraphicsEllipseItem* addCircle(const DRW_Circle& data);
+    //QGraphicsEllipseItem* addCircle(const DRW_Circle& data);
+    void addCircle(const DRW_Circle& data);
 
     /** Called for every ellipse */
     void addEllipse(const DRW_Ellipse& data);
@@ -211,6 +213,13 @@ private:
 
     QList<DRW_Layer> layers;
     QList<SceneArc*> arches;
+
+    QList<DRW_Arc> arcs;
+    QList<DRW_Circle> circles;
+    QList<DRW_Line> lines;
+    QList<DRW_Point> points;
+
+    DxfItem *dxf_item;
 };
 
 #endif // DXFINTERFACE_H

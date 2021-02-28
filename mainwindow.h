@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QTreeWidgetItem>
+#include <QGraphicsScene>
 #include <QList>
 #include <QSettings>
 #include <QtWidgets>
@@ -110,6 +111,7 @@ private:
     QAction *m_backgroundAction;
     QAction *m_outlineAction;
 
+    QGraphicsScene *scene;
 
 };
 

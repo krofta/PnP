@@ -86,7 +86,7 @@ public:
     virtual void addArc(const DRW_Arc& data) = 0;
 
     /** Called for every circle */
-    virtual QGraphicsEllipseItem* addCircle(const DRW_Circle& data) = 0;
+    virtual void addCircle(const DRW_Circle& data) = 0;
 
     /** Called for every ellipse */
     virtual void addEllipse(const DRW_Ellipse& data) = 0;
