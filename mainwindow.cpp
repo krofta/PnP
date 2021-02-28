@@ -287,10 +287,10 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
             if(part->get_visible() == 0){
                 part->set_visible(1);
                 part->circle.colorName = "green";
-                part->ellipse = this->dxf.mScene.addEllipse(part->circle.basePoint.x-this->dot_size, part->circle.basePoint.y-this->dot_size,
-                                            2*this->dot_size,2*this->dot_size,QPen(this->dot_color),QBrush(this->dot_color));
+                part->ellipse = this->dxf.mScene.addEllipse(part->circle.basePoint.x-this->project->dot_size, part->circle.basePoint.y-this->project->dot_size,
+                                            2*this->project->dot_size,2*this->project->dot_size,QPen(this->project->dot_color),QBrush(this->project->dot_color));
                 part->ellipse->setZValue(10);
-                QBrush brush_green(this->dot_color);
+                QBrush brush_green(this->project->dot_color);
                 ui->treeWidget->currentItem()->setBackground(1, brush_green);
             }
             else
@@ -331,11 +331,11 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
                 //part->circle.color24 = (0xFFFFFF);
                 citem->part->circle.colorName = "green";
 
-                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-this->dot_size, citem->part->circle.basePoint.y-this->dot_size,
-                                            2*this->dot_size,2*this->dot_size,QPen(this->dot_color),QBrush(this->dot_color));
+                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-this->project->dot_size, citem->part->circle.basePoint.y-this->project->dot_size,
+                                            2*this->project->dot_size,2*this->project->dot_size,QPen(this->project->dot_color),QBrush(this->project->dot_color));
                 //part->ellipse = this->dxf.addCircle(*part->getCircle());
                 citem->part->ellipse->setZValue(10);
-                QBrush brush_green(this->dot_color);
+                QBrush brush_green(this->project->dot_color);
                 citem->setBackground(1, brush_green);
 
             }
@@ -622,14 +622,16 @@ void MainWindow::reload_files()
             return;
         }
         int res= 1;
-        if(this->project->bom_type == CAD_TYPE::KiCAD)
-            res = this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds, true);
-        if(this->project->bom_type == CAD_TYPE::OrCAD)
-            res = this->file_parser.parse_BOM_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
+        if(this->project->bom_type == CAD_TYPE::KiCAD){
+            res = this->file_parser.parse_csv_partlist(this->project->BillOfMaterialFile, &this->project->pcb_partkinds, true);
+        }
+        if(this->project->bom_type == CAD_TYPE::OrCAD){
+            res = this->file_parser.parse_BOM_partlist(this->project->BillOfMaterialFile, &this->project->pcb_partkinds);
+        }
         //if(this->project->bom_type == CAD_TYPE::Franzi)
         if(!res){
-            this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
-            this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
+            this->file_parser.partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
+            this->file_parser.partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
             this->csv_initialised = 1;
         }
         break;
@@ -651,14 +653,14 @@ void MainWindow::reload_files()
         }
         int res= 1;
         if(this->project->bom_type == CAD_TYPE::KiCAD)
-            res = this->file_parser.parse_pos_datei(this->PickAndPlaceFile, this->pcb_partkinds);
+            res = this->file_parser.parse_pos_datei(this->project->PickAndPlaceFile, this->project->pcb_partkinds);
         if(this->project->bom_type == CAD_TYPE::OrCAD)
-            res = this->file_parser.parse_rpt_datei(this->PickAndPlaceFile, this->pcb_partkinds);
+            res = this->file_parser.parse_rpt_datei(this->project->PickAndPlaceFile, this->project->pcb_partkinds);
 
         this->ui->treeWidget->clear();
         if(!res){
-            this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
-            this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
+            this->file_parser.partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
+            this->file_parser.partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
             this->rpt_initialised = 1;
         }
         break;
@@ -734,10 +736,10 @@ void MainWindow::toggle_parts()
                 CustomItem *citem = (CustomItem*)item->child(j);
                 citem->part->set_visible(1);
                 citem->part->circle.colorName = "green";
-                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-this->dot_size, citem->part->circle.basePoint.y-this->dot_size,
-                                            2*this->dot_size,2*this->dot_size,QPen(this->dot_color),QBrush(this->dot_color));
+                citem->part->ellipse = this->dxf.mScene.addEllipse(citem->part->circle.basePoint.x-this->project->dot_size, citem->part->circle.basePoint.y-this->project->dot_size,
+                                            2*this->project->dot_size,2*this->project->dot_size,QPen(this->project->dot_color),QBrush(this->project->dot_color));
                 citem->part->ellipse->setZValue(10);
-                QBrush brush_green(this->dot_color);
+                QBrush brush_green(this->project->dot_color);
                 citem->setBackground(1, brush_green);
             }
         }
