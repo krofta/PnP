@@ -44,6 +44,7 @@ int pnp_project::select_file(QString last_path)
     if(project_file.isEmpty()){
         return 1;
     }
+    emit send_new_project(this->project_file);
     return 0;
 }
 

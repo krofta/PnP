@@ -415,19 +415,19 @@ void MainWindow::saveSettings(){
 
 void MainWindow::add_dxf_file()
 {
-    this->dxf_filename = QFileDialog::getOpenFileName(this, "Open DXF", this->lastFilePath, "DXF Files (*.dxf)");
+    QString dxf_file = QFileDialog::getOpenFileName(this, "Open DXF", this->lastFilePath, "DXF Files (*.dxf)");
 
-    if(dxf_filename.isEmpty()){
+    if(dxf_file.isEmpty()){
         return;
     }
-    QFileInfo fi(this->dxf_filename);
+    QFileInfo fi(dxf_file);
     this->lastFilePath = fi.path();
     //this->ui->statusBar->showMessage(this->dxf_filename);
-    dxf.iniDXF(this->dxf_filename);
+    dxf.iniDXF(dxf_file);
     this->ui->graphicsView->setScene(dxf.scene());
     this->ui->graphicsView->fitInView(dxf.scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
     this->ui->graphicsView->show();
-    this->project->dxf_files.append(this->dxf_filename);
+    this->project->dxf_files.append(dxf_file);
     this->graphic_initialised = 1;
     this->project->graphic_type = GRAPIC_TYPE::DXF;
 }
@@ -475,8 +475,8 @@ void MainWindow::open_BOM_file(bool KiCad)
         this->msgBox.exec();
         return;
     }
-    this->BillOfMaterialFile = QFileDialog::getOpenFileName(this, "Open CSV", this->lastFilePath,KiCad?"csv Files (*.csv)" :"BOM Files (*.BOM)");
-    if(this->BillOfMaterialFile.isEmpty())
+    QString BillOfMaterialFile = QFileDialog::getOpenFileName(this, "Open CSV", this->lastFilePath,KiCad?"csv Files (*.csv)" :"BOM Files (*.BOM)");
+    if(BillOfMaterialFile.isEmpty())
     {
         return;
     }
@@ -484,13 +484,13 @@ void MainWindow::open_BOM_file(bool KiCad)
     this->file_parser = CSV_Parser();
     int res = 0;
     res= KiCad ?
-                this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds, true) :
-                this->file_parser.parse_BOM_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
+                this->file_parser.parse_csv_partlist(BillOfMaterialFile, &this->project->pcb_partkinds, true) :
+                this->file_parser.parse_BOM_partlist(BillOfMaterialFile, &this->project->pcb_partkinds);
     if(!res){
-        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
-        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
+        this->file_parser.partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
+        this->file_parser.partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
         this->csv_initialised = 1;
-        this->project->BillOfMaterialFile = this->BillOfMaterialFile;
+        this->project->BillOfMaterialFile = BillOfMaterialFile;
         this->project->bom_type = KiCad ? CAD_TYPE::KiCAD : CAD_TYPE::OrCAD;
     }
     else{
@@ -506,22 +506,22 @@ void MainWindow::open_pos_file(bool KiCAD)
         this->msgBox.exec();
         return;
     }
-    this->PickAndPlaceFile = QFileDialog::getOpenFileName(this, "Open RPT",  this->lastFilePath, KiCAD?"POS Files (*.pos)" :"RPT Files (*.rpt)");
-    if(this->PickAndPlaceFile.isEmpty())
+    QString PickAndPlaceFile = QFileDialog::getOpenFileName(this, "Open RPT",  this->lastFilePath, KiCAD?"POS Files (*.pos)" :"RPT Files (*.rpt)");
+    if(PickAndPlaceFile.isEmpty())
     {
         return;
     }
     this->file_parser = CSV_Parser();
     int res = 0;
     res= KiCAD ?
-                this->file_parser.parse_pos_datei(this->PickAndPlaceFile, this->pcb_partkinds) :
-                this->file_parser.parse_rpt_datei(this->PickAndPlaceFile, this->pcb_partkinds) ;
+                this->file_parser.parse_pos_datei(PickAndPlaceFile, this->project->pcb_partkinds) :
+                this->file_parser.parse_rpt_datei(PickAndPlaceFile, this->project->pcb_partkinds) ;
     this->ui->treeWidget->clear();
     if(!res){
-        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
-        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
+        this->file_parser.partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
+        this->file_parser.partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
         this->rpt_initialised = 1;
-        this->project->PickAndPlaceFile = this->PickAndPlaceFile;
+        this->project->PickAndPlaceFile = PickAndPlaceFile;
         this->project->pos_type = KiCAD ? CAD_TYPE::KiCAD : CAD_TYPE::OrCAD;
     }
     else
@@ -540,21 +540,21 @@ void MainWindow::open_franzisStueckliste()
         this->msgBox.exec();
         return;
     }
-    this->BillOfMaterialFile = QFileDialog::getOpenFileName(this, "Open CSV",  this->lastFilePath, "CSV Files (*.csv)");
-    if(this->BillOfMaterialFile.isEmpty())
+    QString BillOfMaterialFile = QFileDialog::getOpenFileName(this, "Open CSV",  this->lastFilePath, "CSV Files (*.csv)");
+    if(BillOfMaterialFile.isEmpty())
     {
         return;
     }
 
     this->file_parser = CSV_Parser();
     int res = 0;
-    res= this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
+    res= this->file_parser.parse_csv_partlist(BillOfMaterialFile, &this->project->pcb_partkinds);
 
     if(!res){
-        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
-        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
+        this->file_parser.partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
+        this->file_parser.partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
         this->csv_initialised = 1;
-        this->project->BillOfMaterialFile = this->BillOfMaterialFile;
+        this->project->BillOfMaterialFile = BillOfMaterialFile;
         this->project->bom_type = CAD_TYPE::Franzi;
     }
     else{
@@ -573,7 +573,7 @@ void MainWindow::reload_files()
     if(this->project->project_file.isEmpty())
         return;
     this->ui->treeWidget->clear();
-    this->pcb_partkinds.clear();
+    this->project->pcb_partkinds.clear();
     this->dxf.mScene.clear();
 
     switch(this->project->graphic_type){
@@ -587,8 +587,7 @@ void MainWindow::reload_files()
             this->msgBox.exec();
             return;
         }
-        for(int i = 0; i < this->project->dxf_files.count(); i++){
-            QFileInfo check_dxf(this->project->dxf_files[i]);
+        for(int i = 0; i < this->project->dxf_files.count(); i++){            QFileInfo check_dxf(this->project->dxf_files[i]);
             if(!check_dxf.exists() || !check_dxf.isFile()){
                 this->msgBox.setText(this->project->dxf_files[i] + " does not exist.");
                 this->msgBox.exec();
@@ -667,38 +666,13 @@ void MainWindow::reload_files()
     }
 
     return;
-
-
-    int res= 0;
-    //TODO: check project settings if kicad is checked
-    res= true ?
-                this->file_parser.parse_csv_partlist(this->BillOfMaterialFile, &this->pcb_partkinds, true) :
-                this->file_parser.parse_BOM_partlist(this->BillOfMaterialFile, &this->pcb_partkinds);
-    if(!res){
-        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
-        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
-        this->csv_initialised = 1;
-    }
-    // rpt Datei einlesen und zu den csv Daten matchen
-    this->file_parser = CSV_Parser();
-    //TODO: check project settings if kicad is checked
-    res= true ?
-                this->file_parser.parse_pos_datei(this->PickAndPlaceFile, this->pcb_partkinds) :
-                this->file_parser.parse_rpt_datei(this->PickAndPlaceFile, this->pcb_partkinds) ;
-    this->ui->treeWidget->clear();
-    if(!res){
-        this->file_parser.partKindsToTreeView(this->pcb_partkinds, this->ui->treeWidget);
-        this->file_parser.partKindstoTableView(this->pcb_partkinds, this->ui->tableWidget);
-        this->rpt_initialised = 1;
-    }
-
 }
 
 void MainWindow::clear_files()
 {
     this->ui->treeWidget->clear();
     this->ui->tableWidget->clear();
-    this->pcb_partkinds.clear();
+    this->project->pcb_partkinds.clear();
     this->dxf.mScene.clear();
 }
 

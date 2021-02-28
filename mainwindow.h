@@ -45,23 +45,13 @@ public:
     QList<QString> last_projects;
     DXFInterface dxf;
     QMessageBox msgBox;
-    // Liste von Objekte um Informationen über Position und Name zu Speichern
 
-    // Objekt zum parsen der scv und rpt dateien
     SvgView *m_svgview;
     CSV_Parser file_parser;
     pnp_project *project;
     int graphic_initialised;
     int csv_initialised;
     int rpt_initialised;
-
-    //TODO: in klasse pnp_projekt verschieben
-    QColor dot_color;
-    double dot_size;
-    QList<PCB_PartKind> pcb_partkinds;
-    QString dxf_filename;
-    QString BillOfMaterialFile;
-    QString PickAndPlaceFile;
 
     QAction *recentFileActs[10];
 
@@ -70,13 +60,9 @@ protected:
 
 private slots:
     void on_dxfButton_clicked();
-
     void on_csvButton_clicked();
-    
     void on_rptButton_clicked();
-    
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
-
     void on_toggleButton_clicked();
 
 public slots:
@@ -101,7 +87,6 @@ private:
     void createRecentFileMenu();
 
     void openRecentFile();
-
 
     void loadSettings();
     void saveSettings();
