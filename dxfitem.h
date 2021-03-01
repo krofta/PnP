@@ -9,8 +9,8 @@
 class DxfItem : public QGraphicsItem
 {
 public:
-    DxfItem(const QColor &color, QList<DRW_Arc> *arcs, QList<DRW_Circle> *circles,
-            QList<DRW_Line> *lines, QList<DRW_Point> *points);
+    DxfItem(const QColor &color,
+            QList<QLineF> *lines, QList<QPointF> *points, QRectF boundary_box);
 
 
     QRectF boundingRect() const override;
@@ -26,13 +26,19 @@ protected:
 private:
     int x;
     int y;
+
+    QRectF boundary_boxF;
+
     QColor color;
     QVector<QPointF> stuff;
 
     QList<DRW_Arc> *arcs;
     QList<DRW_Circle> *circles;
-    QList<DRW_Line> *lines;
-    QList<DRW_Point> *points;
+    //QList<DRW_Line> *lines;
+    //QList<DRW_Point> *points;
+
+    QList<QLineF> *linesF;
+    QList<QPointF> *pointsF;
 };
 
 #endif // DXFITEM_H

@@ -4,9 +4,12 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-DxfItem::DxfItem(const QColor &color, QList<DRW_Arc> *arcs, QList<DRW_Circle> *circles,
-                 QList<DRW_Line> *lines, QList<DRW_Point> *points)
+DxfItem::DxfItem(const QColor &color,
+                 QList<QLineF> *lines, QList<QPointF> *points, QRectF boundary_box)
 {
+    this->boundary_boxF = boundary_box;
+    this->linesF = lines;
+    this->pointsF = points;
     this->x = 0.0;
     this->y = 0.0;
     this->color = color;
@@ -14,18 +17,20 @@ DxfItem::DxfItem(const QColor &color, QList<DRW_Arc> *arcs, QList<DRW_Circle> *c
     setZValue(0);
 
     //setFlags(ItemIsSelectable | ItemIsMovable);
-    setFlags(ItemIsSelectable);
+    //setFlags(ItemIsSelectable);
     setAcceptHoverEvents(true);
 }
 
 QRectF DxfItem::boundingRect() const
 {
-
+    return this->boundary_boxF;
 }
 
 QPainterPath DxfItem::shape() const
 {
-
+    QPainterPath path;
+    path.addRect(boundingRect());
+    return path;
 }
 
 void DxfItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget)
@@ -36,7 +41,15 @@ void DxfItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWi
     if (item->state & QStyle::State_MouseOver)
         fillColor = fillColor.lighter(125);
 
-     const qreal lod = item->levelOfDetailFromTransform(painter->worldTransform());
+    // information about how much the user has zoomed in
+    const qreal lod = item->levelOfDetailFromTransform(painter->worldTransform());
+
+
+    painter->setPen(QPen(Qt::white, 0));
+    // draw lines
+    for(int i = 0; i < this->linesF->count(); i++){
+        painter->drawLine(this->linesF->at(i));
+    }
 
 }
 

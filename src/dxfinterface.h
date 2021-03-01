@@ -205,21 +205,29 @@ public:
     DRW_Layer getLayer(std::string name);
 
     void drawPolyline(std::vector<DRW_Vertex*> vertlist, QPen pen);
-
     QGraphicsScene * scene();
 
+    DxfItem *dxf_item;
+    QList<QPointF> pointsF;
+    QList<QLineF> linesF;
 
 private:
+    // sets min / max points of x and y
+    void set_boundary(double x, double y);
+    double minx, miny, maxx, maxy;
 
     QList<DRW_Layer> layers;
     QList<SceneArc*> arches;
 
     QList<DRW_Arc> arcs;
     QList<DRW_Circle> circles;
-    QList<DRW_Line> lines;
-    QList<DRW_Point> points;
+    //QList<DRW_Line> lines;
+    //QList<DRW_Point> points;
 
-    DxfItem *dxf_item;
+
+
+
+
 };
 
 #endif // DXFINTERFACE_H

@@ -426,8 +426,11 @@ void MainWindow::add_dxf_file()
     this->lastFilePath = fi.path();
     //this->ui->statusBar->showMessage(this->dxf_filename);
     dxf.iniDXF(dxf_file);
-    this->ui->graphicsView->setScene(dxf.scene());
-    this->ui->graphicsView->fitInView(dxf.scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
+    dxf.dxf_item->setPos(QPoint(0,0));
+    this->ui->graphicsView->scene()->addItem(this->dxf.dxf_item);
+    // scene already set in contructor
+    //this->ui->graphicsView->setScene(dxf.scene());
+    this->ui->graphicsView->fitInView(this->ui->graphicsView->scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
     this->ui->graphicsView->show();
     this->project->dxf_files.append(dxf_file);
     this->graphic_initialised = 1;
@@ -596,8 +599,12 @@ void MainWindow::reload_files()
                 continue;
             }
             dxf.iniDXF(this->project->dxf_files[i]);
-            this->ui->graphicsView->setScene(dxf.scene());
-            this->ui->graphicsView->fitInView(dxf.scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
+
+            dxf.dxf_item->setPos(QPoint(0,0));
+            this->ui->graphicsView->scene()->addItem(this->dxf.dxf_item);
+            // scene already set in contructor
+            //this->ui->graphicsView->setScene(dxf.scene());
+            this->ui->graphicsView->fitInView(this->ui->graphicsView->scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
             this->ui->graphicsView->show();
             this->graphic_initialised = 1;
         }
@@ -676,6 +683,8 @@ void MainWindow::clear_files()
     this->ui->tableWidget->clear();
     this->project->pcb_partkinds.clear();
     this->scene->clear();
+    this->dxf.pointsF.clear();
+    this->dxf.linesF.clear();
 }
 
 void MainWindow::toggle_parts()
