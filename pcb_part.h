@@ -3,16 +3,29 @@
 
 #include <QString>
 #include <QList>
+#include <QGraphicsItem>
 #include "libdxfrw/src/libdxfrw.h"
 
 
 
-class PCB_Part
+class PCB_Part// : public QGraphicsItem
 {
 public:
     PCB_Part();
-    ~PCB_Part();
     PCB_Part(QString name, QString x = "0", QString y = "0");
+    ~PCB_Part();
+
+/*
+    QRectF boundingRect() const override;
+    QPainterPath shape() const override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+*/
+public:
     void set_name(QString name);
     bool set_sx(QString x);
     bool set_sx(QString x, int invert);
@@ -35,7 +48,7 @@ public:
     double get_dy();
     double get_drotation();
     int get_visible();
-    int get_color();
+    QColor get_color();
     DRW_Circle* getCircle();
     QGraphicsEllipseItem *ellipse;
 
@@ -51,7 +64,11 @@ private:
     double dy;
     double drotation;
     int visible;
-    int color;
+
+    /*
+    QColor color;
+    QVector<QPointF> stuff;
+    */
 
 
 

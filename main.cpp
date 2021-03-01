@@ -5,14 +5,35 @@
 
 int main(int argc, char *argv[])
 {
-    /*
+
+    /* Uncomment if compiled for embedded device with wayland compositor
+    qputenv("XDG_RUNTIME_DIR", "/opt/waylandCompositor");
+    qputenv("QT_QPA_PLATFORM", "wayland");
+    */
+
+    /* Uncomment if compiled for eglfs environment
     qputenv("QT_QPA_EGLFS_ALWAYS_SET_MODE","1");
     qputenv("QT_QPA_EGLFS_KMS_ATOMIC","1");
     qputenv("QT_QPA_PLATFORM", "eglfs");
     */
+    qputenv("QSG_INFO", "1");
+    qputenv("QT_OPENGL", "angle");
+    qputenv("QSG_RENDER_LOOP","threaded");
+ /*
 
+*/
+    QGuiApplication::setAttribute(Qt::AA_UseOpenGLES);
     QApplication a(argc, argv);
     qApp->setStyle(QStyleFactory::create("Fusion"));
+    switch (QOpenGLContext::openGLModuleType()) {
+    case QOpenGLContext::LibGLES:
+        qDebug() << "OpenGL context: LibGLES";
+        break;
+    case QOpenGLContext::LibGL:
+        qDebug() << "OpenGL context: LibGLES";
+        break;
+    }
+
 
     QPalette newPalette;
     newPalette.setColor(QPalette::Window,          QColor( 37,  37,  37));

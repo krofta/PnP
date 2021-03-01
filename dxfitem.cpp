@@ -5,11 +5,14 @@
 #include <QStyleOptionGraphicsItem>
 
 DxfItem::DxfItem(const QColor &color,
-                 QList<QLineF> *lines, QList<QPointF> *points, QRectF boundary_box)
+                 QList<QLineF> *lines, QList<QPointF> *points,
+                 QList<QRectF> *circles,
+                 QRectF boundary_box)
 {
     this->boundary_boxF = boundary_box;
     this->linesF = lines;
     this->pointsF = points;
+    this->circlesF = circles;
     this->x = 0.0;
     this->y = 0.0;
     this->color = color;
@@ -50,6 +53,10 @@ void DxfItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWi
     for(int i = 0; i < this->linesF->count(); i++){
         painter->drawLine(this->linesF->at(i));
     }
+    for(int i = 0; i < this->circlesF->count(); i++){
+        painter->drawEllipse(this->circlesF->at(i));
+    }
+
 
 }
 

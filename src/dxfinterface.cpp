@@ -31,7 +31,7 @@ DXFInterface::DXFInterface(QString filename)
 
     QRectF bound = QRectF(minx, miny, maxx-minx, maxy-miny);
 
-    this->dxf_item = new DxfItem(QColor(255,255,255),&this->linesF, &this->pointsF, bound);
+    this->dxf_item = new DxfItem(QColor(255,255,255),&this->linesF, &this->pointsF, &this->circlesF, bound);
 
     //mScene.setBackgroundBrush(QBrush(Qt::black));
 }
@@ -44,26 +44,21 @@ void DXFInterface::iniDXF(QString filename){
     dxfRW *rw = new dxfRW(filename.toUtf8());
     rw->read(this, false);
     QRectF bound = QRectF(minx, miny, maxx-minx, maxy-miny);
-    this->dxf_item = new DxfItem(QColor(255,255,255),&this->linesF, &this->pointsF, bound);
-    //mScene.setBackgroundBrush(QBrush(Qt::gray));
+    this->dxf_item = new DxfItem(QColor(255,255,255),&this->linesF, &this->pointsF, &this->circlesF, bound);
+
 }
 
 
-void DXFInterface::addArc(const DRW_Arc &data)
-{
-    //this->arcs.append(data);
-    /*
-    SceneArc *  arc = new SceneArc(data);
-    arc->setPen(attributesToPen(&data));
-    arches.append(arc);
-    mScene.addItem(arc);
-    */
-}
+void DXFInterface::addArc(const DRW_Arc &data){}
 
-
-//QGraphicsEllipseItem* DXFInterface::addCircle(const DRW_Circle &data)
 void DXFInterface::addCircle(const DRW_Circle &data)
 {
+    set_boundary(data.basePoint.x - data.radious, data.basePoint.y - data.radious);
+    set_boundary(data.basePoint.x + data.radious, data.basePoint.y + data.radious);
+    this->circlesF.append(QRectF(data.basePoint.x - data.radious,
+                                 data.basePoint.y - data.radious,
+                                 data.radious*2,
+                                 data.radious*2));
     //circles.append(data);
     //return mScene.addEllipse(data.basePoint.x-data.radious, data.basePoint.y-data.radious, 2*data.radious, 2*data.radious, attributesToPen(&data));
 }
@@ -72,66 +67,55 @@ void DXFInterface::addCircle(const DRW_Circle &data)
 
 void DXFInterface::addEllipse(const DRW_Ellipse &data)
 {
+
     //ellipses.append(data);
+
+    //this->ellipses.append(DRW_Ellipse(data));
+
 
     DRW_Ellipse *el = new DRW_Ellipse(data);
     DRW_Polyline *pl = new DRW_Polyline();
     el->toPolyline(pl);
-    drawPolyline(pl->vertlist, attributesToPen(&data));
-
-
+    drawPolyline(pl->vertlist);
 }
 
-
-void DXFInterface::addLayer(const DRW_Layer &data)
-{
-    //layers.append(data);
-}
+void DXFInterface::addLayer(const DRW_Layer &data){}
 
 
 
 void DXFInterface::addLine(const DRW_Line &data)
 {
-    //lines.append(data);
     set_boundary(data.basePoint.x, data.basePoint.y);
     set_boundary(data.secPoint.x, data.secPoint.y);
     linesF.append(QLineF(data.basePoint.x, data.basePoint.y,
                          data.secPoint.x, data.secPoint.y));
-    //mScene.addLine(QLineF(data.basePoint.x, data.basePoint.y, data.secPoint.x, data.secPoint.y), attributesToPen(&data));
 }
 
 void DXFInterface::addLWPolyline(const DRW_LWPolyline &data)
 {
-    QPen pen = attributesToPen(&data);
+
 
     for(unsigned int i = 1; i < data.vertlist.size(); i++)
     {
         DRW_Vertex2D *verta = data.vertlist[i-1];
         DRW_Vertex2D *vertb = data.vertlist[i];
-
-        //lines.append(DRW_Line (verta->x, verta->y, vertb->x, vertb->y));
         set_boundary(verta->x, verta->y);
         set_boundary(vertb->x, vertb->y);
         linesF.append(QLineF(verta->x, verta->y,
                              vertb->x, vertb->y));
-        //lines.append(new DRW_Line (verta->x, verta->y, vertb->x, vertb->y));
-
-        //mScene.addLine(verta->x, verta->y, vertb->x, vertb->y, pen);
     }
 }
 
 
 void DXFInterface::addPoint(const DRW_Point &data)
 {
-    //points.append(data);
     set_boundary(data.basePoint.x, data.basePoint.y);
     pointsF.append(QPointF(data.basePoint.x, data.basePoint.y));
-    //mScene.addLine(data.basePoint.x, data.basePoint.y, data.basePoint.x, data.basePoint.y, attributesToPen(&data));
 }
 
 void DXFInterface::addPolyline(const DRW_Polyline &data)
 {
-    drawPolyline(data.vertlist, attributesToPen(&data));
+    drawPolyline(data.vertlist);
 }
 
 void DXFInterface::addSpline(const DRW_Spline *data)
@@ -140,11 +124,8 @@ void DXFInterface::addSpline(const DRW_Spline *data)
     Spline sp(data);
     sp.update(qlines);
 
-    //QPen pen = attributesToPen(data);
-
     foreach(QLineF line, qlines)
     {
-        //lines.append(DRW_Line(double(line.p1().x()), double(line.p1().y()), double(line.p2().x()), double(line.p2().y())));
         set_boundary(double(line.p1().x()), double(line.p1().y()));
         set_boundary(double(line.p2().x()), double(line.p2().y()));
         linesF.append(QLineF(double(line.p1().x()),
@@ -153,112 +134,16 @@ void DXFInterface::addSpline(const DRW_Spline *data)
                              double(line.p2().y())
                              )
                       );
-        //mScene.addLine(line, pen);
     }
 }
 
 
-QPen DXFInterface::attributesToPen(const DRW_Entity *e)
-{
-    QPen p(Qt::yellow, 0, Qt::SolidLine);
-
-    if(e->visible == false)
-        qDebug() << "nevid";
-
-    if (e->color == 256)
-    { // BYLAYER
-        DRW_Layer l = getLayer(e->layer);
-        p.setColor( numberToColor( l.color));
-    }
-
-    else if (e->color24 >= 0)
-        p.setColor(QColor(e->color24 >> 16,
-                          e->color24 >> 16 & 0xFF,
-                          e->color24 & 0xFF));
-    else
-        p.setColor(numberToColor(e->color));
-
-    if(e->lineType == "BYLAYER")
-    {
-        DRW_Layer l = getLayer(e->layer);
-        setQPenLinetype(p, l.lineType);
-    }
-    else
-        setQPenLinetype(p, e->lineType);
-
-//    if(e->lineWith != 1)
-//        p.setWidth( e->lineWith);
-
-    return p;
-}
-
-QColor DXFInterface::numberToColor(int col)
-{
-    // 7 je black or white - potrebuju white (255)
-    if (col == 7)
-        col = 255;
-
-    if (col==0)
-    {
-        //return RS_Color(RS2::FlagByBlock);
-    }
-    else if (col==256)
-    {
-        //return RS_Color(RS2::FlagByLayer);
-    }
-    else if (col<=255 && col>=0)
-    {
-
-        return QColor::fromRgb(DRW::dxfColors[col][0],
-                DRW::dxfColors[col][1],
-                DRW::dxfColors[col][2]);
-    }
-
-    return QColor(Qt::red);
-    // else: neznama barva
-}
-
-DRW_Layer DXFInterface::getLayer(std::string name)
-{
-    foreach(DRW_Layer l, layers)
-    {
-        if (l.name == name)
-            return l;
-    }
-
-    qDebug() << "layer not found :" << name.c_str();
-    return DRW_Layer();
-}
-
-void DXFInterface::setQPenLinetype(QPen & p, std::string linetype)
-{
-    if (linetype == "CONTINUOUS" || linetype == "Continuous")
-        p.setStyle(Qt::SolidLine);
-
-    else if(linetype == "HIDDEN")
-        p.setStyle(Qt::DashLine);
-
-    else if(linetype == "CENTER")
-    {
-        QVector<qreal> dashes;
-        dashes << 6 << 2 << 2 << 2;
-        p.setDashPattern(dashes);
-    }
-    else
-    {
-        qDebug() << "unknown linetype" << linetype.c_str();
-    }
-    return;
-}
-
-void DXFInterface::drawPolyline(std::vector<DRW_Vertex*> vertlist, QPen pen)
+void DXFInterface::drawPolyline(std::vector<DRW_Vertex*> vertlist)
 {
     for(unsigned int i = 1; i < vertlist.size(); i++)
     {
         DRW_Vertex *verta = vertlist[i-1];
         DRW_Vertex *vertb = vertlist[i];
-
-        //lines.append(DRW_Line(verta->basePoint.x, verta->basePoint.y, vertb->basePoint.x, vertb->basePoint.y));
         set_boundary(verta->basePoint.x, verta->basePoint.y);
         set_boundary(vertb->basePoint.x, vertb->basePoint.y);
         linesF.append(QLineF(verta->basePoint.x,
@@ -267,13 +152,11 @@ void DXFInterface::drawPolyline(std::vector<DRW_Vertex*> vertlist, QPen pen)
                              vertb->basePoint.y
                              )
                       );
-        //mScene.addLine(verta->basePoint.x, verta->basePoint.y, vertb->basePoint.x, vertb->basePoint.y, pen);
     }
 }
 
 QGraphicsScene * DXFInterface::scene()
 {
-    //return &mScene;
     return nullptr;
 }
 
