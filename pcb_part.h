@@ -5,10 +5,11 @@
 #include <QList>
 #include <QGraphicsItem>
 #include "libdxfrw/src/libdxfrw.h"
+#include "chip.h"
 
 
 
-class PCB_Part// : public QGraphicsItem
+class PCB_Part
 {
 public:
     PCB_Part();
@@ -37,7 +38,7 @@ public:
     void set_drotation(double rot);
     void set_visible(int val);
     void set_color(int color);
-    void refreshCircle();
+    void refreshGraphicItem();
 
     QString get_name();
     QString get_sx();
@@ -47,10 +48,11 @@ public:
     double get_dx();
     double get_dy();
     double get_drotation();
-    int get_visible();
+    //int get_visible();
     QColor get_color();
-    DRW_Circle* getCircle();
-    QGraphicsEllipseItem *ellipse;
+    //DRW_Circle* getCircle();
+    //QGraphicsEllipseItem *ellipse;
+    Chip *chip;
 
     DRW_Circle circle;
 

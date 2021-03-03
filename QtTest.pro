@@ -17,6 +17,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
+    chip.cpp \
     customtablewidgetitem.cpp \
     dxfitem.cpp \
         mainwindow.cpp \
@@ -39,6 +40,7 @@ SOURCES += main.cpp\
     svgview.cpp
 
 HEADERS  += mainwindow.h \
+    chip.h \
     customtablewidgetitem.h \
     dxfitem.h \
     libdxfrw/src/intern/drw_cptable932.h \

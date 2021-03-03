@@ -7,20 +7,23 @@
 #include <QAction>
 
 #include "customitem.h"
+#include "customtablewidgetitem.h"
 #include "src/dxfinterface.h"
 #include "libdxfrw/src/libdxfrw.h"
 #include <src/dxfsceneview.h>
+
+#define COLUMN_COLOR 0x2F,0x4F,0x4F
 
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    scene(new QGraphicsScene(this)),
+    m_scene(new QGraphicsScene(this)),
     m_svgview(new SvgView)
 {
 
     ui->setupUi(this);
-    this->ui->graphicsView->setScene(this->scene);
+    this->ui->graphicsView->setScene(this->m_scene);
 
 
     this->csv_initialised = this->rpt_initialised = this->graphic_initialised = 0;
@@ -132,9 +135,10 @@ void MainWindow::addActions()
     this->ui->actionAdd_dxf_file->setStatusTip("Adds a dxf file to graphics scene");
     connect(this->ui->actionAdd_dxf_file, &QAction::triggered, this, &MainWindow::add_dxf_file);
     // Opens a svg vector file
+    /*
     this->ui->actionOpen_svg_file->setStatusTip("Opens a svg file to graphics scene");
     connect(this->ui->actionOpen_svg_file, &QAction::triggered, this, &MainWindow::open_svg_file);
-
+    */
 
     // open BOM file KiCAD
     this->ui->actionKiCAD_BOM->setStatusTip("Loads all kinds of parts of the pcb to the tree view");
@@ -185,7 +189,7 @@ void MainWindow::addActions()
 
 
     // Renderer-------------------------------
-
+    /*
     m_nativeAction = this->ui->menuRenderer->addAction("Native");
     m_nativeAction->setCheckable(true);
     m_nativeAction->setChecked(true);
@@ -237,6 +241,7 @@ void MainWindow::addActions()
     zoomAction->setShortcut(QKeySequence::ZoomOut);
     zoomAction = this->ui->menuView->addAction(tr("Reset Zoom"), this->ui->graphicsView, &SvgView::resetZoom);
     zoomAction->setShortcut(Qt::CTRL + Qt::Key_0);
+    */
 
 }
 
@@ -253,6 +258,14 @@ void MainWindow::onTextColorSelected(QColor color)
     //ui->textEdit->setTextColor(color);
     //this->dot_color = color;
     this->project->dot_color = color;
+    for(int i = 0; i < this->project->pcb_partkinds.count(); i++){
+        for(int j = 0; j < this->project->pcb_partkinds[i].parts.count(); j++ ){
+            if(this->project->pcb_partkinds[i].parts[j].chip != nullptr){
+                this->project->pcb_partkinds[i].parts[j].chip->changeColor(color);
+                this->project->pcb_partkinds[i].parts[j].chip->update();
+            }
+        }
+    }
 }
 
 
@@ -286,22 +299,16 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
         c_item = (CustomItem*)item;
         if(c_item->part != nullptr){
             part = c_item->part;
-            if(part->get_visible() == 0){
-                part->set_visible(1);
-                part->circle.colorName = "green";
-                part->ellipse = this->scene->addEllipse(part->circle.basePoint.x-this->project->dot_size, part->circle.basePoint.y-this->project->dot_size,
-                                            2*this->project->dot_size,2*this->project->dot_size,QPen(this->project->dot_color),QBrush(this->project->dot_color));
-                part->ellipse->setZValue(10);
-                QBrush brush_green(this->project->dot_color);
-                ui->treeWidget->currentItem()->setBackground(1, brush_green);
-            }
-            else
-            {
-                part->set_visible(0);
-                if(part->ellipse != nullptr)
-                    this->scene->removeItem(part->ellipse);
-                QBrush brush_white(Qt::white);
-                ui->treeWidget->currentItem()->setBackground(1, brush_white);
+            if(part->chip != nullptr){
+                if(part->chip->isVisible() == false){
+                    part->chip->setVisible(true);
+                    ui->treeWidget->currentItem()->setBackground(1, QBrush(this->project->dot_color));
+                }
+                else
+                {
+                    part->chip->setVisible(false);
+                    ui->treeWidget->currentItem()->setBackground(1, QBrush(QColor(COLUMN_COLOR)));
+                }
             }
 
         }
@@ -311,34 +318,28 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
         // Checken ob irgendwelche Bauteile aktiviert
         for(int i = 0; i < item->childCount(); i++){
             CustomItem* citem = (CustomItem*)item->child(i);
-            if(citem->part->get_visible())
-                visible = 1;
+            if(citem->part->chip != nullptr){
+                if(citem->part->chip->isVisible())
+                    visible = 1;
+            }
         }
         // Wenn Bauteile aktiviert -> Alle deaktivieren
         if(visible)
             for(int i = 0; i < item->childCount(); i++){
                 CustomItem* citem = (CustomItem*)item->child(i);
-                citem->part->set_visible(0);
-                if(citem->part->ellipse != nullptr)
-                    this->scene->removeItem(citem->part->ellipse);
-                QBrush brush_white(Qt::white);
-                citem->setBackground(1, brush_white);
+                if(citem->part->chip != nullptr){
+                    citem->part->chip->setVisible(false);
+                }
+                citem->setBackground(1, QBrush(QColor(COLUMN_COLOR)));
 
             }
         // Wenn keine Bauteile aktiviert -> Alle aktivieren
         else
             for(int i = 0; i < item->childCount(); i++){
                 CustomItem* citem = (CustomItem*)item->child(i);
-                citem->part->set_visible(1);
-                //part->circle.color24 = (0xFFFFFF);
-                citem->part->circle.colorName = "green";
-
-                citem->part->ellipse = this->scene->addEllipse(citem->part->circle.basePoint.x-this->project->dot_size, citem->part->circle.basePoint.y-this->project->dot_size,
-                                            2*this->project->dot_size,2*this->project->dot_size,QPen(this->project->dot_color),QBrush(this->project->dot_color));
-                //part->ellipse = this->dxf.addCircle(*part->getCircle());
-                citem->part->ellipse->setZValue(10);
-                QBrush brush_green(this->project->dot_color);
-                citem->setBackground(1, brush_green);
+                if(citem->part->chip != nullptr)
+                    citem->part->chip->setVisible(true);
+                citem->setBackground(1, QBrush(this->project->dot_color));
 
             }
     }
@@ -369,7 +370,7 @@ void MainWindow::receive_dot_size(double size)
 
 void MainWindow::setRenderer(int renderMode)
 {
-    this->ui->graphicsView->setRenderer(static_cast<SvgView::RendererType>(renderMode));
+    //this->ui->graphicsView->setRenderer(static_cast<SvgView::RendererType>(renderMode));
 }
 
 void MainWindow::loadSettings(){
@@ -434,9 +435,10 @@ void MainWindow::add_dxf_file()
     this->ui->graphicsView->show();
     this->project->dxf_files.append(dxf_file);
     this->graphic_initialised = 1;
+    //this->ui->graphicsView->scale(1, -1);
     this->project->graphic_type = GRAPIC_TYPE::DXF;
 }
-
+/*
 bool MainWindow::open_svg_file()
 {
 
@@ -470,7 +472,7 @@ bool MainWindow::open_svg_file()
 
     return true;
 }
-
+*/
 
 void MainWindow::open_BOM_file(bool KiCad)
 {
@@ -492,8 +494,8 @@ void MainWindow::open_BOM_file(bool KiCad)
                 this->file_parser.parse_csv_partlist(BillOfMaterialFile, &this->project->pcb_partkinds, true) :
                 this->file_parser.parse_BOM_partlist(BillOfMaterialFile, &this->project->pcb_partkinds);
     if(!res){
-        this->file_parser.partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
-        this->file_parser.partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
+        this->partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
+        this->partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
         this->csv_initialised = 1;
         this->project->BillOfMaterialFile = BillOfMaterialFile;
         this->project->bom_type = KiCad ? CAD_TYPE::KiCAD : CAD_TYPE::OrCAD;
@@ -523,8 +525,9 @@ void MainWindow::open_pos_file(bool KiCAD)
                 this->file_parser.parse_rpt_datei(PickAndPlaceFile, this->project->pcb_partkinds) ;
     this->ui->treeWidget->clear();
     if(!res){
-        this->file_parser.partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
-        this->file_parser.partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
+        this->partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
+        this->partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
+        this->chipsToScene(this->project->pcb_partkinds, this->m_scene);
         this->rpt_initialised = 1;
         this->project->PickAndPlaceFile = PickAndPlaceFile;
         this->project->pos_type = KiCAD ? CAD_TYPE::KiCAD : CAD_TYPE::OrCAD;
@@ -556,8 +559,8 @@ void MainWindow::open_franzisStueckliste()
     res= this->file_parser.parse_csv_partlist(BillOfMaterialFile, &this->project->pcb_partkinds);
 
     if(!res){
-        this->file_parser.partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
-        this->file_parser.partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
+        this->partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
+        this->partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
         this->csv_initialised = 1;
         this->project->BillOfMaterialFile = BillOfMaterialFile;
         this->project->bom_type = CAD_TYPE::Franzi;
@@ -579,7 +582,7 @@ void MainWindow::reload_files()
         return;
     this->ui->treeWidget->clear();
     this->project->pcb_partkinds.clear();
-    this->scene->clear();
+    this->m_scene->clear();
 
     switch(this->project->graphic_type){
     case GRAPIC_TYPE::GRAPIC_TYPE_UNDEF:
@@ -607,6 +610,7 @@ void MainWindow::reload_files()
             this->ui->graphicsView->fitInView(this->ui->graphicsView->scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
             this->ui->graphicsView->show();
             this->graphic_initialised = 1;
+            //this->ui->graphicsView->scale(1, -1);
         }
 
         break;
@@ -638,8 +642,8 @@ void MainWindow::reload_files()
         }
         //if(this->project->bom_type == CAD_TYPE::Franzi)
         if(!res){
-            this->file_parser.partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
-            this->file_parser.partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
+            this->partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
+            this->partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
             this->csv_initialised = 1;
         }
         break;
@@ -667,8 +671,9 @@ void MainWindow::reload_files()
 
         this->ui->treeWidget->clear();
         if(!res){
-            this->file_parser.partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
-            this->file_parser.partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
+            this->partKindsToTreeView(this->project->pcb_partkinds, this->ui->treeWidget);
+            this->partKindstoTableView(this->project->pcb_partkinds, this->ui->tableWidget);
+            this->chipsToScene(this->project->pcb_partkinds, this->m_scene);
             this->rpt_initialised = 1;
         }
         break;
@@ -677,12 +682,88 @@ void MainWindow::reload_files()
     return;
 }
 
+int MainWindow::partKindsToTreeView(QList<PCB_PartKind> &part_kinds, QTreeWidget *tree){
+    tree->clear();
+    for(int i = 0; i < part_kinds.count(); i++){
+        QTreeWidgetItem *treeItemRoot = new QTreeWidgetItem(tree);
+        treeItemRoot->setText(0, part_kinds[i].get_name());
+        for(int j = 0; j < part_kinds[i].parts.count(); j++){
+            CustomItem *treeItemChild = new CustomItem(&part_kinds[i].parts[j]);
+            treeItemChild->setText(0, part_kinds[i].parts[j].get_name());
+            treeItemChild->setText(1, part_kinds[i].parts[j].get_sx());
+            treeItemChild->setText(2, part_kinds[i].parts[j].get_sy());
+            treeItemChild->setText(3, part_kinds[i].parts[j].get_srotation());
+            treeItemChild->setText(4, part_kinds[i].parts[j].get_layer());
+            treeItemRoot->addChild(treeItemChild);
+        }
+    }
+    return 0;
+}
+
+int MainWindow::partKindstoTableView(QList<PCB_PartKind> &part_kinds, QTableWidget *table)
+{
+    table->clear();
+    table->setHorizontalHeaderLabels(QStringList() << "Name"
+        << "Barcode"
+        << "Ignore"
+        << "Fiducial"
+        << "Caera Vision"
+        << "Nozzle"
+        << "Speed X"
+        << "Acc. X"
+        << "Speed Y"
+        << "Acc. Y"
+        << "Speed Z"
+        << "Acc. Z"
+        << "Speed rot."
+        << "Acc. rot."
+        << "Height"
+        << "Offset X"
+        << "Offset Y"
+        << "Offset rot."
+        );
+    table->setRowCount(part_kinds.count());
+    for(int i = 0, column = 0; i < part_kinds.count(); i++){
+        column = 0;
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::name));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::barcode));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::ignore));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::fiducial));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::cv));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::nozzle));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::velx));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::accx));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::vely));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::accy));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::velz));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::accz));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::velrot));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::accrot));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::height));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::offsetx));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::offsety));
+        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::offsetrot));
+    }
+    return 0;
+}
+
+int MainWindow::chipsToScene(QList<PCB_PartKind> &part_kinds, QGraphicsScene *scene)
+{
+    for(int i = 0; i < part_kinds.count(); i++){
+        for(int j = 0; j < part_kinds[i].parts.count(); j++){
+            if(part_kinds[i].parts[j].chip != nullptr ){
+                scene->addItem( part_kinds[i].parts[j].chip);
+            }
+        }
+    }
+}
+
 void MainWindow::clear_files()
 {
     this->ui->treeWidget->clear();
     this->ui->tableWidget->clear();
     this->project->pcb_partkinds.clear();
-    this->scene->clear();
+    this->m_scene->clear();
     this->dxf.pointsF.clear();
     this->dxf.linesF.clear();
 }
@@ -690,46 +771,22 @@ void MainWindow::clear_files()
 void MainWindow::toggle_parts()
 {
     int itemsCount = this->ui->treeWidget->topLevelItemCount();
-    int visible = 0;
-    // checken ob items aktiviert sind
     for(int i = 0; i < itemsCount; i++){
         QTreeWidgetItem *item = (QTreeWidgetItem *)this->ui->treeWidget->topLevelItem(i);
         for(int j = 0; j < item->childCount(); j++){
             CustomItem *citem = (CustomItem*)item->child(j);
-            if(citem->part->get_visible()){
-                visible = 1;
-            }
-        }
-    }
-    if(visible){
-        for(int i = 0; i < itemsCount; i++){
-            QTreeWidgetItem *item = (QTreeWidgetItem *)this->ui->treeWidget->topLevelItem(i);
-            for(int j = 0; j < item->childCount(); j++){
-                CustomItem *citem = (CustomItem*)item->child(j);
-                citem->part->set_visible(0);
-                if(citem->part->ellipse != nullptr)
-                    this->scene->removeItem(citem->part->ellipse);
-                QBrush brush_white(Qt::white);
-                citem->setBackground(1, brush_white);
-            }
-        }
-    }
-    else{
-        for(int i = 0; i < itemsCount; i++){
-            QTreeWidgetItem *item = (QTreeWidgetItem *)this->ui->treeWidget->topLevelItem(i);
-            for(int j = 0; j < item->childCount(); j++){
-                CustomItem *citem = (CustomItem*)item->child(j);
-                citem->part->set_visible(1);
-                citem->part->circle.colorName = "green";
-                citem->part->ellipse = this->scene->addEllipse(citem->part->circle.basePoint.x-this->project->dot_size, citem->part->circle.basePoint.y-this->project->dot_size,
-                                            2*this->project->dot_size,2*this->project->dot_size,QPen(this->project->dot_color),QBrush(this->project->dot_color));
-                citem->part->ellipse->setZValue(10);
-                QBrush brush_green(this->project->dot_color);
-                citem->setBackground(1, brush_green);
-            }
-        }
-    }
+            if(citem->part->chip != nullptr){
+                if(citem->part->chip->isVisible()){
+                    citem->part->chip->setVisible(false);
+                    citem->setBackground(1, QBrush(QColor(COLUMN_COLOR)));
 
+                }else{
+                    citem->part->chip->setVisible(true);
+                    citem->setBackground(1, QBrush(this->project->dot_color));
+                }
+            }
+        }
+    }
 }
 
 void MainWindow::on_reloadButton_clicked(){

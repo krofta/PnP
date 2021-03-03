@@ -59,6 +59,7 @@ public:
 protected:
     void showEvent(QShowEvent *ev);
 
+
 private slots:
     void on_dxfButton_clicked();
     void on_csvButton_clicked();
@@ -95,11 +96,15 @@ private:
     void add_dxf_file();
     void open_BOM_file(bool KiCAD);
     void open_pos_file(bool KiCAD);
-    bool open_svg_file();
+    //bool open_svg_file();
     void open_franzisStueckliste();
 
     void open_files_from_project();
     void reload_files();
+    int  partKindsToTreeView(QList<PCB_PartKind> &part_kinds, QTreeWidget *tree);
+    int  partKindstoTableView(QList<PCB_PartKind> &part_kinds, QTableWidget *table);
+    int  chipsToScene(QList<PCB_PartKind> &part_kinds, QGraphicsScene *scene);
+
     void clear_files();
 
     void toggle_parts();
@@ -111,7 +116,7 @@ private:
     QAction *m_backgroundAction;
     QAction *m_outlineAction;
 
-    QGraphicsScene *scene;
+    QGraphicsScene *m_scene;
 
 };
 

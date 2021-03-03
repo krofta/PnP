@@ -8,36 +8,45 @@
 // -----------------------------KONSTRUKTOREN
 
 
-PCB_Part::PCB_Part()// : QGraphicsItem()
+PCB_Part::PCB_Part()
 {
-    this->ellipse = nullptr;
+    this->chip = nullptr;
 
 }
 
 
 PCB_Part::~PCB_Part(){
+    /*
     this->circle = DRW_Circle();
     this->circle.color = 0x00FF00;
     this->circle.basePoint = DRW_Coord(0.0, 0.0, 0.0);
     this->circle.radious = 0.5;
     this->circle.visible = false;
     this->ellipse = nullptr;
+    */
+    this ->chip = nullptr;
 
 }
 
 PCB_Part::PCB_Part(QString name, QString x, QString y)// : QGraphicsItem()
 {
-    this->ellipse = nullptr;
+    //this->ellipse = nullptr;
+
     this->set_name(name);
     this->set_sx(x);
     this->set_sy(y);
     //this->color = 0x00FFFF;
+    /*
     this->visible = 0;
     this->circle = DRW_Circle();
     this->circle.color = 0x00FF00;
     this->circle.basePoint = DRW_Coord(0.0, 0.0, 0.0);
     this->circle.radious = 0.5;
     this->circle.visible = false;
+    */
+
+    this->chip = nullptr;
+    //this->chip = new Chip(QColor(Qt::blue),0,0);
 }
 
 // ------------------------------SETTER METHODEN
@@ -157,106 +166,31 @@ QColor PCB_Part::get_color(){
     //return this->color;
 }
 
+/*
 int PCB_Part::get_visible(){
     //this->circle.visible
     return this->circle.visible;
 }
-
+*/
+/*
 DRW_Circle* PCB_Part::getCircle(){
     return &this->circle;
 }
-
-void PCB_Part::refreshCircle(){
-    this->circle.basePoint.x = this->dx;
-    this->circle.basePoint.y = this->dy;
-}
-
-
-/*
-QRectF PCB_Part::boundingRect() const
-{
-    return QRectF(0, 0, 50, 50);
-}
-
-QPainterPath PCB_Part::shape() const
-{
-    QPainterPath path;
-    path.addRect(14, 14, 10, 10);
-    return path;
-}
-
-void PCB_Part::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-    Q_UNUSED(widget);
-
-    QColor fillColor = (option->state & QStyle::State_Selected) ? color.darker(150) : color;
-    if (option->state & QStyle::State_MouseOver)
-        fillColor = fillColor.lighter(125);
-
-    const qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
-    if (lod < 0.2) {
-        if (lod < 0.125) {
-            painter->fillRect(QRectF(0, 0, 50, 50), fillColor);
-            return;
-        }
-
-        QBrush b = painter->brush();
-        painter->setBrush(fillColor);
-        painter->drawRect(13, 13, 10, 10);
-        painter->setBrush(b);
-        return;
-    }
-
-    QPen oldPen = painter->pen();
-    QPen pen = oldPen;
-    int width = 0;
-    if (option->state & QStyle::State_Selected)
-        width += 2;
-
-    pen.setWidth(width);
-    QBrush b = painter->brush();
-    painter->setBrush(QBrush(fillColor.darker(option->state & QStyle::State_Sunken ? 120 : 100)));
-
-    painter->drawRect(QRect(14, 14, 15, 15));
-    painter->setBrush(b);
-
-
-
-    // Draw text
-    if (lod >= 2) {
-        QFont font("Times", 10);
-        font.setStyleStrategy(QFont::ForceOutline);
-        painter->setFont(font);
-        painter->save();
-        painter->scale(0.1, 0.1);
-        painter->drawText(170, 180, QString("%1").arg(this->name));
-        painter->restore();
-    }
-
-}
-
-void PCB_Part::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    QGraphicsItem::mousePressEvent(event);
-    update();
-}
-
-void PCB_Part::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (event->modifiers() & Qt::ShiftModifier) {
-        stuff << event->pos();
-        update();
-        return;
-    }
-    QGraphicsItem::mouseMoveEvent(event);
-}
-
-void PCB_Part::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    QGraphicsItem::mouseReleaseEvent(event);
-    update();
-}
 */
+
+void PCB_Part::refreshGraphicItem(){
+    if(this->chip == nullptr){
+        this->chip = new Chip(QColor(Qt::blue), this->dx, this->dy, this->drotation);
+    }else{
+        this->chip->setX(this->dx);
+        this->chip->setY(this->dy);
+        this->chip->setPos(this->dx, this->dy);
+        this->chip->setRotation(this->drotation);
+    }
+
+    //this->circle.basePoint.x = this->dx;
+    //this->circle.basePoint.y = this->dy;
+}
 
 
 

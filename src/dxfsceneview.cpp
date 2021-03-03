@@ -23,12 +23,14 @@ DXFSceneView::DXFSceneView(QWidget *parent) :
     QGraphicsView(parent)
 {
     setSceneRect(INT_MIN/2, INT_MIN/2, INT_MAX, INT_MAX);
-    setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    setDragMode(ScrollHandDrag);
+    //setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    setDragMode(QGraphicsView::ScrollHandDrag);
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-    scale(1, -1);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+    setOptimizationFlags(QGraphicsView::DontSavePainterState);
+    scale(1, -1);
 }
 
 

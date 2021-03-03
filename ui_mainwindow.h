@@ -31,7 +31,7 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 #include "ColorPickerToolButton.h"
-#include "svgview.h"
+#include "src/dxfsceneview.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -70,7 +70,7 @@ public:
     QWidget *tabComponentPara;
     QVBoxLayout *verticalLayout_10;
     QTableWidget *tableWidget;
-    SvgView *graphicsView;
+    DXFSceneView *graphicsView;
     QStatusBar *statusBar;
     QMenuBar *menuBar;
     QMenu *menuFile;
@@ -221,7 +221,7 @@ public:
 
         tabWidget->addTab(tabComponentPara, QString());
         splitter->addWidget(tabWidget);
-        graphicsView = new SvgView(splitter);
+        graphicsView = new DXFSceneView(splitter);
         graphicsView->setObjectName(QString::fromUtf8("graphicsView"));
         sizePolicy1.setHeightForWidth(graphicsView->sizePolicy().hasHeightForWidth());
         graphicsView->setSizePolicy(sizePolicy1);
@@ -280,7 +280,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);

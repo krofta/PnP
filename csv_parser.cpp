@@ -1,6 +1,5 @@
 #include "csv_parser.h"
 #include "customitem.h"
-#include "customtablewidgetitem.h"
 #include <QFile>
 #include <QSettings>
 
@@ -103,70 +102,6 @@ int CSV_Parser::parse_BOM_partlist(QString path, QList<PCB_PartKind> * part_kind
     return 0;
 }
 
-int CSV_Parser::partKindsToTreeView(QList<PCB_PartKind> &part_kinds, QTreeWidget *tree){
-    tree->clear();
-    for(int i = 0; i < part_kinds.count(); i++){
-        QTreeWidgetItem *treeItemRoot = new QTreeWidgetItem(tree);
-        treeItemRoot->setText(0, part_kinds[i].get_name());
-        for(int j = 0; j < part_kinds[i].parts.count(); j++){
-            CustomItem *treeItemChild = new CustomItem(&part_kinds[i].parts[j]);
-            treeItemChild->setText(0, part_kinds[i].parts[j].get_name());
-            treeItemChild->setText(1, part_kinds[i].parts[j].get_sx());
-            treeItemChild->setText(2, part_kinds[i].parts[j].get_sy());
-            treeItemChild->setText(3, part_kinds[i].parts[j].get_srotation());
-            treeItemChild->setText(4, part_kinds[i].parts[j].get_layer());
-            treeItemRoot->addChild(treeItemChild);
-        }
-    }
-    return 0;
-}
-
-int CSV_Parser::partKindstoTableView(QList<PCB_PartKind> &part_kinds, QTableWidget *table)
-{
-    table->clear();
-    table->setHorizontalHeaderLabels(QStringList() << "Name"
-        << "Barcode"
-        << "Ignore"
-        << "Fiducial"
-        << "Caera Vision"
-        << "Nozzle"
-        << "Speed X"
-        << "Acc. X"
-        << "Speed Y"
-        << "Acc. Y"
-        << "Speed Z"
-        << "Acc. Z"
-        << "Speed rot."
-        << "Acc. rot."
-        << "Height"
-        << "Offset X"
-        << "Offset Y"
-        << "Offset rot."
-        );
-    table->setRowCount(part_kinds.count());
-    for(int i = 0, column = 0; i < part_kinds.count(); i++){
-        column = 0;
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::name));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::barcode));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::ignore));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::fiducial));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::cv));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::nozzle));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::velx));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::accx));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::vely));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::accy));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::velz));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::accz));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::velrot));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::accrot));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::height));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::offsetx));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::offsety));
-        table->setItem(i, column++, new CustomTableWidgetItem(&part_kinds[i], processParameter::offsetrot));
-    }
-    return 0;
-}
 
 void CSV_Parser::addTreeRoot(QTreeWidget *tree, PCB_PartKind kind)
 {
@@ -260,7 +195,7 @@ int CSV_Parser::parse_rpt_datei(QString path, QList<PCB_PartKind> &part_kinds/*,
                     if(lineStrings[0] == part_kinds[i].parts[j].get_name() ){
                         part_kinds[i].parts[j].set_sx(lineStrings[4]);
                         part_kinds[i].parts[j].set_sy(lineStrings[5]);
-                        part_kinds[i].parts[j].refreshCircle();
+                        part_kinds[i].parts[j].refreshGraphicItem();
                     }
                 }
             }
@@ -295,7 +230,7 @@ int CSV_Parser::parse_pos_datei(QString path, QList<PCB_PartKind> &part_kinds/*,
                         part_kinds[i].parts[j].set_sy(lineStrings[4]);
                         part_kinds[i].parts[j].set_srotation(lineStrings[5]);
                         part_kinds[i].parts[j].set_layer(lineStrings[6]);
-                        part_kinds[i].parts[j].refreshCircle();
+                        part_kinds[i].parts[j].refreshGraphicItem();
                     }
                 }
             }

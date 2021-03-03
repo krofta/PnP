@@ -98,7 +98,7 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="tabComponents">
           <property name="sizePolicy">
@@ -146,7 +146,7 @@
           </layout>
          </widget>
         </widget>
-        <widget class="SvgView" name="graphicsView">
+        <widget class="DXFSceneView" name="graphicsView">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -210,20 +210,8 @@
     </property>
     <addaction name="actionToggle_all_parts"/>
    </widget>
-   <widget class="QMenu" name="menuRenderer">
-    <property name="title">
-     <string>Renderer</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuView">
-    <property name="title">
-     <string>View</string>
-    </property>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
-   <addaction name="menuRenderer"/>
-   <addaction name="menuView"/>
   </widget>
   <action name="actionNewProject">
    <property name="text">
@@ -304,9 +292,9 @@
    <header>ColorPickerToolButton.h</header>
   </customwidget>
   <customwidget>
-   <class>SvgView</class>
+   <class>DXFSceneView</class>
    <extends>QGraphicsView</extends>
-   <header>svgview.h</header>
+   <header>src/dxfsceneview.h</header>
   </customwidget>
  </customwidgets>
  <resources>
