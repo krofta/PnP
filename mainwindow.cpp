@@ -18,8 +18,9 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    m_scene(new QGraphicsScene(this)),
-    m_svgview(new SvgView)
+    m_scene(new QGraphicsScene(this))
+    //,
+    //m_svgview(new SvgView)
 {
 
     ui->setupUi(this);
@@ -187,61 +188,20 @@ void MainWindow::addActions()
     this->ui->actionToggle_all_parts->setStatusTip("Toggles position dot of all existing parts");
     connect(this->ui->actionToggle_all_parts, &QAction::triggered, this, &MainWindow::toggle_parts);
 
-
-    // Renderer-------------------------------
-    /*
-    m_nativeAction = this->ui->menuRenderer->addAction("Native");
-    m_nativeAction->setCheckable(true);
-    m_nativeAction->setChecked(true);
-    m_nativeAction->setData(int(SvgView::Native));
-#ifndef QT_NO_OPENGL
-    m_glAction = this->ui->menuRenderer->addAction(tr("&OpenGL"));
-    m_glAction->setCheckable(true);
-    m_glAction->setData(int(SvgView::OpenGL));
-#endif
-    m_imageAction = this->ui->menuRenderer->addAction(tr("&Image"));
-    m_imageAction->setCheckable(true);
-    m_imageAction->setData(int(SvgView::Image));
-
-    this->ui->menuRenderer->addSeparator();
-    m_antialiasingAction = this->ui->menuRenderer->addAction(tr("&Antialiasing"));
-    m_antialiasingAction->setCheckable(true);
-    m_antialiasingAction->setChecked(false);
-    connect(m_antialiasingAction, &QAction::toggled, this->ui->graphicsView, &SvgView::setAntialiasing);
-
-    QActionGroup *rendererGroup = new QActionGroup(this);
-    rendererGroup->addAction(m_nativeAction);
-#ifndef QT_NO_OPENGL
-    rendererGroup->addAction(m_glAction);
-#endif
-    rendererGroup->addAction(m_imageAction);
-
-    connect(rendererGroup, &QActionGroup::triggered,
-            [this] (QAction *a) { setRenderer(a->data().toInt()); });
+    this->colorPickerActionWidget = new ColorPickerActionWidget(this);
+    this->ui->menuTools->addAction(colorPickerActionWidget);
 
 
-    // View-------------------------------
+    connect(colorPickerActionWidget, &ColorPickerActionWidget::triggered ,  this, &MainWindow::onColorDialogAction);
 
-    m_backgroundAction = this->ui->menuView->addAction(tr("&Background"));
-    m_backgroundAction->setEnabled(false);
-    m_backgroundAction->setCheckable(true);
-    m_backgroundAction->setChecked(false);
-    connect(m_backgroundAction, &QAction::toggled, this->ui->graphicsView, &SvgView::setViewBackground);
+    QObject::connect(colorPickerActionWidget, &ColorPickerActionWidget::colorSelected,this, &MainWindow::onColorSelected);
+    //QObject::connect(colorPickerActionWidget,  &ColorPickerActionWidget::rejected,  this->ui->menuTools, QMenu::rejected);
 
-    m_outlineAction = this->ui->menuView->addAction(tr("&Outline"));
-    m_outlineAction->setEnabled(false);
-    m_outlineAction->setCheckable(true);
-    m_outlineAction->setChecked(true);
-    connect(m_outlineAction, &QAction::toggled, this->ui->graphicsView, &SvgView::setViewOutline);
+    QObject::connect(colorPickerActionWidget, SIGNAL(colorSelected(QColor)),this->ui->menuTools, SLOT(hide()));
+    QObject::connect(colorPickerActionWidget, SIGNAL(rejected()),           this->ui->menuTools, SLOT(hide()));
 
-    this->ui->menuView->addSeparator();
-    QAction *zoomAction = this->ui->menuView->addAction(tr("Zoom &In"), this->ui->graphicsView, &SvgView::zoomIn);
-    zoomAction->setShortcut(QKeySequence::ZoomIn);
-    zoomAction = this->ui->menuView->addAction(tr("Zoom &Out"), this->ui->graphicsView, &SvgView::zoomOut);
-    zoomAction->setShortcut(QKeySequence::ZoomOut);
-    zoomAction = this->ui->menuView->addAction(tr("Reset Zoom"), this->ui->graphicsView, &SvgView::resetZoom);
-    zoomAction->setShortcut(Qt::CTRL + Qt::Key_0);
-    */
+    QObject::connect(this->ui->menuTools, SIGNAL(aboutToShow()), colorPickerActionWidget, SLOT(aboutToShow()));
+    QObject::connect(this->ui->menuTools, SIGNAL(aboutToHide()), colorPickerActionWidget, SLOT(aboutToHide()));
 
 }
 
@@ -368,10 +328,43 @@ void MainWindow::receive_dot_size(double size)
     this->ui->horizontalSlider->setValue((int)(size * 100));
 }
 
+void MainWindow::onColorDialogAction()
+{
+    QScopedPointer<QColorDialog> colorDialogPtr(new QColorDialog(this));
+    QColorDialog * colorDialog = colorDialogPtr.data();
+    colorDialog->setOptions(QColorDialog::DontUseNativeDialog | QColorDialog::ShowAlphaChannel);
+    QColor currentColor = colorDialog->currentColor();
+    currentColor.setAlpha(255);
+    colorDialog->setCurrentColor(currentColor);
+    if (colorDialog->exec() == QColorDialog::Accepted){
+        QColor color = colorDialog->currentColor();
+        onColorSelected(color);
+    }
+
+}
+
+void MainWindow::onColorSelected(QColor color)
+{
+    //ui->textEdit->setTextColor(color);
+    //this->dot_color = color;
+    this->project->dot_color = color;
+    for(int i = 0; i < this->project->pcb_partkinds.count(); i++){
+        for(int j = 0; j < this->project->pcb_partkinds[i].parts.count(); j++ ){
+            if(this->project->pcb_partkinds[i].parts[j].chip != nullptr){
+                this->project->pcb_partkinds[i].parts[j].chip->changeColor(color);
+                this->project->pcb_partkinds[i].parts[j].chip->update();
+            }
+        }
+    }
+}
+
+
+/*
 void MainWindow::setRenderer(int renderMode)
 {
     //this->ui->graphicsView->setRenderer(static_cast<SvgView::RendererType>(renderMode));
 }
+*/
 
 void MainWindow::loadSettings(){
     QSettings setting("kPlacer","MainWindowSettings");

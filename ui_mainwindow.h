@@ -77,8 +77,6 @@ public:
     QMenu *menuOpen_BOM_file;
     QMenu *menuOpen_pos_file;
     QMenu *menuTools;
-    QMenu *menuRenderer;
-    QMenu *menuView;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -247,16 +245,10 @@ public:
         menuOpen_pos_file->setObjectName(QString::fromUtf8("menuOpen_pos_file"));
         menuTools = new QMenu(menuBar);
         menuTools->setObjectName(QString::fromUtf8("menuTools"));
-        menuRenderer = new QMenu(menuBar);
-        menuRenderer->setObjectName(QString::fromUtf8("menuRenderer"));
-        menuView = new QMenu(menuBar);
-        menuView->setObjectName(QString::fromUtf8("menuView"));
         MainWindow->setMenuBar(menuBar);
 
         menuBar->addAction(menuFile->menuAction());
         menuBar->addAction(menuTools->menuAction());
-        menuBar->addAction(menuRenderer->menuAction());
-        menuBar->addAction(menuView->menuAction());
         menuFile->addSeparator();
         menuFile->addAction(actionOpen_project);
         menuFile->addAction(actionNewProject);
@@ -277,6 +269,7 @@ public:
         menuOpen_pos_file->addAction(actionKiCAD_position_file);
         menuOpen_pos_file->addAction(actionOrCAD_position_file);
         menuTools->addAction(actionToggle_all_parts);
+        menuTools->addSeparator();
 
         retranslateUi(MainWindow);
 
@@ -313,8 +306,6 @@ public:
         menuOpen_BOM_file->setTitle(QCoreApplication::translate("MainWindow", "Open BOM file", nullptr));
         menuOpen_pos_file->setTitle(QCoreApplication::translate("MainWindow", "Open pos file", nullptr));
         menuTools->setTitle(QCoreApplication::translate("MainWindow", "Tools", nullptr));
-        menuRenderer->setTitle(QCoreApplication::translate("MainWindow", "Renderer", nullptr));
-        menuView->setTitle(QCoreApplication::translate("MainWindow", "View", nullptr));
     } // retranslateUi
 
 };

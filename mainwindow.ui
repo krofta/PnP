@@ -209,6 +209,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionToggle_all_parts"/>
+    <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>

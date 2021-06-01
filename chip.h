@@ -53,20 +53,26 @@
 
 #include <QColor>
 #include <QGraphicsItem>
+#include <QToolTip>
 
 class Chip : public QGraphicsItem
 {
 public:
-    Chip(const QColor &color, double x, double y, double rot);
+    Chip(const QColor &color,QString name, double x, double y, double rot);
 
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
+    void setName(QString name);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    //void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
 public slots:
     void changeColor(QColor c);
@@ -75,6 +81,7 @@ private:
     double x;
     double y;
     double rot;
+    QString m_name;
     int m_pressed;
     QColor color;
     QVector<QPointF> stuff;

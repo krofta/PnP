@@ -54,8 +54,9 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-Chip::Chip(const QColor &color, double x, double y, double rot)
+Chip::Chip(const QColor &color,QString name, double x, double y, double rot)
 {
+    this->m_name = name;
     m_pressed = 0;
     this->x = x;
     this->y = y;
@@ -65,7 +66,7 @@ Chip::Chip(const QColor &color, double x, double y, double rot)
     setPos(x,y);
     setRotation(rot);
 
-    setFlags(ItemIsSelectable | ItemIsMovable);
+    setFlags(ItemIsSelectable);// | ItemIsMovable);
     setAcceptHoverEvents(true);
 }
 
@@ -124,6 +125,11 @@ void Chip::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 }
 
+void Chip::setName(QString name)
+{
+    this->m_name = name;
+}
+
 void Chip::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     m_pressed=1;
@@ -148,6 +154,27 @@ void Chip::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     update();
     QGraphicsItem::mouseReleaseEvent(event);
 
+}
+
+void Chip::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+/*
+    QString str = QString("testToolTip");
+    if (toolTip() != str){
+        setToolTip(str);
+    }
+    */
+    QPoint p = event->screenPos();
+    //QPoint point = QPoint((int)this->x, (int)this->y);
+    QString txt = this->m_name;// + "\nX:" + QString::number(this->x) +  "\nY:" + QString::number(this->y);
+    QToolTip::showText(p,txt);//this,QRect(p,QSize(50,50)),10000);
+    //map
+    QGraphicsItem::hoverEnterEvent(event);
+}
+
+void Chip::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    QToolTip::hideText();
 }
 
 void Chip::changeColor(QColor c)

@@ -180,16 +180,16 @@ DRW_Circle* PCB_Part::getCircle(){
 
 void PCB_Part::refreshGraphicItem(){
     if(this->chip == nullptr){
-        this->chip = new Chip(QColor(Qt::blue), this->dx, this->dy, this->drotation);
+        this->chip = new Chip(QColor(Qt::blue),this->name, this->dx, this->dy, this->drotation);
+        this->chip->setVisible(false);
     }else{
+        this->chip->setName(this->name);
         this->chip->setX(this->dx);
         this->chip->setY(this->dy);
         this->chip->setPos(this->dx, this->dy);
         this->chip->setRotation(this->drotation);
+        this->chip->setVisible(false);
     }
-
-    //this->circle.basePoint.x = this->dx;
-    //this->circle.basePoint.y = this->dy;
 }
 
 

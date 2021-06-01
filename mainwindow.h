@@ -14,8 +14,8 @@
 
 #include "pcb_part.h"
 #include "csv_parser.h"
-#include "svgview.h"
 #include "pnp_project.h"
+#include "ColorPickerActionWidget.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -47,7 +47,7 @@ public:
     DXFInterface dxf;
     QMessageBox msgBox;
 
-    SvgView *m_svgview;
+    //SvgView *m_svgview;
     CSV_Parser file_parser;
     pnp_project *project;
     int graphic_initialised;
@@ -70,7 +70,9 @@ private slots:
 public slots:
     void receive_new_project(QString project);
     void receive_dot_size(double size);
-    void setRenderer(int renderMode);
+    void onColorDialogAction();
+    void onColorSelected(QColor color);
+    //void setRenderer(int renderMode);
 
 
 private Q_SLOTS:
@@ -115,6 +117,7 @@ private:
     QAction *m_antialiasingAction;
     QAction *m_backgroundAction;
     QAction *m_outlineAction;
+    ColorPickerActionWidget * colorPickerActionWidget;
 
     QGraphicsScene *m_scene;
 
